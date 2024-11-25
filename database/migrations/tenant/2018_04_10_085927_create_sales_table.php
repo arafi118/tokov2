@@ -22,12 +22,14 @@ class CreateSalesTable extends Migration
             $table->integer('item');
             $table->double('total_qty');
             $table->double('total_discount');
+            $table->double('total_cashback');
             $table->double('total_tax');
             $table->double('total_price');
             $table->double('grand_total');
             $table->double('order_tax_rate')->nullable();
             $table->double('order_tax')->nullable();
             $table->double('order_discount')->nullable();
+            $table->double('order_cashback')->nullable();
             $table->double('shipping_cost')->nullable();
             $table->integer('sale_status');
             $table->integer('payment_status');
@@ -35,8 +37,8 @@ class CreateSalesTable extends Migration
             $table->double('paid_amount')->nullable();
             $table->text('sale_note')->nullable();
             $table->text('staff_note')->nullable();
-            $table->enum('is_po',['Ya','Tidak'])->nullable();
-            $table->enum('is_tempo',['Ya','Tidak'])->nullable();
+            $table->enum('is_po', ['Ya', 'Tidak'])->nullable();
+            $table->enum('is_tempo', ['Ya', 'Tidak'])->nullable();
             $table->timestamps();
         });
     }

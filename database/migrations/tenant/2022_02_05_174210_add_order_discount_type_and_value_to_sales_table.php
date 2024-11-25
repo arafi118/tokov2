@@ -16,6 +16,8 @@ class AddOrderDiscountTypeAndValueToSalesTable extends Migration
         Schema::table('sales', function (Blueprint $table) {
             $table->string('order_discount_type')->after('order_tax')->nullable();
             $table->double('order_discount_value')->after('order_discount_type')->nullable();
+            $table->string('order_cashback_type')->after('order_discount')->nullable();
+            $table->double('order_cashback_value')->after('order_cashback_type')->nullable();
         });
     }
 

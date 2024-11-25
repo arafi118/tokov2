@@ -15,11 +15,11 @@ class DummySeeder extends Seeder
     public function run()
     {
         $this->insertTaxes();
-        // $this->insertProductCategories();
-        // $this->insertBrand();
+        $this->insertProductCategories();
+        $this->insertBrand();
         $this->insertUnits();
-        // $this->insertSuppliers();
-        // $this->insertProducts();
+        $this->insertSuppliers();
+        $this->insertProducts();
     }
 
     private function insertTaxes()

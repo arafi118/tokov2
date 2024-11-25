@@ -14,8 +14,9 @@ class AddCouponToSalesTable extends Migration
     public function up()
     {
         Schema::table('sales', function (Blueprint $table) {
-            $table->integer('coupon_id')->after('order_discount')->nullable();
+            $table->integer('coupon_id')->after('order_cashback')->nullable();
             $table->double('coupon_discount')->after('coupon_id')->nullable();
+            $table->double('coupon_cashback')->after('coupon_discount')->nullable();
         });
     }
 

@@ -34,11 +34,11 @@ class TbRekeningSaldo extends Model
 
     public function trx_debit()
     {
-        return $this->hasOne(\App\TbJurnalDetail::class, 'debit_kode', 'tb_rekening_kode');
+        return $this->hasOne(TbJurnalDetail::class, 'debit_kode', 'tb_rekening_kode');
     }
 
     public function trx_kredit()
     {
-        return $this->hasOne(\App\TbJurnalDetail::class, 'kredit_kode', 'tb_rekening_kode');
+        return $this->hasOne(TbJurnalDetail::class, 'kredit_kode', 'tb_rekening_kode');
     }
 }

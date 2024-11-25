@@ -94,14 +94,24 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <label>Pre Order</label><br>
-                                                <input type="checkbox" name="is_po" id="is_po" onclick="checkPo();">
+                                                <label>{{ trans('file.Payment Status') }} *</label>
+                                                <select name="payment_status" class="form-control">
+                                                    <option selected>{{ trans('file.Payment Status') }}</option>
+                                                    <option value="1">{{ trans('file.Pending') }}</option>
+                                                    <option value="2">{{ trans('file.Due') }}</option>
+                                                    <option value="3">{{ trans('file.Partial') }}</option>
+                                                    <option value="4">{{ trans('file.Paid') }}</option>
+                                                </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-2">
                                             <div class="form-group">
-                                                <label>Tempo</label><br>
-                                                <input type="checkbox" name="is_tempo" id="is_tempo">
+                                                <label for="is_po">Pre Order</label>
+                                                <label for="is_po" class="custom-control custom-checkbox">
+                                                    <input type="checkbox" name="is_po" id="is_po"
+                                                        onclick="checkPo();" class="custom-control-input">
+                                                    <span class="custom-control-indicator"></span>
+                                                </label>
                                             </div>
                                         </div>
                                     </div>
@@ -126,11 +136,11 @@
                                                         <tr>
                                                             <th>{{ trans('file.name') }}</th>
                                                             <th>{{ trans('file.Code') }}</th>
-                                                            <th>{{ trans('file.Quantity') }}</th>
+                                                            <th width="100">{{ trans('file.Quantity') }}</th>
                                                             <th>{{ trans('file.Batch No') }}</th>
-                                                            <th>{{ trans('file.Expired Date') }}</th>
                                                             <th>{{ trans('file.Net Unit Price') }}</th>
                                                             <th>{{ trans('file.Discount') }}</th>
+                                                            <th>{{ trans('file.Cashback') }}</th>
                                                             <th>{{ trans('file.Tax') }}</th>
                                                             <th>{{ trans('file.Subtotal') }}</th>
                                                             <th><i class="dripicons-trash"></i></th>
@@ -143,8 +153,8 @@
                                                         <th id="total-qty">0</th>
                                                         <th></th>
                                                         <th></th>
-                                                        <th></th>
                                                         <th id="total-discount">0.00</th>
+                                                        <th id="total-cashback">0.00</th>
                                                         <th id="total-tax">0.00</th>
                                                         <th id="total">0.00</th>
                                                         <th><i class="dripicons-trash"></i></th>
@@ -162,6 +172,11 @@
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <input type="hidden" name="total_discount" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <input type="hidden" name="total_cashback" />
                                             </div>
                                         </div>
                                         <div class="col-md-2">
@@ -190,7 +205,45 @@
                                         </div>
                                     </div>
                                     <div class="row mt-3">
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>{{ trans('file.Order Discount Type') }}</label>
+                                                <select id="order-discount-type" name="order_discount_type"
+                                                    class="form-control">
+                                                    <option value="Flat">{{ trans('file.Flat') }}</option>
+                                                    <option value="Percentage">{{ trans('file.Percentage') }}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>{{ trans('file.Value') }}</label>
+                                                <input type="text" name="order_discount_value"
+                                                    class="form-control numkey" id="order-discount-val">
+                                                <input type="hidden" name="order_discount" class="form-control"
+                                                    id="order-discount">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>{{ trans('file.Order Cashback Type') }}</label>
+                                                <select id="order-cashback-type" name="order_cashback_type"
+                                                    class="form-control">
+                                                    <option value="Flat">{{ trans('file.Flat') }}</option>
+                                                    <option value="Percentage">{{ trans('file.Percentage') }}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>{{ trans('file.Value') }}</label>
+                                                <input type="text" name="order_cashback_value"
+                                                    class="form-control numkey" id="order-cashback-val">
+                                                <input type="hidden" name="order_cashback" class="form-control"
+                                                    id="order-cashback">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>{{ trans('file.Order Tax') }}</label>
                                                 <select class="form-control" name="order_tax_rate">
@@ -201,26 +254,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>{{ trans('file.Order Discount Type') }}</label>
-                                                <select id="order-discount-type" name="order_discount_type"
-                                                    class="form-control">
-                                                    <option value="Flat">{{ trans('file.Flat') }}</option>
-                                                    <option value="Percentage">{{ trans('file.Percentage') }}</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>{{ trans('file.Value') }}</label>
-                                                <input type="text" name="order_discount_value"
-                                                    class="form-control numkey" id="order-discount-val">
-                                                <input type="hidden" name="order_discount" class="form-control"
-                                                    id="order-discount">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>
                                                     {{ trans('file.Shipping Cost') }}
@@ -229,7 +263,7 @@
                                                     step="any" />
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>{{ trans('file.Attach Document') }}</label> <i
                                                     class="dripicons-question" data-toggle="tooltip"
@@ -242,23 +276,12 @@
                                                 @endif
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>{{ trans('file.Sale Status') }} *</label>
                                                 <select name="sale_status" id="sale_status" class="form-control">
                                                     <option value="1">{{ trans('file.Completed') }}</option>
                                                     <option value="2">{{ trans('file.Pending') }}</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4" style="display:none;">
-                                            <div class="form-group">
-                                                <label>{{ trans('file.Payment Status') }} *</label>
-                                                <select name="payment_status" class="form-control">
-                                                    <option value="1">{{ trans('file.Pending') }}</option>
-                                                    <option value="2">{{ trans('file.Due') }}</option>
-                                                    <option value="3">{{ trans('file.Partial') }}</option>
-                                                    <option value="4">{{ trans('file.Paid') }}</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -398,6 +421,9 @@
                 <td><strong>{{ trans('file.Order Discount') }}</strong>
                     <span class="pull-right" id="order_discount">0.00</span>
                 </td>
+                <td><strong>{{ trans('file.Order Cashback') }}</strong>
+                    <span class="pull-right" id="order_cashback">0.00</span>
+                </td>
                 <td><strong>{{ trans('file.Shipping Cost') }}</strong>
                     <span class="pull-right" id="shipping_cost">0.00</span>
                 </td>
@@ -426,6 +452,10 @@
                                 <div class="col-md-4 form-group">
                                     <label>{{ trans('file.Unit Discount') }}</label>
                                     <input type="number" name="edit_discount" class="form-control numkey">
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label>{{ trans('file.Unit Cashback') }}</label>
+                                    <input type="number" name="edit_cashback" class="form-control numkey">
                                 </div>
                                 <div class="col-md-4 form-group">
                                     <label>{{ trans('file.Unit Price') }}</label>
@@ -533,6 +563,7 @@
         // array data with selection
         var product_price = [];
         var product_discount = [];
+        var product_cashback = [];
         var tax_rate = [];
         var tax_name = [];
         var tax_method = [];
@@ -671,6 +702,7 @@
             rowindex = $(this).closest('tr').index();
             product_price.splice(rowindex, 1);
             product_discount.splice(rowindex, 1);
+            product_cashback.splice(rowindex, 1);
             tax_rate.splice(rowindex, 1);
             tax_name.splice(rowindex, 1);
             tax_method.splice(rowindex, 1);
@@ -696,11 +728,17 @@
             }
 
             var edit_discount = $('input[name="edit_discount"]').val();
+            var edit_cashback = $('input[name="edit_cashback"]').val();
             var edit_qty = $('input[name="edit_qty"]').val();
             var edit_unit_price = $('input[name="edit_unit_price"]').val();
 
             if (parseFloat(edit_discount) > parseFloat(edit_unit_price)) {
                 alert('Invalid Discount Input!');
+                return;
+            }
+
+            if (parseFloat(edit_cashback) > parseFloat(edit_unit_price)) {
+                alert('Invalid Cashback Input!');
                 return;
             }
 
@@ -742,6 +780,7 @@
                 product_price[rowindex] = $('input[name="edit_unit_price"]').val();
             }
             product_discount[rowindex] = $('input[name="edit_discount"]').val();
+            product_cashback[rowindex] = $('input[name="edit_cashback"]').val();
             checkDiscount(edit_qty, false);
             //checkQuantity(edit_qty, false);
         });
@@ -816,6 +855,7 @@
                 success: function(data) {
                     console.log(data);
                     var flag = 1;
+                    console.log(pre_qty)
                     if (pre_qty > 0) {
 
                         var qty = data[15];
@@ -840,29 +880,41 @@
                         var cols = '';
                         pos = product_code.indexOf(data[1]);
                         temp_unit_name = (data[6]).split(',');
-                        cols += '<td>' + data[0] +
-                            '<button type="button" class="edit-product btn btn-link" data-toggle="modal" data-target="#editModal"> <i class="dripicons-document-edit"></i></button></td>';
-                        cols += '<td>' + data[1] + '</td>';
-                        cols += '<td><input type="number" class="form-control qty" name="qty[]" value="' + data[
-                            15] + '" step="any" required/></td>';
+
+                        var expired_date = '<div class="text-danger small expired-date">Kadaluwarsa: N/A</div>';
                         if (data[12]) {
-                            cols += '<td><input type="text" class="form-control batch-no" value="' + batch_no[
+                            expired_date = '<div class="text-danger small expired-date">Kadaluwarsa: ' +
+                                expired_date[
                                     pos] +
+                                '</div>';
+                        }
+
+                        cols += '<td>' + data[0] +
+                            '<button type="button" class="edit-product btn btn-link" data-toggle="modal" data-target="#editModal"> <i class="dripicons-document-edit"></i></button>' +
+                            expired_date + '</td>';
+                        cols += '<td>' + data[1] + '</td>';
+                        cols +=
+                            '<td><input type="number" class="form-control form-control-sm qty" name="qty[]" value="' +
+                            data[
+                                15] + '" step="any" required/></td>';
+                        if (data[12]) {
+                            cols +=
+                                '<td><input type="text" class="form-control form-control-sm batch-no" value="' +
+                                batch_no[pos] +
                                 '" required/> <input type="hidden" class="product-batch-id" name="product_batch_id[]" value="' +
                                 product_batch_id[pos] + '"/> </td>';
-                            cols += '<td class="expired-date">' + expired_date[pos] + '</td>';
                         } else {
                             cols +=
-                                '<td><input type="text" class="form-control batch-no" disabled/> <input type="hidden" class="product-batch-id" name="product_batch_id[]"/> </td>';
-                            cols += '<td class="expired-date">N/A</td>';
+                                '<td><input type="text" class="form-control form-control-sm batch-no" disabled/> <input type="hidden" class="product-batch-id" name="product_batch_id[]"/> </td>';
                         }
 
                         cols += '<td class="net_unit_price"></td>';
                         cols += '<td class="discount">0.00</td>';
+                        cols += '<td class="cashback">0.00</td>';
                         cols += '<td class="tax"></td>';
                         cols += '<td class="sub-total"></td>';
                         cols +=
-                            '<td><button type="button" class="ibtnDel btn btn-md btn-danger">{{ trans('file.delete') }}</button></td>';
+                            '<td><button type="button" class="ibtnDel btn btn-sm btn-danger"><i class="dripicons-trash"></i></button></td>';
                         cols += '<input type="hidden" class="product-code" name="product_code[]" value="' +
                             data[1] + '"/>';
                         cols += '<input type="hidden" class="product-id" name="product_id[]" value="' + data[
@@ -871,6 +923,7 @@
                             temp_unit_name[0] + '"/>';
                         cols += '<input type="hidden" class="net_unit_price" name="net_unit_price[]" />';
                         cols += '<input type="hidden" class="discount-value" name="discount[]" />';
+                        cols += '<input type="hidden" class="cashback-value" name="cashback[]" />';
                         cols += '<input type="hidden" class="tax-rate" name="tax_rate[]" value="' + data[3] +
                             '"/>';
                         cols += '<input type="hidden" class="tax-value" name="tax[]" />';
@@ -891,6 +944,7 @@
                         }
 
                         product_discount.splice(rowindex, 0, '0.00');
+                        product_cashback.splice(rowindex, 0, '0.00');
                         tax_rate.splice(rowindex, 0, parseFloat(data[3]));
                         tax_name.splice(rowindex, 0, data[4]);
                         tax_method.splice(rowindex, 0, data[5]);
@@ -932,6 +986,7 @@
             $('input[name="edit_qty"]').val(qty);
 
             $('input[name="edit_discount"]').val(parseFloat(product_discount[rowindex]).toFixed(2));
+            $('input[name="edit_cashback"]').val(parseFloat(product_cashback[rowindex]).toFixed(2));
 
             var tax_name_all = JSON.parse('{!! json_encode($tax_name_all) !!}');
             pos = tax_name_all.indexOf(tax_name[rowindex]);
@@ -1046,6 +1101,10 @@
                 rowindex] * quantity).toFixed(2));
             $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.discount-value').val((product_discount[
                 rowindex] * quantity).toFixed(2));
+            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.cashback').text((product_cashback[
+                rowindex] * quantity).toFixed(2));
+            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.cashback-value').val((product_cashback[
+                rowindex] * quantity).toFixed(2));
             $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.tax-rate').val(tax_rate[rowindex]
                 .toFixed(2));
 
@@ -1119,6 +1178,14 @@
             $("#total-discount").text(total_discount.toFixed(2));
             $('input[name="total_discount"]').val(total_discount.toFixed(2));
 
+            //Sum of cashback
+            var total_cashback = 0;
+            $(".cashback").each(function() {
+                total_cashback += parseFloat($(this).text());
+            });
+            $("#total-cashback").text(total_cashback.toFixed(2));
+            $('input[name="total_cashback"]').val(total_cashback.toFixed(2));
+
             //Sum of tax
             var total_tax = 0;
             $(".tax").each(function() {
@@ -1145,6 +1212,7 @@
             var subtotal = parseFloat($('#total').text());
             var order_tax = parseFloat($('select[name="order_tax_rate"]').val());
             var shipping_cost = parseFloat($('input[name="shipping_cost"]').val());
+
             var order_discount_type = $('select[name="order_discount_type"]').val();
             var order_discount_value = parseFloat($('input[name="order_discount_value"]').val());
             if (!order_discount_value)
@@ -1155,6 +1223,16 @@
             else
                 var order_discount = parseFloat(subtotal * (order_discount_value / 100));
 
+            var order_cashback_type = $('select[name="order_cashback_type"]').val();
+            var order_cashback_value = parseFloat($('input[name="order_cashback_value"]').val());
+            if (!order_cashback_value)
+                order_cashback_value = 0.00;
+
+            if (order_cashback_type == 'Flat')
+                var order_cashback = parseFloat(order_cashback_value);
+            else
+                var order_cashback = parseFloat(subtotal * (order_cashback_value / 100));
+
             if (!shipping_cost)
                 shipping_cost = 0.00;
 
@@ -1163,12 +1241,14 @@
             var grand_total = (subtotal + order_tax + shipping_cost) - order_discount;
 
             $('input[name="order_discount"]').val(order_discount);
+            $('input[name="order_cashback"]').val(order_cashback);
             $('#item').text(item);
             $('input[name="item"]').val($('table.order-list tbody tr:last').index() + 1);
             $('#subtotal').text(subtotal.toFixed(2));
             $('#order_tax').text(order_tax.toFixed(2));
             $('input[name="order_tax"]').val(order_tax.toFixed(2));
             $('#order_discount').text(order_discount.toFixed(2));
+            $('#order_cashback').text(order_cashback.toFixed(2));
             $('#shipping_cost').text(shipping_cost.toFixed(2));
             $('#grand_total').text(grand_total.toFixed(2));
             if ($('select[name="payment_status"]').val() == 4) {
@@ -1182,7 +1262,15 @@
             calculateGrandTotal();
         });
 
+        $('select[name="order_cashback_type"]').on("change", function() {
+            calculateGrandTotal();
+        });
+
         $('input[name="order_discount_value"]').on("input", function() {
+            calculateGrandTotal();
+        });
+
+        $('input[name="order_cashback_value"]').on("input", function() {
             calculateGrandTotal();
         });
 
@@ -1403,20 +1491,9 @@
         });
 
         function checkPo() {
-
-            if ($('#is_tempo').is(':checked')) {
-                $('#is_tempo').prop('checked', false);
+            if ($('select[name="payment_status"').val() == '2') {
+                $('select[name="payment_status"').val('4').trigger('change');
             }
-
-            if ($('#is_po').is(':checked')) {
-
-                $('#is_tempo').attr('disabled', 'disabled');
-            } else {
-
-                $('#is_tempo').removeAttr('disabled');
-
-            }
-
         }
     </script>
     <script type="text/javascript" src="https://js.stripe.com/v3/"></script>

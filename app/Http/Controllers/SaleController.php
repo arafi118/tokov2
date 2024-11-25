@@ -334,7 +334,42 @@ class SaleController extends Controller
                     $coupon_code = null;
 
                 $nestedData['sale'] = array(
-                    '[ "' . date(config('date_format'), strtotime($sale->created_at->toDateString())) . '"', ' "' . $sale->reference_no . '"', ' "' . $sale_status . '"', ' "' . $sale->biller->name . '"', ' "' . $sale->biller->company_name . '"', ' "' . $sale->biller->email . '"', ' "' . $sale->biller->phone_number . '"', ' "' . $sale->biller->address . '"', ' "' . $sale->biller->city . '"', ' "' . $sale->customer->name . '"', ' "' . $sale->customer->phone_number . '"', ' "' . $sale->customer->address . '"', ' "' . $sale->customer->city . '"', ' "' . $sale->id . '"', ' "' . $sale->total_tax . '"', ' "' . $sale->total_discount . '"', ' "' . $sale->total_price . '"', ' "' . $sale->order_tax . '"', ' "' . $sale->order_tax_rate . '"', ' "' . $sale->order_discount . '"', ' "' . $sale->shipping_cost . '"', ' "' . $sale->grand_total . '"', ' "' . $sale->paid_amount . '"', ' "' . preg_replace('/[\n\r]/', "<br>", $sale->sale_note) . '"', ' "' . preg_replace('/[\n\r]/', "<br>", $sale->staff_note) . '"', ' "' . $sale->user->name . '"', ' "' . $sale->user->email . '"', ' "' . $sale->warehouse->name . '"', ' "' . $coupon_code . '"', ' "' . $sale->coupon_discount . '"]'
+                    0 => '[ "' . date(
+                        config('date_format'),
+                        strtotime($sale->created_at->toDateString())
+                    ) . '"',
+                    1 => ' "' . $sale->reference_no . '"',
+                    2 => ' "' . $sale_status . '"',
+                    3 => ' "' . $sale->biller->name . '"',
+                    4 => ' "' . $sale->biller->company_name . '"',
+                    5 => ' "' . $sale->biller->email . '"',
+                    6 => ' "' . $sale->biller->phone_number . '"',
+                    7 => ' "' . $sale->biller->address . '"',
+                    8 => ' "' . $sale->biller->city . '"',
+                    9 => ' "' . $sale->customer->name . '"',
+                    10 => ' "' . $sale->customer->phone_number . '"',
+                    11 => ' "' . $sale->customer->address . '"',
+                    12 => ' "' . $sale->customer->city . '"',
+                    13 => ' "' . $sale->id . '"',
+                    14 => ' "' . $sale->total_tax . '"',
+                    15 => ' "' . $sale->total_discount . '"',
+                    16 => ' "' . $sale->total_price . '"',
+                    17 => ' "' . $sale->order_tax . '"',
+                    18 => ' "' . $sale->order_tax_rate . '"',
+                    19 => ' "' . $sale->order_discount . '"',
+                    20 => ' "' . $sale->shipping_cost . '"',
+                    21 => ' "' . $sale->grand_total . '"',
+                    22 => ' "' . $sale->paid_amount . '"',
+                    23 => ' "' . preg_replace('/[\n\r]/', "<br>", $sale->sale_note) . '"',
+                    24 => ' "' . preg_replace('/[\n\r]/', "<br>", $sale->staff_note) . '"',
+                    25 => ' "' . $sale->user->name . '"',
+                    26 => ' "' . $sale->user->email . '"',
+                    27 => ' "' . $sale->warehouse->name . '"',
+                    28 => ' "' . $coupon_code . '"',
+                    29 => ' "' . $sale->coupon_discount . '"',
+                    30 => ' "' . $sale->total_cashback . '"',
+                    31 => ' "' . $sale->order_cashback . '"',
+                    32 => ' "' . $sale->coupon_cashback . '"]'
                 );
                 $data[] = $nestedData;
             }
@@ -388,7 +423,7 @@ class SaleController extends Controller
             //$data['reference_no'] = 'sl-' . date("Ymd") . '-'. date("his");
 
             $data['is_po']        = isset($data['is_po']) ? 'Ya' : 'Tidak';
-            $data['is_tempo']     = isset($data['is_tempo']) ? 'Ya' : 'Tidak';
+            $data['is_tempo']     = $data['payment_status'] == '2' ? 'Ya' : 'Tidak';
 
             /*if(isset($request->reference_no)) {
                 $this->validate($request, [
@@ -398,7 +433,7 @@ class SaleController extends Controller
                 ]);
             }*/
 
-
+            // dd($data);
             $data['user_id'] = Auth::id();
             $cash_register_data = CashRegister::where([
                 ['user_id', $data['user_id']],
@@ -498,6 +533,7 @@ class SaleController extends Controller
             $sale_unit = $data['sale_unit'];
             $net_unit_price = $data['net_unit_price'];
             $discount = $data['discount'];
+            $cashback = $data['cashback'];
             $tax_rate = $data['tax_rate'];
             $tax = $data['tax'];
             $total = $data['subtotal'];
@@ -646,6 +682,7 @@ class SaleController extends Controller
                 $product_sale['sale_unit_id'] = $sale_unit_id;
                 $product_sale['net_unit_price'] = $net_unit_price[$i];
                 $product_sale['discount'] = $discount[$i];
+                $product_sale['cashback'] = $cashback[$i];
                 $product_sale['tax_rate'] = $tax_rate[$i];
                 $product_sale['tax'] = $tax[$i];
                 $product_sale['total'] = $mail_data['total'][$i] = $total[$i];
@@ -669,7 +706,6 @@ class SaleController extends Controller
             }
 
             $fdata = $lims_sale_data->toArray();
-
             if ($data['payment_status'] == 3 || $data['payment_status'] == 4 || ($data['payment_status'] == 2 && $data['pos'] && $data['paid_amount'] > 0)) {
 
                 if ($data['paying_amount'] == 0) {
@@ -843,7 +879,7 @@ class SaleController extends Controller
                 }
             }
 
-            if ($data['pos'] == 1) {
+            if ($data['pos'] == 1 || $data['payment_status'] == '4') {
 
                 $fdata += ['cara_bayar' => $cara_bayar];
                 $fdata += ['konsumen' => $lims_customer_data->name];
@@ -868,7 +904,7 @@ class SaleController extends Controller
 
             // Response Message
             $response = false;
-            return abort(500);
+            return $e;
         }
 
         \DB::commit();
@@ -1364,6 +1400,17 @@ class SaleController extends Controller
             ])
             ->select('discounts.*')
             ->get();
+        $all_cashback = DB::connection(env('TENANT_DB_CONNECTION'))->table('cashback_plan_customers')
+            ->join('cashback_plans', 'cashback_plans.id', '=', 'cashback_plan_customers.cashback_plan_id')
+            ->join('cashback_plan_cashbacks', 'cashback_plans.id', '=', 'cashback_plan_cashbacks.cashback_plan_id')
+            ->join('cashbacks', 'cashbacks.id', '=', 'cashback_plan_cashbacks.cashback_id')
+            ->where([
+                ['cashback_plans.is_active', true],
+                ['cashbacks.is_active', true],
+                ['cashback_plan_customers.customer_id', $customer_id]
+            ])
+            ->select('cashbacks.*')
+            ->get();
         $lims_product_data = Product::where([
             ['code', $product_code[0]],
             ['is_active', true]
@@ -1455,6 +1502,26 @@ class SaleController extends Controller
         $product[] = $lims_product_data->is_variant;
         $product[] = $qty;
 
+        foreach ($all_cashback as $key => $cashback) {
+            $product_list = explode(",", $cashback->product_list);
+            $days = explode(",", $cashback->days);
+
+            if (($cashback->applicable_for == 'All' || in_array($lims_product_data->id, $product_list)) && ($todayDate >= $cashback->valid_from && $todayDate <= $cashback->valid_till && in_array(date('D'), $days) && $qty >= $cashback->minimum_qty && $qty <= $cashback->maximum_qty)) {
+                if ($cashback->type == 'flat') {
+                    $product[] = $cashback->value;
+                } elseif ($cashback->type == 'percentage') {
+                    $product[] = $lims_product_data->price * ($cashback->value / 100);
+                }
+                break;
+            } else {
+                continue;
+            }
+        }
+
+        if (count($all_cashback) <= 0) {
+            $product[] = 0;
+        }
+
         return $product;
     }
 
@@ -1517,25 +1584,33 @@ class SaleController extends Controller
                 $lims_product_variant_data = ProductVariant::select('item_code')->FindExactProduct($product_sale_data->product_id, $product_sale_data->variant_id)->first();
                 $product->code = $lims_product_variant_data->item_code;
             }
+
             $unit_data = Unit::find($product_sale_data->sale_unit_id);
             if ($unit_data) {
                 $unit = $unit_data->unit_code;
-            } else
+            } else {
                 $unit = '';
+            }
+
             if ($product_sale_data->product_batch_id) {
                 $product_batch_data = ProductBatch::select('batch_no')->find($product_sale_data->product_batch_id);
                 $product_sale[7][$key] = $product_batch_data->batch_no;
-            } else
+            } else {
                 $product_sale[7][$key] = 'N/A';
+            }
+
             $product_sale[0][$key] = $product->name . ' [' . $product->code . ']';
-            if ($product_sale_data->imei_number)
+            if ($product_sale_data->imei_number) {
                 $product_sale[0][$key] .= '<br>IMEI or Serial Number: ' . $product_sale_data->imei_number;
+            }
+
             $product_sale[1][$key] = $product_sale_data->qty;
             $product_sale[2][$key] = $unit;
             $product_sale[3][$key] = $product_sale_data->tax;
             $product_sale[4][$key] = $product_sale_data->tax_rate;
             $product_sale[5][$key] = $product_sale_data->discount;
             $product_sale[6][$key] = $product_sale_data->total;
+            $product_sale[8][$key] = $product_sale_data->cashback;
         }
         return $product_sale;
     }
@@ -2110,6 +2185,7 @@ class SaleController extends Controller
             $numberTransformer = $numberToWords->getNumberTransformer('en');
         else
             $numberTransformer = $numberToWords->getNumberTransformer(\App::getLocale());
+
         $numberInWords = $numberTransformer->toWords($lims_sale_data->grand_total);
 
         return view('backend.sale.invoice', compact('lims_sale_data', 'lims_product_sale_data', 'lims_biller_data', 'lims_warehouse_data', 'lims_customer_data', 'lims_payment_data', 'numberInWords'));
@@ -2513,7 +2589,8 @@ class SaleController extends Controller
             [
                 'slug' => $data['is_po'] == 'Tidak' ? 'penjualan-' . $data['cara_bayar'] : 'penjualan-po',
                 'label' => $data['is_po'] == 'Tidak' ? 'Penjualan ' . ucwords($data['cara_bayar']) : 'Penjualan' . $add_label,
-                'nominal' => $data['total_price'] + $data['shipping_cost'] + $data['order_tax'] - $data['order_discount'],
+                // 'nominal' => $data['total_price'] + $data['shipping_cost'] + $data['order_tax'] - $data['order_discount'], // Pengaturan Awal
+                'nominal' => $data['total_price'] + $data['shipping_cost'] + $data['order_tax'], // Pengaturan Baru
                 'cara_bayar'       => $data['cara_bayar'],
             ],
             [
@@ -2538,6 +2615,18 @@ class SaleController extends Controller
                 'slug' => 'discount-penjualan' . $add_slug,
                 'label' => 'Discount penjualan' . $add_label,
                 'nominal' => $data['order_discount'],
+                'cara_bayar'       => $data['cara_bayar'],
+            ],
+            [
+                'slug' => 'cashback-penjualan' . $add_slug,
+                'label' => 'Total Cashback produk' . $add_label,
+                'nominal' => $data['total_cashback'],
+                'cara_bayar'       => $data['cara_bayar'],
+            ],
+            [
+                'slug' => 'cashback-penjualan' . $add_slug,
+                'label' => 'Cashback penjualan' . $add_label,
+                'nominal' => $data['order_cashback'],
                 'cara_bayar'       => $data['cara_bayar'],
             ],
             [

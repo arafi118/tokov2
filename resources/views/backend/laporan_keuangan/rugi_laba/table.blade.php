@@ -7,6 +7,10 @@
         number_format($data['laba_kotor']['pot_penjualan']['saldo']) < 0
             ? '(' . number_format($data['laba_kotor']['pot_penjualan']['saldo'] * -1) . ')'
             : number_format($data['laba_kotor']['pot_penjualan']['saldo']);
+    $d_cashback_penjualan =
+        number_format($data['laba_kotor']['cashback_penjualan']['saldo']) < 0
+            ? '(' . number_format($data['laba_kotor']['cashback_penjualan']['saldo'] * -1) . ')'
+            : number_format($data['laba_kotor']['cashback_penjualan']['saldo']);
     $d_retur_penjualan =
         number_format($data['laba_kotor']['retur_penjualan']['saldo']) < 0
             ? '(' . number_format($data['laba_kotor']['retur_penjualan']['saldo'] * -1) . ')'
@@ -28,6 +32,11 @@
         <td style="text-align:right;">{{ $d_pot_penjualan }}</td>
     </tr>
     <tr>
+        <td>{{ $data['laba_kotor']['cashback_penjualan']['kode'] }}</td>
+        <td>{{ $data['laba_kotor']['cashback_penjualan']['nama'] }}</td>
+        <td style="text-align:right;">{{ $d_cashback_penjualan }}</td>
+    </tr>
+    <tr>
         <td>{{ $data['laba_kotor']['retur_penjualan']['kode'] }}</td>
         <td>{{ $data['laba_kotor']['retur_penjualan']['nama'] }}
         </td>
@@ -38,6 +47,7 @@
         $penjualan_bersih =
             $data['laba_kotor']['penjualan']['saldo'] +
             $data['laba_kotor']['pot_penjualan']['saldo'] +
+            $data['laba_kotor']['cashback_penjualan']['saldo'] +
             $data['laba_kotor']['retur_penjualan']['saldo'];
         $d_penjualan_bersih =
             $penjualan_bersih < 0
@@ -63,6 +73,10 @@
             $data['laba_kotor']['pot_pembelian']['saldo'] < 0
                 ? '(' . number_format($data['laba_kotor']['pot_pembelian']['saldo'] * -1) . ')'
                 : number_format($data['laba_kotor']['pot_pembelian']['saldo']);
+        $d_cashback_pembelian =
+            $data['laba_kotor']['cashback_pembelian']['saldo'] < 0
+                ? '(' . number_format($data['laba_kotor']['cashback_pembelian']['saldo'] * -1) . ')'
+                : number_format($data['laba_kotor']['cashback_pembelian']['saldo']);
         $d_retur_pembelian = '(' . number_format($data['laba_kotor']['retur_pembelian']) . ')';
 
     @endphp
@@ -96,6 +110,11 @@
         <td>{{ $data['laba_kotor']['pot_pembelian']['kode'] }}</td>
         <td>{{ $data['laba_kotor']['pot_pembelian']['nama'] }}</td>
         <td style="text-align:right;">{{ $d_pot_pembelian }}</td>
+    </tr>
+    <tr>
+        <td>{{ $data['laba_kotor']['cashback_pembelian']['kode'] }}</td>
+        <td>{{ $data['laba_kotor']['cashback_pembelian']['nama'] }}</td>
+        <td style="text-align:right;">{{ $d_cashback_pembelian }}</td>
     </tr>
     <tr>
         <td>5.1.01.03</td>

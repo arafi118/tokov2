@@ -21,6 +21,7 @@ class CreateProductSalesTable extends Migration
             $table->integer('sale_unit_id');
             $table->double('net_unit_price');
             $table->double('discount');
+            $table->double('cashback');
             $table->double('tax_rate');
             $table->double('tax');
             $table->double('total');

@@ -882,25 +882,25 @@
                                     {{ trans('file.Cash') }}</button>
                             </div>
                             <!-- <div class="column-5">
-                                                                                                                                                                    <button style="background-color: #213170" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="paypal-btn"><i class="fa fa-paypal"></i> {{ trans('file.PayPal') }}</button>
-                                                                                                                                                                </div> -->
+                                                                                                                                                                                        <button style="background-color: #213170" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="paypal-btn"><i class="fa fa-paypal"></i> {{ trans('file.PayPal') }}</button>
+                                                                                                                                                                                    </div> -->
                             <div class="column-5">
                                 <button style="background-color: #e28d02" type="button" class="btn btn-custom"
                                     id="draft-btn"><i class="dripicons-flag"></i> {{ trans('file.Draft') }}</button>
                             </div>
                             <!--  <div class="column-5">
-                                                                                                                                                                    <button style="background-color: #fd7272" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="cheque-btn"><i class="fa fa-money"></i> {{ trans('file.Cheque') }}</button>
-                                                                                                                                                                </div>
-                                                                                                                                                                <div class="column-5">
-                                                                                                                                                                    <button style="background-color: #5f27cd" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="gift-card-btn"><i class="fa fa-credit-card-alt"></i> {{ trans('file.Gift Card') }}</button>
-                                                                                                                                                                </div>
-                                                                                                                                                                <div class="column-5">
-                                                                                                                                                                    <button style="background-color: #b33771" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="deposit-btn"><i class="fa fa-university"></i> {{ trans('file.Deposit') }}</button>
-                                                                                                                                                                </div> -->
+                                                                                                                                                                                        <button style="background-color: #fd7272" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="cheque-btn"><i class="fa fa-money"></i> {{ trans('file.Cheque') }}</button>
+                                                                                                                                                                                    </div>
+                                                                                                                                                                                    <div class="column-5">
+                                                                                                                                                                                        <button style="background-color: #5f27cd" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="gift-card-btn"><i class="fa fa-credit-card-alt"></i> {{ trans('file.Gift Card') }}</button>
+                                                                                                                                                                                    </div>
+                                                                                                                                                                                    <div class="column-5">
+                                                                                                                                                                                        <button style="background-color: #b33771" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="deposit-btn"><i class="fa fa-university"></i> {{ trans('file.Deposit') }}</button>
+                                                                                                                                                                                    </div> -->
                             {{-- @if ($lims_reward_point_setting_data->is_active) --}}
                             <!-- <div class="column-5">
-                                                                                                                                                                    <button style="background-color: #319398" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="point-btn"><i class="dripicons-rocket"></i> {{ trans('file.Points') }}</button>
-                                                                                                                                                                </div> -->
+                                                                                                                                                                                        <button style="background-color: #319398" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="point-btn"><i class="dripicons-rocket"></i> {{ trans('file.Points') }}</button>
+                                                                                                                                                                                    </div> -->
                             {{-- @endif --}}
                             <div class="column-5">
                                 <button style="background-color: #d63031;" type="button" class="btn btn-custom"
@@ -948,21 +948,21 @@
                                                 <input type="hidden" name="paid_by_id">
                                                 <label>{{ trans('file.Paid By') }}</label>
                                                 <!-- <select name="paid_by_id_select" class="form-control selectpicker">
-                                                                                                                                                <option value="1">Cash</option>
-                                                                                                                                                <option value="2">Gift Card</option>
-                                                                                                                                                <option value="3">Credit Card</option>
-                                                                                                                                                <option value="4">Cheque</option>
-                                                                                                                                                <option value="5">Paypal</option>
-                                                                                                                                                <option value="6">Deposit</option>
-                                                                                                                                                {{-- @if ($lims_reward_point_setting_data->is_active) --}}
-                                                                                                                                                    <option value="7">Points</option>
-                                                                                                                                                {{-- @endif --}}
-                                                                                                                                            </select> -->
+                                                                                                                                                                    <option value="1">Cash</option>
+                                                                                                                                                                    <option value="2">Gift Card</option>
+                                                                                                                                                                    <option value="3">Credit Card</option>
+                                                                                                                                                                    <option value="4">Cheque</option>
+                                                                                                                                                                    <option value="5">Paypal</option>
+                                                                                                                                                                    <option value="6">Deposit</option>
+                                                                                                                                                                    {{-- @if ($lims_reward_point_setting_data->is_active) --}}
+                                                                                                                                                                        <option value="7">Points</option>
+                                                                                                                                                                    {{-- @endif --}}
+                                                                                                                                                                </select> -->
                                                 <select style="display: none;" name="paid_by_id_select"
                                                     id="paid_by_id_add" class="form-control selectpicker">
                                                     <option value="1">Cash</option>
                                                     <!--  <option value="3">Credit Card</option>
-                                                                                                                                                <option value="4">Cheque</option> -->
+                                                                                                                                                                    <option value="4">Cheque</option> -->
                                                     <!-- <option value="5">Debit Card</option> -->
                                                     <!-- <option value="6">Tempo / Utang</option> -->
                                                 </select>
@@ -2602,13 +2602,7 @@
             else {
                 var data = $(this).data('product');
 
-                product_info = data.split(" ");
-                pos = product_code.indexOf(product_info[0]);
-                if (pos < 0)
-                    alert('Product is not avaialable in the selected warehouse');
-                else {
-                    productSearch(data);
-                }
+                productSearch(data);
             }
         });
         //Delete product
@@ -2946,7 +2940,6 @@
         }
 
         function productSearch(data) {
-
             var product_info = data.split(" ");
             var product_code = product_info[0];
             var pre_qty = 0;
@@ -2964,38 +2957,19 @@
                     data: data
                 },
                 success: function(data) {
-                    console.log(pre_qty);
                     var flag = 1;
                     if (pre_qty > 0) {
-
-                        // alert('cch');
-                        /*if(pre_qty)
-                            var qty = parseFloat(pre_qty) + data[15];
-                        else*/
                         var qty = data[15];
 
-                        $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ') .qty').val(qty);
+                        $('#myTable tbody tr:nth-child(' + (rowindex + 1) + ') .plus').trigger('click');
                         pos = product_code.indexOf(data[1]);
-                        if (!data[11] && product_warehouse_price[pos]) {
 
-                            product_price[rowindex] = parseFloat(product_warehouse_price[pos] * currency[
-                                'exchange_rate']) + parseFloat(product_warehouse_price[pos] * [
-                                'exchange_rate'
-                            ] * customer_group_rate);
-                        } else {
-
-                            product_price[rowindex] = parseFloat(data[2] * ['exchange_rate']) +
-                                parseFloat(data[2] * currency['exchange_rate'] * customer_group_rate);
-                        }
-
-                        flag = 0;
-                        checkQuantity(String(qty), true);
                         flag = 0;
                         localStorage.setItem("tbody-id", $("table.order-list tbody").html());
                     }
+
                     $("input[name='product_code_name']").val('');
                     if (flag) {
-
                         addNewProduct(data);
                     }
                 }
@@ -3070,13 +3044,8 @@
 
             rowindex = newRow.index();
 
-            if (!data[11] && product_warehouse_price[pos]) {
-                product_price.splice(rowindex, 0, parseFloat(product_warehouse_price[pos] * currency['exchange_rate']) +
-                    parseFloat(product_warehouse_price[pos] * currency['exchange_rate'] * customer_group_rate));
-            } else {
-                product_price.splice(rowindex, 0, parseFloat(data[2] * currency['exchange_rate']) + parseFloat(data[2] *
-                    currency['exchange_rate'] * customer_group_rate));
-            }
+            product_price.splice(rowindex, 0, parseFloat(data[2] * currency['exchange_rate']) + parseFloat(data[2] *
+                currency['exchange_rate'] * customer_group_rate));
             product_discount.splice(rowindex, 0, '0.00');
             tax_rate.splice(rowindex, 0, parseFloat(data[3]));
             tax_name.splice(rowindex, 0, data[4]);
@@ -3181,7 +3150,7 @@
                         valid = 1;
                         todyDate = JSON.parse('{!! json_encode(
                             date('
-                                                                                                                                                                                                                        Y - m - d '),
+                                                                                                                                                                                                                                                                                                                                                Y - m - d '),
                         ) !!}');
                         if (parseFloat(value['quantity']) <= parseFloat(value['used']))
                             alert('This Coupon is no longer available');

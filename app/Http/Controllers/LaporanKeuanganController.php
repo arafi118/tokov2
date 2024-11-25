@@ -401,7 +401,9 @@ class LaporanKeuanganController extends Controller
                 if ($rek->kode == '1.1.03.01') {
                     foreach ($rek->komsaldo as $saldo) {
                         if ($saldo->tahun == $tahun) {
-                            $saldo_bulan_ini = $saldo->trx_debit->s_debit;
+                            if ($saldo->trx_debit) {
+                                $saldo_bulan_ini = $saldo->trx_debit->debit_nominal;
+                            }
                             $komsaldo = $saldo->$debit_bulan_ini - $saldo->$kredit_bulan_ini;
                             $saldo_bulan_lalu = $saldo->$debit_bulan_lalu - $saldo->$kredit_bulan_lalu;
                         } else {
@@ -494,6 +496,7 @@ class LaporanKeuanganController extends Controller
 
             $data['laba_kotor']['penjualan']       = $this->jurnal->queryLabaKotor($k_debit, $k_kredit, $tahun, $warehouse_id, '4.1.01.01');
             $data['laba_kotor']['pot_penjualan']       = $this->jurnal->queryLabaKotor($k_debit, $k_kredit, $tahun, $warehouse_id, '4.1.01.02');
+            $data['laba_kotor']['cashback_penjualan']       = $this->jurnal->queryLabaKotor($k_debit, $k_kredit, $tahun, $warehouse_id, '4.1.01.06');
             $data['laba_kotor']['retur_penjualan']       = $this->jurnal->queryLabaKotor($k_debit, $k_kredit, $tahun, $warehouse_id, '4.1.01.03');
 
             $data['laba_kotor']['persediaan_awal'] = $this->jurnal->queryPersediaanAwal($bulan_lalu, $tahun_lalu, $tahun, $warehouse_id);
@@ -503,6 +506,7 @@ class LaporanKeuanganController extends Controller
             $data['laba_kotor']['beban_pengolahan']       = $this->jurnal->queryLabaKotor($k_debit, $k_kredit, $tahun, $warehouse_id, '5.1.01.04');
             $data['laba_kotor']['beban_angkut']       = $this->jurnal->queryLabaKotor($k_debit, $k_kredit, $tahun, $warehouse_id, '5.1.01.05');
             $data['laba_kotor']['pot_pembelian']       = $this->jurnal->queryLabaKotor($k_debit, $k_kredit, $tahun, $warehouse_id, '5.1.01.02');
+            $data['laba_kotor']['cashback_pembelian']       = $this->jurnal->queryLabaKotor($k_debit, $k_kredit, $tahun, $warehouse_id, '5.1.01.06');
             $data['laba_kotor']['persediaan_akhir']       = $this->jurnal->queryLabaKotor($k_debit, $k_kredit, $tahun, $warehouse_id, '1.1.03.01');
             $data['pendapatan_lain_lain']       = $this->jurnal->queryLabaKotor($k_debit, $k_kredit, $tahun, $warehouse_id, '4.1.01.05');
             $data['beban_operasional'] = $this->jurnal->queryRugiLaba($k_debit, $k_kredit, '6.1', $tahun, $warehouse_id);

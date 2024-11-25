@@ -16,103 +16,106 @@
                 <div class="card-header mt-2">
                     <h3 class="text-center">{{ trans('file.Sale List') }}</h3>
                 </div>
-                {!! Form::open(['route' => 'sales.index', 'method' => 'get']) !!}
-                <div class="row ml-1 mt-2">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label><strong>{{ trans('file.Date') }}</strong></label>
-                            <input type="text" class="daterangepicker-field form-control"
-                                value="{{ $starting_date }} To {{ $ending_date }}" required />
-                            <input type="hidden" name="starting_date" value="{{ $starting_date }}" />
-                            <input type="hidden" name="ending_date" value="{{ $ending_date }}" />
+                <div class="card-body">
+                    {!! Form::open(['route' => 'sales.index', 'method' => 'get']) !!}
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label><strong>{{ trans('file.Date') }}</strong></label>
+                                <input type="text" class="daterangepicker-field form-control"
+                                    value="{{ $starting_date }} To {{ $ending_date }}" required />
+                                <input type="hidden" name="starting_date" value="{{ $starting_date }}" />
+                                <input type="hidden" name="ending_date" value="{{ $ending_date }}" />
+                            </div>
+                        </div>
+                        <div class="col-md-3 @if (\Auth::user()->role_id > 2) {{ 'd-none' }} @endif">
+                            <div class="form-group">
+                                <label><strong>{{ trans('file.Warehouse') }}</strong></label>
+                                <select id="warehouse_id" name="warehouse_id" class="selectpicker form-control"
+                                    data-live-search="true" data-live-search-style="begins">
+                                    <option value="0">{{ trans('file.All Warehouse') }}</option>
+                                    @foreach ($lims_warehouse_list as $warehouse)
+                                        <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label><strong>{{ trans('file.Sale Status') }}</strong></label>
+                                <select id="sale-status" class="form-control" name="sale_status">
+                                    <option value="0">{{ trans('file.All') }}</option>
+                                    <option value="1">{{ trans('file.Completed') }}</option>
+                                    <option value="2">{{ trans('file.Pending') }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label><strong>{{ trans('file.Payment Status') }}</strong></label>
+                                <select id="payment-status" class="form-control" name="payment_status">
+                                    <option value="0">{{ trans('file.All') }}</option>
+                                    <option value="1">{{ trans('file.Pending') }}</option>
+                                    <option value="2">{{ trans('file.Due') }}</option>
+                                    <option value="3">{{ trans('file.Partial') }}</option>
+                                    <option value="4">{{ trans('file.Paid') }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2 mt-3">
+                            <div class="form-group">
+                                <button class="btn btn-primary" id="filter-btn"
+                                    type="submit">{{ trans('file.submit') }}</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-3 @if (\Auth::user()->role_id > 2) {{ 'd-none' }} @endif">
-                        <div class="form-group">
-                            <label><strong>{{ trans('file.Warehouse') }}</strong></label>
-                            <select id="warehouse_id" name="warehouse_id" class="selectpicker form-control"
-                                data-live-search="true" data-live-search-style="begins">
-                                <option value="0">{{ trans('file.All Warehouse') }}</option>
-                                @foreach ($lims_warehouse_list as $warehouse)
-                                    <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label><strong>{{ trans('file.Sale Status') }}</strong></label>
-                            <select id="sale-status" class="form-control" name="sale_status">
-                                <option value="0">{{ trans('file.All') }}</option>
-                                <option value="1">{{ trans('file.Completed') }}</option>
-                                <option value="2">{{ trans('file.Pending') }}</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label><strong>{{ trans('file.Payment Status') }}</strong></label>
-                            <select id="payment-status" class="form-control" name="payment_status">
-                                <option value="0">{{ trans('file.All') }}</option>
-                                <option value="1">{{ trans('file.Pending') }}</option>
-                                <option value="2">{{ trans('file.Due') }}</option>
-                                <option value="3">{{ trans('file.Partial') }}</option>
-                                <option value="4">{{ trans('file.Paid') }}</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-2 mt-3">
-                        <div class="form-group">
-                            <button class="btn btn-primary" id="filter-btn"
-                                type="submit">{{ trans('file.submit') }}</button>
-                        </div>
+                    {!! Form::close() !!}
+
+                    @if (in_array('sales-add', $all_permission))
+                        <a href="{{ route('sales.create') }}" class="btn btn-info"><i class="dripicons-plus"></i>
+                            {{ trans('file.Add Sale') }}</a>&nbsp;
+                        <a href="{{ url('sales/sale_by_csv') }}" class="btn btn-primary"><i class="dripicons-copy"></i>
+                            {{ trans('file.Import Sale') }}</a>
+                    @endif
+                    <div class="table-responsive">
+                        <table id="sale-table" class="table sale-list" style="width: 100%">
+                            <thead>
+                                <tr>
+                                    <th class="not-exported"></th>
+                                    <th>{{ trans('file.Date') }}</th>
+                                    <th>{{ trans('file.reference') }}</th>
+                                    <th>{{ trans('file.Biller') }}</th>
+                                    <th>{{ trans('file.customer') }}</th>
+                                    <th>{{ trans('file.Sale Status') }}</th>
+                                    <th>{{ trans('file.Payment Status') }}</th>
+                                    <th>{{ trans('file.Delivery Status') }}</th>
+                                    <th>{{ trans('file.grand total') }}</th>
+                                    <th>{{ trans('file.Returned Amount') }}</th>
+                                    <th>{{ trans('file.Paid') }}</th>
+                                    <th>{{ trans('file.Due') }}</th>
+                                    <th class="not-exported">{{ trans('file.action') }}</th>
+                                </tr>
+                            </thead>
+
+                            <tfoot class="tfoot active">
+                                <th></th>
+                                <th>{{ trans('file.Total') }}</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tfoot>
+                        </table>
                     </div>
                 </div>
-                {!! Form::close() !!}
             </div>
-            @if (in_array('sales-add', $all_permission))
-                <a href="{{ route('sales.create') }}" class="btn btn-info"><i class="dripicons-plus"></i>
-                    {{ trans('file.Add Sale') }}</a>&nbsp;
-                <a href="{{ url('sales/sale_by_csv') }}" class="btn btn-primary"><i class="dripicons-copy"></i>
-                    {{ trans('file.Import Sale') }}</a>
-            @endif
-        </div>
-        <div class="table-responsive">
-            <table id="sale-table" class="table sale-list" style="width: 100%">
-                <thead>
-                    <tr>
-                        <th class="not-exported"></th>
-                        <th>{{ trans('file.Date') }}</th>
-                        <th>{{ trans('file.reference') }}</th>
-                        <th>{{ trans('file.Biller') }}</th>
-                        <th>{{ trans('file.customer') }}</th>
-                        <th>{{ trans('file.Sale Status') }}</th>
-                        <th>{{ trans('file.Payment Status') }}</th>
-                        <th>{{ trans('file.Delivery Status') }}</th>
-                        <th>{{ trans('file.grand total') }}</th>
-                        <th>{{ trans('file.Returned Amount') }}</th>
-                        <th>{{ trans('file.Paid') }}</th>
-                        <th>{{ trans('file.Due') }}</th>
-                        <th class="not-exported">{{ trans('file.action') }}</th>
-                    </tr>
-                </thead>
-
-                <tfoot class="tfoot active">
-                    <th></th>
-                    <th>{{ trans('file.Total') }}</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                </tfoot>
-            </table>
         </div>
     </section>
 
@@ -158,6 +161,7 @@
                         <th>{{ trans('file.Unit Price') }}</th>
                         <th>{{ trans('file.Tax') }}</th>
                         <th>{{ trans('file.Discount') }}</th>
+                        <th>{{ trans('file.Cashback') }}</th>
                         <th>{{ trans('file.Subtotal') }}</th>
                     </thead>
                     <tbody>
@@ -243,20 +247,20 @@
                         <div class="col-md-6 mt-1">
                             <label>{{ trans('file.Paid By') }}</label>
                             <!-- <select name="paid_by_id" class="form-control">
-                                    <option value="1">Cash</option>
-                                    <option value="2">Gift Card</option>
-                                    <option value="3">Credit Card</option>
-                                    <option value="4">Cheque</option>
-                                    <option value="5">Paypal</option>
-                                    <option value="6">Deposit</option>
-                                    @if ($lims_reward_point_setting_data->is_active)
+                                                                                                                                    <option value="1">Cash</option>
+                                                                                                                                    <option value="2">Gift Card</option>
+                                                                                                                                    <option value="3">Credit Card</option>
+                                                                                                                                    <option value="4">Cheque</option>
+                                                                                                                                    <option value="5">Paypal</option>
+                                                                                                                                    <option value="6">Deposit</option>
+                                                                                                                                    @if ($lims_reward_point_setting_data->is_active)
     <option value="7">Points</option>
     @endif
-                                </select> -->
+                                                                                                                                </select> -->
                             <select name="paid_by_id" id="paid_by_id_add" class="form-control selectpicker">
                                 <option value="1">Cash</option>
                                 <!--  <option value="3">Credit Card</option>
-                                    <option value="4">Cheque</option> -->
+                                                                                                                                    <option value="4">Cheque</option> -->
                                 <option value="5">Debit Card</option>
                                 <!-- <option value="6">Tempo / Utang</option> -->
                             </select>
@@ -480,27 +484,28 @@
         $("ul#sale").siblings('a').attr('aria-expanded', 'true');
         $("ul#sale").addClass("show");
         $("ul#sale #sale-list-menu").addClass("active");
-        var public_key = <?php echo json_encode($lims_pos_setting_data->stripe_public_key); ?>;
-        var all_permission = <?php echo json_encode($all_permission); ?>;
-        var reward_point_setting = <?php echo json_encode($lims_reward_point_setting_data); ?>;
-        var sale_id = [];
-        var user_verified = <?php echo json_encode(env('USER_VERIFIED')); ?>;
-        var starting_date = <?php echo json_encode($starting_date); ?>;
-        var ending_date = <?php echo json_encode($ending_date); ?>;
-        var warehouse_id = <?php echo json_encode($warehouse_id); ?>;
-        var sale_status = <?php echo json_encode($sale_status); ?>;
-        var payment_status = <?php echo json_encode($payment_status); ?>;
-        var balance = <?php echo json_encode($balance); ?>;
-        var expired_date = <?php echo json_encode($expired_date); ?>;
-        var current_date = <?php echo json_encode(date('Y-m-d')); ?>;
-        var payment_date = [];
-        var payment_reference = [];
-        var paid_amount = [];
-        var paying_method = [];
-        var payment_id = [];
-        var payment_note = [];
-        var account = [];
-        var deposit;
+
+        var public_key = @json($lims_pos_setting_data->stripe_public_key),
+            all_permission = @json($all_permission),
+            reward_point_setting = @json($lims_reward_point_setting_data),
+            sale_id = [],
+            user_verified = @json(env('USER_VERIFIED')),
+            starting_date = @json($starting_date),
+            ending_date = @json($ending_date),
+            warehouse_id = @json($warehouse_id),
+            sale_status = @json($sale_status),
+            payment_status = @json($payment_status),
+            balance = @json($balance),
+            expired_date = @json($expired_date),
+            current_date = @json(date('Y-m-d')),
+            payment_date = [],
+            payment_reference = [],
+            paid_amount = [],
+            paying_method = [],
+            payment_id = [],
+            payment_note = [],
+            account = [],
+            deposit = null; // Inisialisasi deposit
 
         $.ajaxSetup({
             headers: {
@@ -547,7 +552,7 @@
             a.document.write('<body>');
             a.document.write(
                 '<style>body{font-family: sans-serif;line-height: 1.15;-webkit-text-size-adjust: 100%;}.d-print-none{display:none}.text-center{text-align:center}.row{width:100%;margin-right: -15px;margin-left: -15px;}.col-md-12{width:100%;display:block;padding: 5px 15px;}.col-md-6{width: 50%;float:left;padding: 5px 15px;}table{width:100%;margin-top:30px;}th{text-aligh:left}td{padding:10px}table,th,td{border: 1px solid black; border-collapse: collapse;}</style><style>@media print {.modal-dialog { max-width: 1000px;} }</style>'
-                );
+            );
             a.document.write(divContents);
             a.document.write('</body></html>');
             a.document.close();
@@ -1094,7 +1099,7 @@
                 '<br><strong>{{ trans('file.Warehouse') }}: </strong>' + sale[27] +
                 '<br><strong>{{ trans('file.Sale Status') }}: </strong>' + sale[2] +
                 '<br><br><div class="row"><div class="col-md-6"><strong>{{ trans('file.From') }}:</strong><br>' + sale[
-                3] + '<br>' + sale[4] + '<br>' + sale[5] + '<br>' + sale[6] + '<br>' + sale[7] + '<br>' + sale[8] +
+                    3] + '<br>' + sale[4] + '<br>' + sale[5] + '<br>' + sale[6] + '<br>' + sale[7] + '<br>' + sale[8] +
                 '</div><div class="col-md-6"><div class="float-right"><strong>{{ trans('file.To') }}:</strong><br>' +
                 sale[9] + '<br>' + sale[10] + '<br>' + sale[11] + '<br>' + sale[12] + '</div></div></div>';
             $.get('sales/product_sale/' + sale[13], function(data) {
@@ -1105,6 +1110,7 @@
                 var tax = data[3];
                 var tax_rate = data[4];
                 var discount = data[5];
+                var cashback = data[8];
                 var subtotal = data[6];
                 var batch_no = data[7];
                 var newBody = $("<tbody>");
@@ -1119,6 +1125,7 @@
                     cols += '<td>' + parseFloat(subtotal[index] / qty[index]).toFixed(2) + '</td>';
                     cols += '<td>' + tax[index] + '(' + tax_rate[index] + '%)' + '</td>';
                     cols += '<td>' + discount[index] + '</td>';
+                    cols += '<td>' + cashback[index] + '</td>';
                     cols += '<td>' + subtotal[index] + '</td>';
                     newRow.append(cols);
                     newBody.append(newRow);
@@ -1129,27 +1136,28 @@
                 cols += '<td colspan=6><strong>{{ trans('file.Total') }}:</strong></td>';
                 cols += '<td>' + sale[14] + '</td>';
                 cols += '<td>' + sale[15] + '</td>';
+                cols += '<td>' + sale[30] + '</td>';
                 cols += '<td>' + sale[16] + '</td>';
                 newRow.append(cols);
                 newBody.append(newRow);
 
                 var newRow = $("<tr>");
                 cols = '';
-                cols += '<td colspan=8><strong>{{ trans('file.Order Tax') }}:</strong></td>';
+                cols += '<td colspan=9><strong>{{ trans('file.Order Tax') }}:</strong></td>';
                 cols += '<td>' + sale[17] + '(' + sale[18] + '%)' + '</td>';
                 newRow.append(cols);
                 newBody.append(newRow);
 
                 var newRow = $("<tr>");
                 cols = '';
-                cols += '<td colspan=8><strong>{{ trans('file.Order Discount') }}:</strong></td>';
+                cols += '<td colspan=9><strong>{{ trans('file.Order Discount') }}:</strong></td>';
                 cols += '<td>' + sale[19] + '</td>';
                 newRow.append(cols);
                 newBody.append(newRow);
                 if (sale[28]) {
                     var newRow = $("<tr>");
                     cols = '';
-                    cols += '<td colspan=8><strong>{{ trans('file.Coupon Discount') }} [' + sale[28] +
+                    cols += '<td colspan=9><strong>{{ trans('file.Coupon Discount') }} [' + sale[28] +
                         ']:</strong></td>';
                     cols += '<td>' + sale[29] + '</td>';
                     newRow.append(cols);
@@ -1158,28 +1166,44 @@
 
                 var newRow = $("<tr>");
                 cols = '';
-                cols += '<td colspan=8><strong>{{ trans('file.Shipping Cost') }}:</strong></td>';
+                cols += '<td colspan=9><strong>{{ trans('file.Order Cashback') }}:</strong></td>';
+                cols += '<td>' + sale[31] + '</td>';
+                newRow.append(cols);
+                newBody.append(newRow);
+                if (sale[28]) {
+                    var newRow = $("<tr>");
+                    cols = '';
+                    cols += '<td colspan=9><strong>{{ trans('file.Coupon Cashback') }} [' + sale[28] +
+                        ']:</strong></td>';
+                    cols += '<td>' + sale[32] + '</td>';
+                    newRow.append(cols);
+                    newBody.append(newRow);
+                }
+
+                var newRow = $("<tr>");
+                cols = '';
+                cols += '<td colspan=9><strong>{{ trans('file.Shipping Cost') }}:</strong></td>';
                 cols += '<td>' + sale[20] + '</td>';
                 newRow.append(cols);
                 newBody.append(newRow);
 
                 var newRow = $("<tr>");
                 cols = '';
-                cols += '<td colspan=8><strong>{{ trans('file.grand total') }}:</strong></td>';
+                cols += '<td colspan=9><strong>{{ trans('file.grand total') }}:</strong></td>';
                 cols += '<td>' + sale[21] + '</td>';
                 newRow.append(cols);
                 newBody.append(newRow);
 
                 var newRow = $("<tr>");
                 cols = '';
-                cols += '<td colspan=8><strong>{{ trans('file.Paid Amount') }}:</strong></td>';
+                cols += '<td colspan=9><strong>{{ trans('file.Paid Amount') }}:</strong></td>';
                 cols += '<td>' + sale[22] + '</td>';
                 newRow.append(cols);
                 newBody.append(newRow);
 
                 var newRow = $("<tr>");
                 cols = '';
-                cols += '<td colspan=8><strong>{{ trans('file.Due') }}:</strong></td>';
+                cols += '<td colspan=9><strong>{{ trans('file.Due') }}:</strong></td>';
                 cols += '<td>' + parseFloat(sale[21] - sale[22]).toFixed(2) + '</td>';
                 newRow.append(cols);
                 newBody.append(newRow);
@@ -1202,7 +1226,7 @@
                     2));
                 e.preventDefault();
             } else if ($('input[name="edit_paying_amount"]').val() < parseFloat($('input[name="edit_amount"]')
-                .val())) {
+                    .val())) {
                 alert('Paying amount cannot be bigger than recieved amount');
                 $('input[name="edit_amount"]').val('');
                 $(".change").text(parseFloat($('input[name="edit_paying_amount"]').val() - $(

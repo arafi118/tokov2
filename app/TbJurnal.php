@@ -376,6 +376,7 @@ class TbJurnal extends Model
 
         $data['penjualan']        = $this->queryLabaKotor($k_debit, $k_kredit, $tahun, $warehouse_id, '4.1.01.01');
         $data['pot_penjualan']    = $this->queryLabaKotor($k_debit, $k_kredit, $tahun, $warehouse_id, '4.1.01.02');
+        $data['cashback_penjualan'] = $this->queryLabaKotor($k_debit, $k_kredit, $tahun, $warehouse_id, '4.1.01.06');
         $data['retur_penjualan']  = $this->queryLabaKotor($k_debit, $k_kredit, $tahun, $warehouse_id, '4.1.01.03');
         $data['persediaan_awal']  = $this->queryPersediaanAwal($bulan_lalu, $tahun_lalu, $tahun, $warehouse_id);
         $data['persediaan']       = $this->queryPersediaanPembelian($bulan, $tahun, $warehouse_id);
@@ -393,7 +394,7 @@ class TbJurnal extends Model
         $data['beban_non_usaha']   = $this->loopBebanPendapatan($k_debit, $k_kredit, '7.3', $tahun, $warehouse_id);
         $data['beban_pajak']       = $this->loopBebanPendapatan($k_debit, $k_kredit, '7.4', $tahun, $warehouse_id);
 
-        $data['penjualan_bersih'] = $data['penjualan']['saldo'] + $data['pot_penjualan']['saldo'] + $data['retur_penjualan']['saldo'];
+        $data['penjualan_bersih'] = $data['penjualan']['saldo'] + $data['pot_penjualan']['saldo'] + $data['cashback_penjualan']['saldo'] + +$data['retur_penjualan']['saldo'];
         $data['total_pembelian']  = $data['persediaan'] + $data['beban_pengolahan']['saldo'] + $data['beban_angkut']['saldo'] - $data['pot_pembelian']['saldo'];
 
         $data['total_persediaan'] = $data['persediaan_awal'] + $data['total_pembelian'];
