@@ -247,20 +247,20 @@
                         <div class="col-md-6 mt-1">
                             <label>{{ trans('file.Paid By') }}</label>
                             <!-- <select name="paid_by_id" class="form-control">
-                                                                                                                                    <option value="1">Cash</option>
-                                                                                                                                    <option value="2">Gift Card</option>
-                                                                                                                                    <option value="3">Credit Card</option>
-                                                                                                                                    <option value="4">Cheque</option>
-                                                                                                                                    <option value="5">Paypal</option>
-                                                                                                                                    <option value="6">Deposit</option>
-                                                                                                                                    @if ($lims_reward_point_setting_data->is_active)
+                                                                                                                                        <option value="1">Cash</option>
+                                                                                                                                        <option value="2">Gift Card</option>
+                                                                                                                                        <option value="3">Credit Card</option>
+                                                                                                                                        <option value="4">Cheque</option>
+                                                                                                                                        <option value="5">Paypal</option>
+                                                                                                                                        <option value="6">Deposit</option>
+                                                                                                                                        @if ($lims_reward_point_setting_data->is_active)
     <option value="7">Points</option>
     @endif
-                                                                                                                                </select> -->
+                                                                                                                                    </select> -->
                             <select name="paid_by_id" id="paid_by_id_add" class="form-control selectpicker">
                                 <option value="1">Cash</option>
                                 <!--  <option value="3">Credit Card</option>
-                                                                                                                                    <option value="4">Cheque</option> -->
+                                                                                                                                        <option value="4">Cheque</option> -->
                                 <option value="5">Debit Card</option>
                                 <!-- <option value="6">Tempo / Utang</option> -->
                             </select>
@@ -1131,6 +1131,14 @@
                     newBody.append(newRow);
                 });
 
+                var coupon_prefix = false
+                var coupon_code = ''
+                if (sale[28]) {
+                    var code = sale[28].split('-')
+                    coupon_prefix = code['0']
+                    coupon_code = code['1']
+                }
+
                 var newRow = $("<tr>");
                 cols = '';
                 cols += '<td colspan=6><strong>{{ trans('file.Total') }}:</strong></td>';
@@ -1154,10 +1162,10 @@
                 cols += '<td>' + sale[19] + '</td>';
                 newRow.append(cols);
                 newBody.append(newRow);
-                if (sale[28]) {
+                if (coupon_prefix == 'DS') {
                     var newRow = $("<tr>");
                     cols = '';
-                    cols += '<td colspan=9><strong>{{ trans('file.Coupon Discount') }} [' + sale[28] +
+                    cols += '<td colspan=9><strong>{{ trans('file.Coupon Discount') }} [' + coupon_code +
                         ']:</strong></td>';
                     cols += '<td>' + sale[29] + '</td>';
                     newRow.append(cols);
@@ -1170,10 +1178,10 @@
                 cols += '<td>' + sale[31] + '</td>';
                 newRow.append(cols);
                 newBody.append(newRow);
-                if (sale[28]) {
+                if (coupon_prefix == 'CS') {
                     var newRow = $("<tr>");
                     cols = '';
-                    cols += '<td colspan=9><strong>{{ trans('file.Coupon Cashback') }} [' + sale[28] +
+                    cols += '<td colspan=9><strong>{{ trans('file.Coupon Cashback') }} [' + coupon_code +
                         ']:</strong></td>';
                     cols += '<td>' + sale[32] + '</td>';
                     newRow.append(cols);

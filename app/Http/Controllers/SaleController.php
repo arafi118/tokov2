@@ -423,7 +423,10 @@ class SaleController extends Controller
             //$data['reference_no'] = 'sl-' . date("Ymd") . '-'. date("his");
 
             $data['is_po']        = isset($data['is_po']) ? 'Ya' : 'Tidak';
-            $data['is_tempo']     = $data['payment_status'] == '2' ? 'Ya' : 'Tidak';
+            $data['is_tempo']     = 'Tidak';
+            if (isset($data['payment_status'])) {
+                $data['is_tempo']     = $data['payment_status'] == '2' ? 'Ya' : 'Tidak';
+            }
 
             /*if(isset($request->reference_no)) {
                 $this->validate($request, [
@@ -433,7 +436,6 @@ class SaleController extends Controller
                 ]);
             }*/
 
-            // dd($data);
             $data['user_id'] = Auth::id();
             $cash_register_data = CashRegister::where([
                 ['user_id', $data['user_id']],
@@ -1210,10 +1212,10 @@ class SaleController extends Controller
 
     public function posSale()
     {
-        $role = Role::find(Auth::user()->role_id);
         $rekening = $this->rekening->getRekening();
+        $role = Role::find(Auth::user()->role_id);
+        $permissions = $role->permissions;
         if ($role->hasPermissionTo('sales-add')) {
-            $permissions = Role::findByName($role->name)->permissions;
             foreach ($permissions as $permission)
                 $all_permission[] = $permission->name;
             if (empty($all_permission))
@@ -1225,23 +1227,25 @@ class SaleController extends Controller
             $lims_biller_list = Biller::where('is_active', true)->get();
             $lims_reward_point_setting_data = RewardPointSetting::latest()->first();
             $lims_tax_list = Tax::where('is_active', true)->get();
-            $lims_product_list = Product::select('id', 'name', 'code', 'image')->ActiveFeatured()->whereNull('is_variant')->get();
+
+            $lims_product_list = Product::select('id', 'name', 'code', 'image')->ActiveFeatured()->with([
+                'variant' => function ($query) {
+                    $query->orderBy('position');
+                }
+            ])->get();
             foreach ($lims_product_list as $key => $product) {
                 $images = explode(",", $product->image);
                 $product->base_image = $images[0];
-            }
-            $lims_product_list_with_variant = Product::select('id', 'name', 'code', 'image')->ActiveFeatured()->whereNotNull('is_variant')->get();
 
-            foreach ($lims_product_list_with_variant as $product) {
-                $images = explode(",", $product->image);
-                $product->base_image = $images[0];
-                $lims_product_variant_data = $product->variant()->orderBy('position')->get();
-                $main_name = $product->name;
-                $temp_arr = [];
-                foreach ($lims_product_variant_data as $key => $variant) {
-                    $product->name = $main_name . ' [' . $variant->name . ']';
-                    $product->code = $variant->pivot['item_code'];
-                    $lims_product_list[] = clone ($product);
+                if (count($product->variant) > 0) {
+                    $lims_product_variant_data = $product->variant;
+                    $main_name = $product->name;
+                    $temp_arr = [];
+                    foreach ($lims_product_variant_data as $key => $variant) {
+                        $product->name = $main_name . ' [' . $variant->name . ']';
+                        $product->code = $variant->pivot['item_code'];
+                        $lims_product_list[] = clone ($product);
+                    }
                 }
             }
 

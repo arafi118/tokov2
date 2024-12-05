@@ -23,6 +23,7 @@ class CreateProductPurchasesTable extends Migration
             $table->integer('purchase_unit_id');
             $table->double('net_unit_cost');
             $table->double('discount');
+            $table->double('cashback');
             $table->double('tax_rate');
             $table->double('tax');
             $table->double('total');

@@ -21,11 +21,13 @@ class CreatePurchasesTable extends Migration
             $table->integer('item');
             $table->integer('total_qty');
             $table->double('total_discount');
+            $table->double('total_cashback');
             $table->double('total_tax');
             $table->double('total_cost');
             $table->double('order_tax_rate')->nullable();
             $table->double('order_tax')->nullable();
             $table->double('order_discount')->nullable();
+            $table->double('order_cashback')->nullable();
             $table->double('shipping_cost')->nullable();
             $table->double('grand_total');
             $table->double('paid_amount');
@@ -33,8 +35,8 @@ class CreatePurchasesTable extends Migration
             $table->integer('payment_status');
             $table->string('document')->nullable();
             $table->text('note')->nullable();
-            $table->enum('is_po',['Ya','Tidak'])->nullable();
-            $table->enum('is_tempo',['Ya','Tidak'])->nullable();
+            $table->enum('is_po', ['Ya', 'Tidak'])->nullable();
+            $table->enum('is_tempo', ['Ya', 'Tidak'])->nullable();
             $table->timestamps();
         });
     }

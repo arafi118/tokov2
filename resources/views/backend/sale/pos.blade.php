@@ -2,11 +2,34 @@
     $role_permission = [];
     foreach (Session::get('role_permissions') as $rp) {
         $role_name = $rp->name;
-
         $role_permission[str_replace('-', '_', $role_name) . '_active'] = $rp->role;
     }
 
     extract($role_permission);
+
+    if ($lims_pos_setting_data) {
+        $keybord_active = $lims_pos_setting_data->keybord_active;
+    } else {
+        $keybord_active = 0;
+    }
+
+    $deposit = [];
+    $points = [];
+    $customers = [];
+    foreach ($lims_customer_list as $customer) {
+        $deposit[$customer->id] = $customer->deposit - $customer->expense;
+        $points[$customer->id] = $customer->points;
+
+        $customers[] = [
+            'value' => $customer->id,
+            'label' => $customer->name . ' (' . $customer->phone_number . ')',
+        ];
+    }
+
+    foreach ($lims_tax_list as $tax) {
+        $tax_name_all[] = $tax->name;
+        $tax_rate_all[] = $tax->rate;
+    }
 @endphp
 
 @extends('backend.layout.top-head')
@@ -14,615 +37,30 @@
 @section('content')
     @if ($errors->has('phone_number'))
         <div class="alert alert-danger alert-dismissible text-center">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-                    aria-hidden="true">&times;</span></button>{{ $errors->first('phone_number') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            {{ $errors->first('phone_number') }}
         </div>
     @endif
     @if (session()->has('message'))
         <div class="alert alert-success alert-dismissible text-center"><button type="button" class="close"
-                data-dismiss="alert" aria-label="Close"><span
-                    aria-hidden="true">&times;</span></button>{!! session()->get('message') !!}</div>
+                data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>{!! session()->get('message') !!}
+        </div>
     @endif
     @if (session()->has('not_permitted'))
-        <div class="alert alert-danger alert-dismissible text-center"><button type="button" class="close"
-                data-dismiss="alert" aria-label="Close"><span
-                    aria-hidden="true">&times;</span></button>{{ session()->get('not_permitted') }}</div>
+        <div class="alert alert-danger alert-dismissible text-center">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            {{ session()->get('not_permitted') }}
+        </div>
     @endif
 
-    @php
-        $role = DB::connection(env('TENANT_DB_CONNECTION'))
-            ->table('roles')
-            ->find(Auth::user()->role_id);
-    @endphp
-
     <!-- Side Navbar -->
-    <nav class="side-navbar shrink">
-        <span class="brand-big">
-            @if ($general_setting->site_logo)
-                <a href="{{ url('/') }}"><img src="{{ url('public/logo', $general_setting->site_logo) }}"
-                        width="115"></a>
-            @else
-                <a href="{{ url('/') }}">
-                    <h1 class="d-inline">{{ $general_setting->site_title }}</h1>
-                </a>
-            @endif
-        </span>
-
-        <ul id="side-main-menu" class="side-menu list-unstyled">
-            <li>
-                <a href="{{ url('/') }}">
-                    <i class="dripicons-meter"></i><span>{{ __('file.dashboard') }}</span>
-                </a>
-            </li>
-            <li>
-                <a href="#product" aria-expanded="false" data-toggle="collapse">
-                    <i class="dripicons-list"></i><span>{{ __('file.product') }}</span>
-                </a>
-                <ul id="product" class="collapse list-unstyled ">
-                    @if ($unit_active)
-                        <li id="unit-menu">
-                            <a href="{{ route('unit.index') }}">{{ trans('file.Unit') }}</a>
-                        </li>
-                    @endif
-                    @if ($brand_active)
-                        <li id="brand-menu">
-                            <a href="{{ route('brand.index') }}">{{ trans('file.Brand') }}</a>
-                        </li>
-                    @endif
-                    <li id="category-menu">
-                        <a href="{{ route('category.index') }}">{{ __('file.category') }}</a>
-                    </li>
-                    @if ($warehouse_active)
-                        <li id="warehouse-menu">
-                            <a href="{{ route('warehouse.index') }}">{{ trans('file.Warehouse') }}</a>
-                        </li>
-                    @endif
-                    @if ($purchases_index_active)
-                        <li id="product-list-menu"><a
-                                href="{{ route('products.index') }}">{{ __('file.product_list') }}</a>
-                        </li>
-                        @if ($products_add_active)
-                            <li id="product-create-menu">
-                                <a href="{{ route('products.create') }}">{{ __('file.add_product') }}</a>
-                            </li>
-                        @endif
-                    @endif
-                    @if ($print_barcode_active)
-                        <li id="printBarcode-menu">
-                            <a href="{{ route('product.printBarcode') }}">{{ __('file.print_barcode') }}</a>
-                        </li>
-                    @endif
-                    @if ($adjustment_active)
-                        <li id="adjustment-list-menu">
-                            <a href="{{ route('qty_adjustment.index') }}">{{ trans('file.Adjustment List') }}</a>
-                        </li>
-                        <li id="adjustment-create-menu">
-                            <a href="{{ route('qty_adjustment.create') }}">{{ trans('file.Add Adjustment') }}</a>
-                        </li>
-                    @endif
-                    @if ($stock_count_active)
-                        <li id="stock-count-menu">
-                            <a href="{{ route('stock-count.index') }}">{{ trans('file.Stock Count') }}</a>
-                        </li>
-                    @endif
-                </ul>
-            </li>
-
-            @if ($purchases_index_active)
-                <li>
-                    <a href="#purchase" aria-expanded="false" data-toggle="collapse">
-                        <i class="dripicons-card"></i><span>{{ trans('file.Purchase') }}</span>
-                    </a>
-                    <ul id="purchase" class="collapse list-unstyled ">
-                        <li id="purchase-list-menu">
-                            <a href="{{ route('purchases.index') }}">{{ trans('file.Purchase List') }}</a>
-                        </li>
-                        @if ($purchases_add_active)
-                            <li id="purchase-create-menu">
-                                <a href="{{ route('purchases.create') }}">{{ trans('file.Add Purchase') }}</a>
-                            </li>
-                            <li id="purchase-import-menu">
-                                <a
-                                    href="{{ url('purchases/purchase_by_csv') }}">{{ trans('file.Import Purchase By CSV') }}</a>
-                            </li>
-                        @endif
-                    </ul>
-                </li>
-            @endif
-
-            <li>
-                <a href="#sale" aria-expanded="false" data-toggle="collapse">
-                    <i class="dripicons-cart"></i><span>{{ trans('file.Sale') }}</span>
-                </a>
-                <ul id="sale" class="collapse list-unstyled ">
-                    @if ($sales_index_active)
-                        <li id="sale-list-menu">
-                            <a href="{{ route('sales.index') }}">{{ trans('file.Sale List') }}</a>
-                        </li>
-                        @if ($sales_add_active)
-                            <li>
-                                <a href="{{ route('sale.pos') }}">POS</a>
-                            </li>
-                            <li id="sale-create-menu">
-                                <a href="{{ route('sales.create') }}">{{ trans('file.Add Sale') }}</a>
-                            </li>
-                            <li id="sale-import-menu">
-                                <a href="{{ url('sales/sale_by_csv') }}">{{ trans('file.Import Sale By CSV') }}</a>
-                            </li>
-                        @endif
-                    @endif
-                    @if ($gift_card_active)
-                        <li id="gift-card-menu">
-                            <a href="{{ route('gift_cards.index') }}">{{ trans('file.Gift Card List') }}</a>
-                        </li>
-                    @endif
-                    @if ($coupon_active)
-                        <li id="coupon-menu">
-                            <a href="{{ route('coupons.index') }}">{{ trans('file.Coupon List') }}</a>
-                        </li>
-                    @endif
-                    <li id="delivery-menu">
-                        <a href="{{ route('delivery.index') }}">{{ trans('file.Delivery List') }}</a>
-                    </li>
-                </ul>
-            </li>
-
-            @if ($expenses_index_active)
-                <li>
-                    <a href="#expense" aria-expanded="false" data-toggle="collapse">
-                        <i class="dripicons-wallet"></i><span>{{ trans('file.Expense') }}</span>
-                    </a>
-                    <ul id="expense" class="collapse list-unstyled ">
-                        <li id="exp-cat-menu">
-                            <a href="{{ route('expense_categories.index') }}">{{ trans('file.Expense Category') }}</a>
-                        </li>
-                        <li id="exp-list-menu">
-                            <a href="{{ route('expenses.index') }}">{{ trans('file.Expense List') }}</a>
-                        </li>
-
-                        @if ($expenses_add_active)
-                            <li>
-                                <a id="add-expense" href=""> {{ trans('file.Add Expense') }}</a>
-                            </li>
-                        @endif
-                    </ul>
-                </li>
-            @endif
-
-            @if ($quotes_index_active)
-                <li>
-                    <a href="#quotation" aria-expanded="false" data-toggle="collapse">
-                        <i class="dripicons-document"></i><span>{{ trans('file.Quotation') }}</span>
-                    </a>
-                    <ul id="quotation" class="collapse list-unstyled ">
-                        <li id="quotation-list-menu">
-                            <a href="{{ route('quotations.index') }}">{{ trans('file.Quotation List') }}</a>
-                        </li>
-                        @if ($quotes_add_active)
-                            <li id="quotation-create-menu">
-                                <a href="{{ route('quotations.create') }}">{{ trans('file.Add Quotation') }}</a>
-                            </li>
-                        @endif
-                    </ul>
-                </li>
-            @endif
-
-            @if ($transfers_index_active)
-                <li>
-                    <a href="#transfer" aria-expanded="false" data-toggle="collapse">
-                        <i class="dripicons-export"></i><span>{{ trans('file.Transfer') }}</span>
-                    </a>
-                    <ul id="transfer" class="collapse list-unstyled ">
-                        <li id="transfer-list-menu">
-                            <a href="{{ route('transfers.index') }}">{{ trans('file.Transfer List') }}</a>
-                        </li>
-                        @if ($transfers_add_active)
-                            <li id="transfer-create-menu">
-                                <a href="{{ route('transfers.create') }}">{{ trans('file.Add Transfer') }}</a>
-                            </li>
-                            <li id="transfer-import-menu">
-                                <a
-                                    href="{{ url('transfers/transfer_by_csv') }}">{{ trans('file.Import Transfer By CSV') }}</a>
-                            </li>
-                        @endif
-                    </ul>
-                </li>
-            @endif
-
-            <li>
-                <a href="#return" aria-expanded="false" data-toggle="collapse">
-                    <i class="dripicons-return"></i><span>{{ trans('file.return') }}</span>
-                </a>
-                <ul id="return" class="collapse list-unstyled ">
-                    @if ($returns_index_active)
-                        <li id="sale-return-menu">
-                            <a href="{{ route('return-sale.index') }}">{{ trans('file.Sale') }}</a>
-                        </li>
-                    @endif
-                    @if ($purchase_return_index_active)
-                        <li id="purchase-return-menu">
-                            <a href="{{ route('return-purchase.index') }}">{{ trans('file.Purchase') }}</a>
-                        </li>
-                    @endif
-                </ul>
-            </li>
-
-            @if ($account_index_active || $balance_sheet_active || $account_statement_active)
-                <li class="">
-                    <a href="#account" aria-expanded="false" data-toggle="collapse">
-                        <i class="dripicons-briefcase"></i><span>{{ trans('file.Accounting') }}</span>
-                    </a>
-                    <ul id="account" class="collapse list-unstyled ">
-                        @if ($account_index_active)
-                            <li id="account-list-menu">
-                                <a href="{{ route('accounts.index') }}">{{ trans('file.Account List') }}</a>
-                            </li>
-                            <li><a id="add-account" href="">{{ trans('file.Add Account') }}</a></li>
-                        @endif
-                        @if ($account_journal_active)
-                            <li id="jurnal-menu">
-                                <a href="{{ route('jurnal.index') }}">
-                                    {{ trans('file.Journal') }}
-                                </a>
-                            </li>
-                        @endif
-                        @if ($account_report_active)
-                            <li id="laporan-keuangan-menu">
-                                <a href="{{ route('laporan_keuangan') }}">
-                                    {{ trans('file.Financial Statements') }}
-                                </a>
-                            </li>
-                        @endif
-                        @if ($account_close_statement_active)
-                            <li id="tutup-buku-menu">
-                                <a href="{{ route('tutup_buku.index') }}">
-                                    {{ trans('file.Close the book') }}
-                                </a>
-                            </li>
-                        @endif
-                        @if ($money_transfer_active)
-                            <li id="money-transfer-menu">
-                                <a href="{{ route('money-transfers.index') }}">{{ trans('file.Money Transfer') }}</a>
-                            </li>
-                        @endif
-                        @if ($balance_sheet_active)
-                            <li id="balance-sheet-menu">
-                                <a href="{{ route('accounts.balancesheet') }}">{{ trans('file.Balance Sheet') }}</a>
-                            </li>
-                        @endif
-                        @if ($account_statement_active)
-                            <li id="account-statement-menu">
-                                <a id="account-statement" href="">{{ trans('file.Account Statement') }}</a>
-                            </li>
-                        @endif
-                    </ul>
-                </li>
-            @endif
-
-            <li class="">
-                <a href="#hrm" aria-expanded="false" data-toggle="collapse">
-                    <i class="dripicons-user-group"></i><span>HRM</span>
-                </a>
-                <ul id="hrm" class="collapse list-unstyled ">
-                    @if ($department_active)
-                        <li id="dept-menu">
-                            <a href="{{ route('departments.index') }}">{{ trans('file.Department') }}</a>
-                        </li>
-                    @endif
-                    @if ($employees_index_active)
-                        <li id="employee-menu">
-                            <a href="{{ route('employees.index') }}">{{ trans('file.Employee') }}</a>
-                        </li>
-                    @endif
-                    @if ($attendance_active)
-                        <li id="attendance-menu">
-                            <a href="{{ route('attendance.index') }}">{{ trans('file.Attendance') }}</a>
-                        </li>
-                    @endif
-                    @if ($payroll_active)
-                        <li id="payroll-menu">
-                            <a href="{{ route('payroll.index') }}">{{ trans('file.Payroll') }}</a>
-                        </li>
-                    @endif
-                    <li id="holiday-menu">
-                        <a href="{{ route('holidays.index') }}">{{ trans('file.Holiday') }}</a>
-                    </li>
-                </ul>
-            </li>
-
-            <li>
-                <a href="#people" aria-expanded="false" data-toggle="collapse">
-                    <i class="dripicons-user"></i><span>{{ trans('file.People') }}</span>
-                </a>
-                <ul id="people" class="collapse list-unstyled ">
-                    @if ($users_index_active)
-                        <li id="user-list-menu">
-                            <a href="{{ route('user.index') }}">{{ trans('file.User List') }}</a>
-                        </li>
-                        @if ($users_add_active)
-                            <li id="user-create-menu">
-                                <a href="{{ route('user.create') }}">{{ trans('file.Add User') }}</a>
-                            </li>
-                        @endif
-                    @endif
-                    @if ($customers_index_active)
-                        <li id="customer-list-menu">
-                            <a href="{{ route('customer.index') }}">{{ trans('file.Customer List') }}</a>
-                        </li>
-                        @if ($customers_add_active)
-                            <li id="customer-create-menu">
-                                <a href="{{ route('customer.create') }}">{{ trans('file.Add Customer') }}</a>
-                            </li>
-                        @endif
-                    @endif
-                    @if ($billers_index_active)
-                        <li id="biller-list-menu">
-                            <a href="{{ route('biller.index') }}">{{ trans('file.Biller List') }}</a>
-                        </li>
-                        @if ($billers_add_active)
-                            <li id="biller-create-menu">
-                                <a href="{{ route('biller.create') }}">{{ trans('file.Add Biller') }}</a>
-                            </li>
-                        @endif
-                    @endif
-                    @if ($suppliers_index_active)
-                        <li id="supplier-list-menu">
-                            <a href="{{ route('supplier.index') }}">{{ trans('file.Supplier List') }}</a>
-                        </li>
-                        @if ($suppliers_add_active)
-                            <li id="supplier-create-menu">
-                                <a href="{{ route('supplier.create') }}">{{ trans('file.Add Supplier') }}</a>
-                            </li>
-                        @endif
-                    @endif
-                </ul>
-            </li>
-
-            <li>
-                <a href="#report" aria-expanded="false" data-toggle="collapse">
-                    <i class="dripicons-document-remove"></i><span>{{ trans('file.Reports') }}</span>
-                </a>
-                <ul id="report" class="collapse list-unstyled ">
-                    @if ($profit_loss_active)
-                        <li id="profit-loss-report-menu">
-                            {!! Form::open(['route' => 'report.profitLoss', 'method' => 'post', 'id' => 'profitLoss-report-form']) !!}
-                            <input type="hidden" name="start_date" value="{{ date('Y-m') . '-' . '01' }}" />
-                            <input type="hidden" name="end_date" value="{{ date('Y-m-d') }}" />
-                            <a id="profitLoss-link" href="">{{ trans('file.Summary Report') }}</a>
-                            {!! Form::close() !!}
-                        </li>
-                    @endif
-                    @if ($best_seller_active)
-                        <li id="best-seller-report-menu">
-                            <a href="{{ url('report/best_seller') }}">{{ trans('file.Best Seller') }}</a>
-                        </li>
-                    @endif
-                    @if ($product_report_active)
-                        <li id="product-report-menu">
-                            {!! Form::open(['route' => 'report.product', 'method' => 'get', 'id' => 'product-report-form']) !!}
-                            <input type="hidden" name="start_date" value="{{ date('Y-m') . '-' . '01' }}" />
-                            <input type="hidden" name="end_date" value="{{ date('Y-m-d') }}" />
-                            <input type="hidden" name="warehouse_id" value="0" />
-                            <a id="report-link" href="">{{ trans('file.Product Report') }}</a>
-                            {!! Form::close() !!}
-                        </li>
-                    @endif
-                    @if ($daily_sale_active)
-                        <li id="daily-sale-report-menu">
-                            <a
-                                href="{{ url('report/daily_sale/' . date('Y') . '/' . date('m')) }}">{{ trans('file.Daily Sale') }}</a>
-                        </li>
-                    @endif
-                    @if ($monthly_sale_active)
-                        <li id="monthly-sale-report-menu">
-                            <a
-                                href="{{ url('report/monthly_sale/' . date('Y')) }}">{{ trans('file.Monthly Sale') }}</a>
-                        </li>
-                    @endif
-                    @if ($daily_purchase_active)
-                        <li id="daily-purchase-report-menu">
-                            <a
-                                href="{{ url('report/daily_purchase/' . date('Y') . '/' . date('m')) }}">{{ trans('file.Daily Purchase') }}</a>
-                        </li>
-                    @endif
-                    @if ($monthly_purchase_active)
-                        <li id="monthly-purchase-report-menu">
-                            <a
-                                href="{{ url('report/monthly_purchase/' . date('Y')) }}">{{ trans('file.Monthly Purchase') }}</a>
-                        </li>
-                    @endif
-                    @if ($sale_report_active)
-                        <li id="sale-report-menu">
-                            {!! Form::open(['route' => 'report.sale', 'method' => 'post', 'id' => 'sale-report-form']) !!}
-                            <input type="hidden" name="start_date" value="{{ date('Y-m') . '-' . '01' }}" />
-                            <input type="hidden" name="end_date" value="{{ date('Y-m-d') }}" />
-                            <input type="hidden" name="warehouse_id" value="0" />
-                            <a id="sale-report-link" href="">{{ trans('file.Sale Report') }}</a>
-                            {!! Form::close() !!}
-                        </li>
-                    @endif
-                    {{-- @if ($sale_report_chart_active)
-                        <li id="sale-report-chart-menu">
-                            {!! Form::open(['route' => 'report.saleChart', 'method' => 'post', 'id' => 'sale-report-chart-form']) !!}
-                            <input type="hidden" name="start_date" value="{{ date('Y-m') . '-' . '01' }}" />
-                <input type="hidden" name="end_date" value="{{ date('Y-m-d') }}" />
-                <input type="hidden" name="warehouse_id" value="0" />
-                <input type="hidden" name="time_period" value="weekly" />
-                <a id="sale-report-chart-link" href="">{{ trans('file.Sale Report Chart') }}</a>
-                {!! Form::close() !!}
-        </li>
-        @endif --}}
-                    @if ($payment_report_active)
-                        <li id="payment-report-menu">
-                            {!! Form::open(['route' => 'report.paymentByDate', 'method' => 'post', 'id' => 'payment-report-form']) !!}
-                            <input type="hidden" name="start_date" value="{{ date('Y-m') . '-' . '01' }}" />
-                            <input type="hidden" name="end_date" value="{{ date('Y-m-d') }}" />
-                            <a id="payment-report-link" href="">{{ trans('file.Payment Report') }}</a>
-                            {!! Form::close() !!}
-                        </li>
-                    @endif
-                    @if ($purchase_report_active)
-                        <li id="purchase-report-menu">
-                            {!! Form::open(['route' => 'report.purchase', 'method' => 'post', 'id' => 'purchase-report-form']) !!}
-                            <input type="hidden" name="start_date" value="{{ date('Y-m') . '-' . '01' }}" />
-                            <input type="hidden" name="end_date" value="{{ date('Y-m-d') }}" />
-                            <input type="hidden" name="warehouse_id" value="0" />
-                            <a id="purchase-report-link" href="">{{ trans('file.Purchase Report') }}</a>
-                            {!! Form::close() !!}
-                        </li>
-                    @endif
-                    @if ($customer_report_active)
-                        <li id="customer-report-menu">
-                            <a id="customer-report-link" href="">{{ trans('file.Customer Report') }}</a>
-                        </li>
-                    @endif
-                    @if ($due_report_active)
-                        <li id="due-report-menu">
-                            {!! Form::open(['route' => 'report.customerDueByDate', 'method' => 'post', 'id' => 'customer-due-report-form']) !!}
-                            <input type="hidden" name="start_date"
-                                value="{{ date('Y-m-d', strtotime('-1 year')) }}" />
-                            <input type="hidden" name="end_date" value="{{ date('Y-m-d') }}" />
-                            <a id="due-report-link" href="">{{ trans('file.Customer Due Report') }}</a>
-                            {!! Form::close() !!}
-                        </li>
-                    @endif
-                    @if ($supplier_report_active)
-                        <li id="supplier-report-menu">
-                            <a id="supplier-report-link" href="">{{ trans('file.Supplier Report') }}</a>
-                        </li>
-                    @endif
-                    {{-- @if ($supplier_due_report_active)
-                        <li id="supplier-due-report-menu">
-                            {!! Form::open(['route' => 'report.supplierDueByDate', 'method' => 'post', 'id' => 'supplier-due-report-form']) !!}
-                            <input type="hidden" name="start_date"
-                                value="{{ date('Y-m-d', strtotime('-1 year')) }}" />
-        <input type="hidden" name="end_date" value="{{ date('Y-m-d') }}" />
-        <a id="supplier-due-report-link" href="">{{ trans('file.Supplier Due Report') }}</a>
-        {!! Form::close() !!}
-        </li>
-        @endif --}}
-                    @if ($warehouse_report_active)
-                        <li id="warehouse-report-menu">
-                            <a id="warehouse-report-link" href="">{{ trans('file.Warehouse Report') }}</a>
-                        </li>
-                    @endif
-                    @if ($warehouse_stock_report_active)
-                        <li id="warehouse-stock-report-menu">
-                            <a
-                                href="{{ route('report.warehouseStock') }}">{{ trans('file.Warehouse Stock Chart') }}</a>
-                        </li>
-                    @endif
-                    @if ($product_qty_alert_active)
-                        <li id="qtyAlert-report-menu">
-                            <a href="{{ route('report.qtyAlert') }}">{{ trans('file.Product Quantity Alert') }}</a>
-                        </li>
-                    @endif
-                    {{-- @if ($dso_report_active)
-                        <li id="daily-sale-objective-menu">
-                            <a
-                                href="{{ route('report.dailySaleObjective') }}">{{ trans('file.Daily Sale Objective Report') }}</a>
-        </li>
-        @endif --}}
-                    @if ($user_report_active)
-                        <li id="user-report-menu">
-                            <a id="user-report-link" href="">{{ trans('file.User Report') }}</a>
-                        </li>
-                    @endif
-                </ul>
-            </li>
-
-            <li>
-                <a href="#setting" aria-expanded="false" data-toggle="collapse">
-                    <i class="dripicons-gear"></i><span>{{ trans('file.settings') }}</span>
-                </a>
-                <ul id="setting" class="collapse list-unstyled ">
-                    @if (Auth::user()->role_id <= 2)
-                        <li id="role-menu">
-                            <a href="{{ route('role.index') }}">{{ trans('file.Role Permission') }}</a>
-                        </li>
-                    @endif
-                    @if ($discount_plan_active)
-                        <li id="discount-plan-list-menu">
-                            <a href="{{ route('discount-plans.index') }}">{{ trans('file.Discount Plan') }}</a>
-                        </li>
-                    @endif
-                    @if ($discount_active)
-                        <li id="discount-list-menu">
-                            <a href="{{ route('discounts.index') }}">{{ trans('file.Discount') }}</a>
-                        </li>
-                    @endif
-                    {{-- @if ($all_notification_active)
-                        <li id="notification-list-menu">
-                            <a href="{{ route('notifications.index') }}">{{ trans('file.All Notification') }}</a>
-                        </li>
-                        @endif --}}
-                    {{-- @if ($send_notification_active)
-                                            <li id="notification-menu">
-                                                <a href="" id="send-notification">{{ trans('file.Send Notification') }}</a>
-                        </li>
-                    @endif --}}
-                    @if ($customer_group_active)
-                        <li id="customer-group-menu">
-                            <a href="{{ route('customer_group.index') }}">{{ trans('file.Customer Group') }}</a>
-                        </li>
-                    @endif
-                    @if ($tax_active)
-                        <li id="tax-menu">
-                            <a href="{{ route('tax.index') }}">{{ trans('file.Tax') }}</a>
-                        </li>
-                    @endif
-                    <li id="user-menu">
-                        <a
-                            href="{{ route('user.profile', ['id' => Auth::id()]) }}">{{ trans('file.User Profile') }}</a>
-                    </li>
-                    @if ($create_sms_active)
-                        <li id="create-sms-menu">
-                            <a href="{{ route('setting.createSms') }}">{{ trans('file.Create SMS') }}</a>
-                        </li>
-                    @endif
-                    @if ($general_setting_active)
-                        <li id="general-setting-menu">
-                            <a href="{{ route('setting.general') }}">{{ trans('file.General Setting') }}</a>
-                        </li>
-                    @endif
-                    {{-- @if ($mail_setting_permission_active)
-                        <li id="mail-setting-menu">
-                            <a href="{{ route('setting.mail') }}">{{ trans('file.Mail Setting') }}</a>
-                    </li>
-                    @endif --}}
-                    @if ($reward_point_setting_active)
-                        <li id="reward-point-setting-menu">
-                            <a href="{{ route('setting.rewardPoint') }}">{{ trans('file.Reward Point Setting') }}</a>
-                        </li>
-                    @endif
-                    @if ($sms_setting_active)
-                        <li id="sms-setting-menu">
-                            <a href="{{ route('setting.sms') }}">{{ trans('file.SMS Setting') }}</a>
-                        </li>
-                    @endif
-                    @if ($pos_setting_active)
-                        <li id="pos-setting-menu">
-                            <a href="{{ route('setting.pos') }}">POS
-                                {{ trans('file.settings') }}</a>
-                        </li>
-                    @endif
-                    @if ($hrm_setting_active)
-                        <li id="hrm-setting-menu">
-                            <a href="{{ route('setting.hrm') }}">
-                                {{ trans('file.HRM Setting') }}</a>
-                        </li>
-                    @endif
-                </ul>
-            </li>
-            @if (Auth::user()->role_id != 5)
-                <li>
-                    <a href="{{ url('public/read_me') }}">
-                        <i class="dripicons-information"></i><span>{{ trans('file.Documentation') }}</span>
-                    </a>
-                </li>
-            @endif
-        </ul>
-    </nav>
+    @include('backend.sale.partials.side_navbar')
 
     <section class="forms pos-section">
         <div class="container-fluid">
@@ -636,1250 +74,11 @@
                     </source>
                 </audio>
 
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-body" style="padding-bottom: 0">
-                            {!! Form::open(['route' => 'sales.store', 'method' => 'post', 'files' => true, 'class' => 'payment-form']) !!}
-                            @php
-                                if ($lims_pos_setting_data) {
-                                    $keybord_active = $lims_pos_setting_data->keybord_active;
-                                } else {
-                                    $keybord_active = 0;
-                                }
-                            @endphp
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="row">
-                                        <div class="col-md-4" style="display:none;">
-                                            <div class="form-group">
-                                                <input type="text" name="created_at" class="form-control date"
-                                                    placeholder="Choose date" onkeyup='saveValue(this);' />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4" style="display:none;">
-                                            <div class="form-group">
-                                                <input type="text" id="reference-no" name="reference_no"
-                                                    class="form-control" placeholder="Type reference number"
-                                                    onkeyup='saveValue(this);' />
-                                            </div>
-                                            @if ($errors->has('reference_no'))
-                                                <span>
-                                                    <strong>{{ $errors->first('reference_no') }}</strong>
-                                                </span>
-                                            @endif
-                                        </div>
-                                        <div class="col-md-4" style="display:none;">
-                                            <div class="form-group">
-                                                @if ($lims_pos_setting_data)
-                                                    <input type="hidden" name="warehouse_id_hidden"
-                                                        value="{{ $lims_pos_setting_data->warehouse_id }}">
-                                                @endif
-                                                <select required id="warehouse_id" name="warehouse_id"
-                                                    class="selectpicker form-control" data-live-search="true"
-                                                    data-live-search-style="begins" title="Select warehouse...">
-                                                    @foreach ($lims_warehouse_list as $warehouse)
-                                                        <option value="{{ $warehouse->id }}">{{ $warehouse->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group" style="display:none;">
-                                                @if ($lims_pos_setting_data)
-                                                    <input type="hidden" name="biller_id_hidden"
-                                                        value="{{ $lims_pos_setting_data->biller_id }}">
-                                                @endif
-                                                <select required id="biller_id" name="biller_id"
-                                                    class="selectpicker form-control" data-live-search="true"
-                                                    data-live-search-style="begins" title="Select Biller...">
-                                                    @foreach ($lims_biller_list as $biller)
-                                                        <option value="{{ $biller->id }}">
-                                                            {{ $biller->name . ' (' . $biller->company_name . ')' }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                @if ($lims_pos_setting_data)
-                                                    <input type="hidden" name="customer_id_hidden"
-                                                        value="{{ $lims_pos_setting_data->customer_id }}">
-                                                @endif
-                                                <div class="input-group pos">
-                                                    @if ($customers_add_active)
-                                                        <select required name="customer_id" id="customer_id"
-                                                            class="selectpicker form-control" data-live-search="true"
-                                                            title="Select customer..." style="width: 100px">
-                                                            <?php
-                                                            $deposit = [];
-                                                            $points = [];
-                                                            ?>
-                                                            @foreach ($lims_customer_list as $customer)
-                                                                @php
-                                                                    $deposit[$customer->id] =
-                                                                        $customer->deposit - $customer->expense;
+                {{-- Payment Row --}}
+                @include('backend.sale.partials.payment')
 
-                                                                    $points[$customer->id] = $customer->points;
-                                                                @endphp
-                                                                <option value="{{ $customer->id }}">
-                                                                    {{ $customer->name . ' (' . $customer->phone_number . ')' }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                        <button type="button" class="btn btn-default btn-sm"
-                                                            data-toggle="modal" data-target="#addCustomer"><i
-                                                                class="dripicons-plus"></i></button>
-                                                    @else
-                                                        <?php
-                                                        $deposit = [];
-                                                        $points = [];
-                                                        ?>
-                                                        <select required name="customer_id" id="customer_id"
-                                                            class="selectpicker form-control" data-live-search="true"
-                                                            title="Select customer...">
-                                                            @foreach ($lims_customer_list as $customer)
-                                                                @php
-                                                                    $deposit[$customer->id] =
-                                                                        $customer->deposit - $customer->expense;
-
-                                                                    $points[$customer->id] = $customer->points;
-                                                                @endphp
-                                                                <option value="{{ $customer->id }}">
-                                                                    {{ $customer->name . ' (' . $customer->phone_number . ')' }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <div class="search-box form-group">
-                                                <input type="text" name="product_code_name"
-                                                    id="lims_productcodeSearch"
-                                                    placeholder="Scan/Search product by name/code" class="form-control" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="table-responsive transaction-list">
-                                            <table id="myTable"
-                                                class="table table-hover table-striped order-list table-fixed">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="col-sm-2">{{ trans('file.product') }}</th>
-                                                        <th class="col-sm-2">{{ trans('file.Batch No') }}</th>
-                                                        <th class="col-sm-2">{{ trans('file.Price') }}</th>
-                                                        <th class="col-sm-3">{{ trans('file.Quantity') }}</th>
-                                                        <th class="col-sm-3">{{ trans('file.Subtotal') }}</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="tbody-id">
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="row" style="display: none;">
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <input type="hidden" name="total_qty" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <input type="hidden" name="total_discount" value="0.00" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <input type="hidden" name="total_tax" value="0.00" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <input type="hidden" name="total_price" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <input type="hidden" name="item" />
-                                                <input type="hidden" name="order_tax" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <input type="hidden" name="grand_total" />
-                                                <input type="hidden" name="used_points" />
-                                                <input type="hidden" name="coupon_discount" />
-                                                <input type="hidden" name="sale_status" value="1" />
-                                                <input type="hidden" name="coupon_active">
-                                                <input type="hidden" name="coupon_id">
-                                                <input type="hidden" name="coupon_discount" />
-
-                                                <input type="hidden" name="pos" value="1" />
-                                                <input type="hidden" name="draft" value="0" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 totals" style="border-top: 2px solid #e4e6fc; padding-top: 10px;">
-                                        <div class="row">
-                                            <div class="col-sm-4">
-                                                <span class="totals-title">{{ trans('file.Items') }}</span><span
-                                                    id="item">0</span>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <span class="totals-title">{{ trans('file.Total') }}</span><span
-                                                    id="subtotal">0.00</span>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <span class="totals-title">{{ trans('file.Discount') }} <button
-                                                        type="button" class="btn btn-link btn-sm" data-toggle="modal"
-                                                        data-target="#order-discount-modal"> <i
-                                                            class="dripicons-document-edit"></i></button></span><span
-                                                    id="discount">0.00</span>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <span class="totals-title">{{ trans('file.Coupon') }} <button
-                                                        type="button" class="btn btn-link btn-sm" data-toggle="modal"
-                                                        data-target="#coupon-modal"><i
-                                                            class="dripicons-document-edit"></i></button></span><span
-                                                    id="coupon-text">0.00</span>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <span class="totals-title">{{ trans('file.Tax') }} <button
-                                                        type="button" class="btn btn-link btn-sm" data-toggle="modal"
-                                                        data-target="#order-tax"><i
-                                                            class="dripicons-document-edit"></i></button></span><span
-                                                    id="tax">0.00</span>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <span class="totals-title">{{ trans('file.Shipping') }} <button
-                                                        type="button" class="btn btn-link btn-sm" data-toggle="modal"
-                                                        data-target="#shipping-cost-modal"><i
-                                                            class="dripicons-document-edit"></i></button></span><span
-                                                    id="shipping-cost">0.00</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="payment-amount">
-                            <h2>{{ trans('file.grand total') }} <span id="grand-total">0.00</span></h2>
-                        </div>
-                        <div class="payment-options">
-                            <div class="column-5">
-                                <button style="background: #0984e3" type="button" class="btn btn-custom payment-btn"
-                                    data-toggle="modal" data-target="#add-payment" id="credit-card-btn"><i
-                                        class="fa fa-credit-card"></i> {{ trans('file.Card') }}</button>
-                            </div>
-                            <div class="column-5">
-                                <button style="background: #00cec9" type="button" class="btn btn-custom payment-btn"
-                                    data-toggle="modal" data-target="#add-payment" id="cash-btn"><i
-                                        class="fa fa-money"></i>
-                                    {{ trans('file.Cash') }}</button>
-                            </div>
-                            <!-- <div class="column-5">
-                                                                                                                                                                                        <button style="background-color: #213170" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="paypal-btn"><i class="fa fa-paypal"></i> {{ trans('file.PayPal') }}</button>
-                                                                                                                                                                                    </div> -->
-                            <div class="column-5">
-                                <button style="background-color: #e28d02" type="button" class="btn btn-custom"
-                                    id="draft-btn"><i class="dripicons-flag"></i> {{ trans('file.Draft') }}</button>
-                            </div>
-                            <!--  <div class="column-5">
-                                                                                                                                                                                        <button style="background-color: #fd7272" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="cheque-btn"><i class="fa fa-money"></i> {{ trans('file.Cheque') }}</button>
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                    <div class="column-5">
-                                                                                                                                                                                        <button style="background-color: #5f27cd" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="gift-card-btn"><i class="fa fa-credit-card-alt"></i> {{ trans('file.Gift Card') }}</button>
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                    <div class="column-5">
-                                                                                                                                                                                        <button style="background-color: #b33771" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="deposit-btn"><i class="fa fa-university"></i> {{ trans('file.Deposit') }}</button>
-                                                                                                                                                                                    </div> -->
-                            {{-- @if ($lims_reward_point_setting_data->is_active) --}}
-                            <!-- <div class="column-5">
-                                                                                                                                                                                        <button style="background-color: #319398" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="point-btn"><i class="dripicons-rocket"></i> {{ trans('file.Points') }}</button>
-                                                                                                                                                                                    </div> -->
-                            {{-- @endif --}}
-                            <div class="column-5">
-                                <button style="background-color: #d63031;" type="button" class="btn btn-custom"
-                                    id="cancel-btn" onclick="return confirmCancel()"><i class="fa fa-close"></i>
-                                    {{ trans('file.Cancel') }}</button>
-                            </div>
-                            <div class="column-5">
-                                <button style="background-color: #ffc107;" type="button" class="btn btn-custom"
-                                    data-toggle="modal" data-target="#recentTransaction"><i class="dripicons-clock"></i>
-                                    {{ trans('file.Recent Transaction') }}</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- payment modal -->
-                <div id="add-payment" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true" class="modal fade text-left">
-                    <div role="document" class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 id="exampleModalLabel" class="modal-title">{{ trans('file.Finalize Sale') }}</h5>
-                                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
-                                        aria-hidden="true"><i class="dripicons-cross"></i></span></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-md-10">
-                                        <div class="row">
-                                            <div class="col-md-6 mt-1">
-                                                <label>{{ trans('file.Recieved Amount') }} *</label>
-                                                <input type="text" name="paying_amount" class="form-control numkey"
-                                                    required step="any">
-                                            </div>
-                                            <div class="col-md-6 mt-1">
-                                                <label>{{ trans('file.Paying Amount') }} *</label>
-                                                <input type="text" name="paid_amount" class="form-control numkey"
-                                                    step="any">
-                                            </div>
-                                            <div class="col-md-6 mt-1">
-                                                <label>{{ trans('file.Change') }} : </label>
-                                                <p id="change" class="ml-2">0.00</p>
-                                            </div>
-                                            <div class="col-md-6 mt-1" id="cara_bayar_div">
-                                                <input type="hidden" name="paid_by_id">
-                                                <label>{{ trans('file.Paid By') }}</label>
-                                                <!-- <select name="paid_by_id_select" class="form-control selectpicker">
-                                                                                                                                                                    <option value="1">Cash</option>
-                                                                                                                                                                    <option value="2">Gift Card</option>
-                                                                                                                                                                    <option value="3">Credit Card</option>
-                                                                                                                                                                    <option value="4">Cheque</option>
-                                                                                                                                                                    <option value="5">Paypal</option>
-                                                                                                                                                                    <option value="6">Deposit</option>
-                                                                                                                                                                    {{-- @if ($lims_reward_point_setting_data->is_active) --}}
-                                                                                                                                                                        <option value="7">Points</option>
-                                                                                                                                                                    {{-- @endif --}}
-                                                                                                                                                                </select> -->
-                                                <select style="display: none;" name="paid_by_id_select"
-                                                    id="paid_by_id_add" class="form-control selectpicker">
-                                                    <option value="1">Cash</option>
-                                                    <!--  <option value="3">Credit Card</option>
-                                                                                                                                                                    <option value="4">Cheque</option> -->
-                                                    <!-- <option value="5">Debit Card</option> -->
-                                                    <!-- <option value="6">Tempo / Utang</option> -->
-                                                </select>
-                                            </div>
-                                            <div class="form-group col-md-12 mt-3">
-                                                <div class="card-element form-control">
-                                                </div>
-                                                <div class="card-errors" role="alert"></div>
-                                            </div>
-                                            <div class="form-group col-md-12 col-md-6 mt-1 debit-card">
-                                                <label>Transfer / Debit Card</label>
-                                                <input type="hidden" name="no_rek_bank" id="no_rek_bank">
-                                                <select class="form-control selectpicker" id="no_rek" name="no_rek">
-                                                    @foreach ($rekening as $rek)
-                                                        <option value="{{ $rek->id }}">{{ $rek->nama }} -
-                                                            {{ $rek->no_rek_bank }} - {{ $rek->atas_nama_rek }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="form-group col-md-12 gift-card">
-                                                <label> {{ trans('file.Gift Card') }} *</label>
-                                                <input type="hidden" name="gift_card_id">
-                                                <select id="gift_card_id_select" name="gift_card_id_select"
-                                                    class="selectpicker form-control" data-live-search="true"
-                                                    data-live-search-style="begins" title="Select Gift Card..."></select>
-                                            </div>
-                                            <div class="form-group col-md-12 cheque">
-                                                <label>{{ trans('file.Cheque Number') }} *</label>
-                                                <input type="text" name="cheque_no" class="form-control">
-                                            </div>
-                                            <div class="form-group col-md-12">
-                                                <label>{{ trans('file.Payment Note') }}</label>
-                                                <textarea id="payment_note" rows="2" class="form-control" name="payment_note"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6 form-group">
-                                                <label>{{ trans('file.Sale Note') }}</label>
-                                                <textarea rows="3" class="form-control" name="sale_note"></textarea>
-                                            </div>
-                                            <div class="col-md-6 form-group">
-                                                <label>{{ trans('file.Staff Note') }}</label>
-                                                <textarea rows="3" class="form-control" name="staff_note"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="mt-3">
-                                            <button id="submit-btn" type="button"
-                                                class="btn btn-primary">{{ trans('file.submit') }}</button>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2 qc" data-initial="1">
-                                        <h4><strong>{{ trans('file.Quick Cash') }}</strong></h4>
-                                        <button class="btn btn-block btn-primary qc-btn sound-btn" data-amount="10"
-                                            type="button">10</button>
-                                        <button class="btn btn-block btn-primary qc-btn sound-btn" data-amount="20"
-                                            type="button">20</button>
-                                        <button class="btn btn-block btn-primary qc-btn sound-btn" data-amount="50"
-                                            type="button">50</button>
-                                        <button class="btn btn-block btn-primary qc-btn sound-btn" data-amount="100"
-                                            type="button">100</button>
-                                        <button class="btn btn-block btn-primary qc-btn sound-btn" data-amount="500"
-                                            type="button">500</button>
-                                        <button class="btn btn-block btn-primary qc-btn sound-btn" data-amount="1000"
-                                            type="button">1000</button>
-                                        <button class="btn btn-block btn-danger qc-btn sound-btn" data-amount="0"
-                                            type="button">{{ trans('file.Clear') }}</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- order_discount modal -->
-                <div id="order-discount-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true" class="modal fade text-left">
-                    <div role="document" class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">{{ trans('file.Order Discount') }}</h5>
-                                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
-                                        aria-hidden="true"><i class="dripicons-cross"></i></span></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-md-6 form-group">
-                                        <label>{{ trans('file.Order Discount Type') }}</label>
-                                        <select id="order-discount-type" name="order_discount_type_select"
-                                            class="form-control">
-                                            <option value="Flat">{{ trans('file.Flat') }}</option>
-                                            <option value="Percentage">{{ trans('file.Percentage') }}</option>
-                                        </select>
-                                        <input type="hidden" name="order_discount_type">
-                                    </div>
-                                    <div class="col-md-6 form-group">
-                                        <label>{{ trans('file.Value') }}</label>
-                                        <input type="text" name="order_discount_value" class="form-control numkey"
-                                            id="order-discount-val" onkeyup='saveValue(this);'>
-                                        <input type="hidden" name="order_discount" class="form-control"
-                                            id="order-discount" onkeyup='saveValue(this);'>
-                                    </div>
-                                </div>
-                                <button type="button" name="order_discount_btn" class="btn btn-primary"
-                                    data-dismiss="modal">{{ trans('file.submit') }}</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- coupon modal -->
-                <div id="coupon-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true" class="modal fade text-left">
-                    <div role="document" class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">{{ trans('file.Coupon Code') }}</h5>
-                                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
-                                        aria-hidden="true"><i class="dripicons-cross"></i></span></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <input type="text" id="coupon-code" class="form-control"
-                                        placeholder="Type Coupon Code...">
-                                </div>
-                                <button type="button" class="btn btn-primary coupon-check"
-                                    data-dismiss="modal">{{ trans('file.submit') }}</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- order_tax modal -->
-                <div id="order-tax" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true" class="modal fade text-left">
-                    <div role="document" class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">{{ trans('file.Order Tax') }}</h5>
-                                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
-                                        aria-hidden="true"><i class="dripicons-cross"></i></span></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <input type="hidden" name="order_tax_rate">
-                                    <select class="form-control" name="order_tax_rate_select" id="order-tax-rate-select">
-                                        <option value="0">No Tax</option>
-                                        @foreach ($lims_tax_list as $tax)
-                                            <option value="{{ $tax->rate }}">{{ $tax->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <button type="button" name="order_tax_btn" class="btn btn-primary"
-                                    data-dismiss="modal">{{ trans('file.submit') }}</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- shipping_cost modal -->
-                <div id="shipping-cost-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true" class="modal fade text-left">
-                    <div role="document" class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">{{ trans('file.Shipping Cost') }}</h5>
-                                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
-                                        aria-hidden="true"><i class="dripicons-cross"></i></span></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <input type="text" name="shipping_cost" class="form-control numkey"
-                                        id="shipping-cost-val" step="any" onkeyup='saveValue(this);'>
-                                </div>
-                                <button type="button" name="shipping_cost_btn" class="btn btn-primary"
-                                    data-dismiss="modal">{{ trans('file.submit') }}</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {!! Form::close() !!}
-
-                <!-- product list -->
-                <div class="col-md-6">
-                    <!-- navbar-->
-                    <header>
-                        <nav class="navbar">
-                            <a id="toggle-btn" href="#" class="menu-btn"><i class="fa fa-bars"> </i></a>
-
-                            <div class="navbar-header">
-                                <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
-                                    <li class="nav-item">
-                                        <a id="btnFullscreen" data-toggle="tooltip" title="Full Screen">
-                                            <i class="dripicons-expand"></i>
-                                        </a>
-                                    </li>
-                                    @if ($pos_setting_active)
-                                        <li class="nav-item">
-                                            <a class="dropdown-item" data-toggle="tooltip"
-                                                href="{{ route('setting.pos') }}"
-                                                title="{{ trans('file.POS Setting') }}">
-                                                <i class="dripicons-gear"></i>
-                                            </a>
-                                        </li>
-                                    @endif
-                                    <li class="nav-item">
-                                        <a href="{{ route('sales.printLastReciept') }}" data-toggle="tooltip"
-                                            title="{{ trans('file.Print Last Reciept') }}">
-                                            <i class="dripicons-print"></i>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="" id="register-details-btn" data-toggle="tooltip"
-                                            title="{{ trans('file.Cash Register Details') }}">
-                                            <i class="dripicons-briefcase"></i>
-                                        </a>
-                                    </li>
-
-                                    @if ($today_sale_active)
-                                        <li class="nav-item">
-                                            <a href="" id="today-sale-btn" data-toggle="tooltip"
-                                                title="{{ trans('file.Today Sale') }}">
-                                                <i class="dripicons-shopping-bag"></i>
-                                            </a>
-                                        </li>
-                                    @endif
-                                    @if ($today_profit_active)
-                                        <li class="nav-item">
-                                            <a href="" id="today-profit-btn" data-toggle="tooltip"
-                                                title="{{ trans('file.Today Profit') }}">
-                                                <i class="dripicons-graph-line"></i>
-                                            </a>
-                                        </li>
-                                    @endif
-                                    @if ($alert_product + count(\Auth::user()->unreadNotifications) > 0)
-                                        <li class="nav-item" id="notification-icon">
-                                            <a rel="nofollow" data-toggle="tooltip" title="{{ __('Notifications') }}"
-                                                class="nav-link dropdown-item">
-                                                <i class="dripicons-bell"></i>
-                                                <span
-                                                    class="badge badge-danger notification-number">{{ $alert_product + count(\Auth::user()->unreadNotifications) }}</span>
-                                                <span class="caret"></span>
-                                                <span class="sr-only">Toggle Dropdown</span>
-                                            </a>
-                                            <ul class="right-sidebar" user="menu">
-                                                <li class="notifications">
-                                                    <a href="{{ route('report.qtyAlert') }}"
-                                                        class="btn btn-link">{{ $alert_product }} product exceeds alert
-                                                        quantity
-                                                    </a>
-                                                </li>
-                                                @foreach (\Auth::user()->unreadNotifications as $key => $notification)
-                                                    <li class="notifications">
-                                                        <a href="#"
-                                                            class="btn btn-link">{{ $notification->data['message'] }}</a>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                        </li>
-                                    @endif
-                                    <li class="nav-item">
-                                        <a rel="nofollow" data-toggle="tooltip" class="nav-link dropdown-item">
-                                            <i class="dripicons-user"></i>
-                                            <span>{{ ucfirst(Auth::user()->name) }}</span>
-                                            <i class="fa fa-angle-down"></i>
-                                        </a>
-                                        <ul class="right-sidebar">
-                                            <li>
-                                                <a href="{{ route('user.profile', ['id' => Auth::id()]) }}">
-                                                    <i class="dripicons-user"></i> {{ trans('file.profile') }}
-                                                </a>
-                                            </li>
-                                            @if ($general_setting_active)
-                                                <li>
-                                                    <a href="{{ route('setting.general') }}">
-                                                        <i class="dripicons-gear"></i> {{ trans('file.settings') }}
-                                                    </a>
-                                                </li>
-                                            @endif
-                                            <li>
-                                                <a href="{{ url('my-transactions/' . date('Y') . '/' . date('m')) }}">
-                                                    <i class="dripicons-swap"></i> {{ trans('file.My Transaction') }}
-                                                </a>
-                                            </li>
-                                            @if (Auth::user()->role_id != 5)
-                                                <li>
-                                                    <a
-                                                        href="{{ url('holidays/my-holiday/' . date('Y') . '/' . date('m')) }}">
-                                                        <i class="dripicons-vibrate"></i> {{ trans('file.My Holiday') }}
-                                                    </a>
-                                                </li>
-                                            @endif
-                                            <li>
-                                                <a href="{{ route('logout') }}"
-                                                    onclick="event.preventDefault();
-                                                            document.getElementById('logout-form').submit();">
-                                                    <i class="dripicons-power"></i> {{ trans('file.logout') }}
-                                                </a>
-                                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                                    style="display: none;">
-                                                    @csrf
-                                                </form>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </div>
-                        </nav>
-                    </header>
-                    <div class="filter-window">
-                        <div class="category mt-3">
-                            <div class="row ml-2 mr-2 px-2">
-                                <div class="col-7">Choose category</div>
-                                <div class="col-5 text-right">
-                                    <span class="btn btn-default btn-sm">
-                                        <i class="dripicons-cross"></i>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="row ml-2 mt-3">
-                                @foreach ($lims_category_list as $category)
-                                    <div class="col-md-3 category-img text-center" data-category="{{ $category->id }}">
-                                        @if ($category->image)
-                                            <img src="{{ url('public/images/category', $category->image) }}" />
-                                        @else
-                                            <img src="{{ url('public/images/product/zummXD2dvAtI.png') }}" />
-                                        @endif
-                                        <p class="text-center">{{ $category->name }}</p>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                        <div class="brand mt-3">
-                            <div class="row ml-2 mr-2 px-2">
-                                <div class="col-7">Choose brand</div>
-                                <div class="col-5 text-right">
-                                    <span class="btn btn-default btn-sm">
-                                        <i class="dripicons-cross"></i>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="row ml-2 mt-3">
-                                @foreach ($lims_brand_list as $brand)
-                                    @if ($brand->image)
-                                        <div class="col-md-3 brand-img text-center" data-brand="{{ $brand->id }}">
-                                            <img src="{{ url('public/images/brand', $brand->image) }}" />
-                                            <p class="text-center">{{ $brand->title }}</p>
-                                        </div>
-                                    @else
-                                        <div class="col-md-3 brand-img" data-brand="{{ $brand->id }}">
-                                            <img src="{{ url('public/images/product/zummXD2dvAtI.png') }}" />
-                                            <p class="text-center">{{ $brand->title }}</p>
-                                        </div>
-                                    @endif
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <button class="btn btn-block btn-primary"
-                                id="category-filter">{{ trans('file.category') }}</button>
-                        </div>
-                        <div class="col-md-4">
-                            <button class="btn btn-block btn-info" id="brand-filter">{{ trans('file.Brand') }}</button>
-                        </div>
-                        <div class="col-md-4">
-                            <button class="btn btn-block btn-danger"
-                                id="featured-filter">{{ trans('file.Featured') }}</button>
-                        </div>
-                        <div class="col-md-12 mt-1 table-container">
-                            <table id="product-table" class="table no-shadow product-list">
-                                <thead class="d-none">
-                                    <tr>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @for ($i = 0; $i < ceil($product_number / 5); $i++)
-                                        <tr>
-                                            <td class="product-img sound-btn"
-                                                title="{{ $lims_product_list[0 + $i * 5]->name }}"
-                                                data-product="{{ $lims_product_list[0 + $i * 5]->code . ' (' . $lims_product_list[0 + $i * 5]->name . ')' }}">
-                                                <img src="{{ url('public/images/product', $lims_product_list[0 + $i * 5]->base_image) }}"
-                                                    width="100%" />
-                                                <p>{{ $lims_product_list[0 + $i * 5]->name }}</p>
-                                                <span>{{ $lims_product_list[0 + $i * 5]->code }}</span>
-                                            </td>
-                                            @if (!empty($lims_product_list[1 + $i * 5]))
-                                                <td class="product-img sound-btn"
-                                                    title="{{ $lims_product_list[1 + $i * 5]->name }}"
-                                                    data-product="{{ $lims_product_list[1 + $i * 5]->code . ' (' . $lims_product_list[1 + $i * 5]->name . ')' }}">
-                                                    <img src="{{ url('public/images/product', $lims_product_list[1 + $i * 5]->base_image) }}"
-                                                        width="100%" />
-                                                    <p>{{ $lims_product_list[1 + $i * 5]->name }}</p>
-                                                    <span>{{ $lims_product_list[1 + $i * 5]->code }}</span>
-                                                </td>
-                                            @else
-                                                <td style="border:none;"></td>
-                                            @endif
-                                            @if (!empty($lims_product_list[2 + $i * 5]))
-                                                <td class="product-img sound-btn"
-                                                    title="{{ $lims_product_list[2 + $i * 5]->name }}"
-                                                    data-product="{{ $lims_product_list[2 + $i * 5]->code . ' (' . $lims_product_list[2 + $i * 5]->name . ')' }}">
-                                                    <img src="{{ url('public/images/product', $lims_product_list[2 + $i * 5]->base_image) }}"
-                                                        width="100%" />
-                                                    <p>{{ $lims_product_list[2 + $i * 5]->name }}</p>
-                                                    <span>{{ $lims_product_list[2 + $i * 5]->code }}</span>
-                                                </td>
-                                            @else
-                                                <td style="border:none;"></td>
-                                            @endif
-                                            @if (!empty($lims_product_list[3 + $i * 5]))
-                                                <td class="product-img sound-btn"
-                                                    title="{{ $lims_product_list[3 + $i * 5]->name }}"
-                                                    data-product="{{ $lims_product_list[3 + $i * 5]->code . ' (' . $lims_product_list[3 + $i * 5]->name . ')' }}">
-                                                    <img src="{{ url('public/images/product', $lims_product_list[3 + $i * 5]->base_image) }}"
-                                                        width="100%" />
-                                                    <p>{{ $lims_product_list[3 + $i * 5]->name }}</p>
-                                                    <span>{{ $lims_product_list[3 + $i * 5]->code }}</span>
-                                                </td>
-                                            @else
-                                                <td style="border:none;"></td>
-                                            @endif
-                                            @if (!empty($lims_product_list[4 + $i * 5]))
-                                                <td class="product-img sound-btn"
-                                                    title="{{ $lims_product_list[4 + $i * 5]->name }}"
-                                                    data-product="{{ $lims_product_list[4 + $i * 5]->code . ' (' . $lims_product_list[4 + $i * 5]->name . ')' }}">
-                                                    <img src="{{ url('public/images/product', $lims_product_list[4 + $i * 5]->base_image) }}"
-                                                        width="100%" />
-                                                    <p>{{ $lims_product_list[4 + $i * 5]->name }}</p>
-                                                    <span>{{ $lims_product_list[4 + $i * 5]->code }}</span>
-                                                </td>
-                                            @else
-                                                <td style="border:none;"></td>
-                                            @endif
-                                        </tr>
-                                    @endfor
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <!-- product edit modal -->
-                <div id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true" class="modal fade text-left">
-                    <div role="document" class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 id="modal_header" class="modal-title"></h5>
-                                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
-                                        aria-hidden="true"><i class="dripicons-cross"></i></span></button>
-                            </div>
-                            <div class="modal-body">
-                                <form>
-                                    <div class="row modal-element">
-                                        <div class="col-md-4 form-group">
-                                            <label>{{ trans('file.Quantity') }}</label>
-                                            <input type="text" name="edit_qty" class="form-control numkey">
-                                        </div>
-                                        <div class="col-md-4 form-group">
-                                            <label>{{ trans('file.Unit Discount') }}</label>
-                                            <input type="text" name="edit_discount" class="form-control numkey">
-                                        </div>
-                                        <div class="col-md-4 form-group">
-                                            <label>{{ trans('file.Unit Price') }}</label>
-                                            <input type="text" name="edit_unit_price" class="form-control numkey"
-                                                step="any">
-                                        </div>
-                                        <?php
-                                        $tax_name_all[] = 'No Tax';
-                                        $tax_rate_all[] = 0;
-                                        foreach ($lims_tax_list as $tax) {
-                                            $tax_name_all[] = $tax->name;
-                                            $tax_rate_all[] = $tax->rate;
-                                        }
-                                        ?>
-                                        <div class="col-md-4 form-group">
-                                            <label>{{ trans('file.Tax Rate') }}</label>
-                                            <select name="edit_tax_rate" class="form-control selectpicker">
-                                                @foreach ($tax_name_all as $key => $name)
-                                                    <option value="{{ $key }}">{{ $name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div id="edit_unit" class="col-md-4 form-group">
-                                            <label>{{ trans('file.Product Unit') }}</label>
-                                            <select name="edit_unit" class="form-control selectpicker">
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <button type="button" name="update_btn"
-                                        class="btn btn-primary">{{ trans('file.update') }}</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- add customer modal -->
-                <div id="addCustomer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true" class="modal fade text-left">
-                    <div role="document" class="modal-dialog">
-                        <div class="modal-content">
-                            {!! Form::open(['route' => 'customer.store', 'method' => 'post', 'files' => true]) !!}
-                            <div class="modal-header">
-                                <h5 id="exampleModalLabel" class="modal-title">{{ trans('file.Add Customer') }}</h5>
-                                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
-                                        aria-hidden="true"><i class="dripicons-cross"></i></span></button>
-                            </div>
-                            <div class="modal-body">
-                                <p class="italic">
-                                    <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small>
-                                </p>
-                                <div class="form-group">
-                                    <label>{{ trans('file.Customer Group') }} *</strong> </label>
-                                    <select required class="form-control selectpicker" name="customer_group_id">
-                                        @foreach ($lims_customer_group_all as $customer_group)
-                                            <option value="{{ $customer_group->id }}">{{ $customer_group->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>{{ trans('file.name') }} *</strong> </label>
-                                    <input type="text" name="customer_name" required class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label>{{ trans('file.Email') }}</label>
-                                    <input type="text" name="email" placeholder="example@example.com"
-                                        class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label>{{ trans('file.Phone Number') }} *</label>
-                                    <input type="text" name="phone_number" required class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label>{{ trans('file.Address') }} *</label>
-                                    <input type="text" name="address" required class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label>{{ trans('file.City') }} *</label>
-                                    <input type="text" name="city" required class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <input type="hidden" name="pos" value="1">
-                                    <input type="submit" value="{{ trans('file.submit') }}"
-                                        class="btn btn-primary">
-                                </div>
-                            </div>
-                            {{ Form::close() }}
-                        </div>
-                    </div>
-                </div>
-                <!-- recent transaction modal -->
-                <div id="recentTransaction" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true" class="modal fade text-left">
-                    <div role="document" class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 id="exampleModalLabel" class="modal-title">{{ trans('file.Recent Transaction') }}
-                                    <div class="badge badge-primary">{{ trans('file.latest') }} 10</div>
-                                </h5>
-                                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
-                                        aria-hidden="true"><i class="dripicons-cross"></i></span></button>
-                            </div>
-                            <div class="modal-body">
-                                <ul class="nav nav-tabs" role="tablist">
-                                    <li class="nav-item">
-                                        <a class="nav-link active" href="#sale-latest" role="tab"
-                                            data-toggle="tab">{{ trans('file.Sale') }}</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#draft-latest" role="tab"
-                                            data-toggle="tab">{{ trans('file.Draft') }}</a>
-                                    </li>
-                                </ul>
-                                <div class="tab-content">
-                                    <div role="tabpanel" class="tab-pane show active" id="sale-latest">
-                                        <div class="table-responsive">
-                                            <table class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>{{ trans('file.date') }}</th>
-                                                        <th>{{ trans('file.reference') }}</th>
-                                                        <th>{{ trans('file.customer') }}</th>
-                                                        <th>{{ trans('file.grand total') }}</th>
-                                                        <th>{{ trans('file.action') }}</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($recent_sale as $sale)
-                                                        @php
-                                                            $customer = $sale->customer;
-                                                        @endphp
-                                                        <tr>
-                                                            <td>{{ date('d-m-Y', strtotime($sale->created_at)) }}</td>
-                                                            <td>{{ $sale->reference_no }}</td>
-                                                            <td>{{ $customer->name }}</td>
-                                                            <td>{{ $sale->grand_total }}</td>
-                                                            <td>
-                                                                <div class="btn-group">
-                                                                    @if (in_array('sales-edit', $all_permission))
-                                                                        <a href="{{ route('sales.edit', $sale->id) }}"
-                                                                            class="btn btn-success btn-sm"
-                                                                            title="Edit"><i
-                                                                                class="dripicons-document-edit"></i></a>&nbsp;
-                                                                    @endif
-                                                                    @if (in_array('sales-delete', $all_permission))
-                                                                        {{ Form::open(['route' => ['sales.destroy', $sale->id], 'method' => 'DELETE']) }}
-                                                                        <button type="submit"
-                                                                            class="btn btn-danger btn-sm"
-                                                                            onclick="return confirmDelete()"
-                                                                            title="Delete"><i
-                                                                                class="dripicons-trash"></i></button>
-                                                                        {{ Form::close() }}
-                                                                    @endif
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div role="tabpanel" class="tab-pane fade" id="draft-latest">
-                                        <div class="table-responsive">
-                                            <table class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>{{ trans('file.date') }}</th>
-                                                        <th>{{ trans('file.reference') }}</th>
-                                                        <th>{{ trans('file.customer') }}</th>
-                                                        <th>{{ trans('file.grand total') }}</th>
-                                                        <th>{{ trans('file.action') }}</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($recent_draft as $draft)
-                                                        @php
-                                                            $customer = $draft->customer;
-                                                        @endphp
-                                                        <tr>
-                                                            <td>{{ date('d-m-Y', strtotime($draft->created_at)) }}</td>
-                                                            <td>{{ $draft->reference_no }}</td>
-                                                            <td>{{ $customer->name }}</td>
-                                                            <td>{{ $draft->grand_total }}</td>
-                                                            <td>
-                                                                <div class="btn-group">
-                                                                    @if (in_array('sales-edit', $all_permission))
-                                                                        <a href="{{ url('sales/' . $draft->id . '/create') }}"
-                                                                            class="btn btn-success btn-sm"
-                                                                            title="Edit"><i
-                                                                                class="dripicons-document-edit"></i></a>&nbsp;
-                                                                    @endif
-                                                                    @if (in_array('sales-delete', $all_permission))
-                                                                        {{ Form::open(['route' => ['sales.destroy', $draft->id], 'method' => 'DELETE']) }}
-                                                                        <button type="submit"
-                                                                            class="btn btn-danger btn-sm"
-                                                                            onclick="return confirmDelete()"
-                                                                            title="Delete"><i
-                                                                                class="dripicons-trash"></i></button>
-                                                                        {{ Form::close() }}
-                                                                    @endif
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- add cash register modal -->
-                <div id="cash-register-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true" class="modal fade text-left">
-                    <div role="document" class="modal-dialog">
-                        <div class="modal-content">
-                            {!! Form::open(['route' => 'cashRegister.store', 'method' => 'post']) !!}
-                            <div class="modal-header">
-                                <h5 id="exampleModalLabel" class="modal-title">{{ trans('file.Add Cash Register') }}
-                                </h5>
-                                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
-                                        aria-hidden="true"><i class="dripicons-cross"></i></span></button>
-                            </div>
-                            <div class="modal-body">
-                                <p class="italic">
-                                    <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small>
-                                </p>
-                                <div class="row">
-                                    <div class="col-md-6 form-group warehouse-section">
-                                        <label>{{ trans('file.Warehouse') }} *</strong> </label>
-                                        <select required name="warehouse_id" class="selectpicker form-control"
-                                            data-live-search="true" data-live-search-style="begins"
-                                            title="Select warehouse...">
-                                            @foreach ($lims_warehouse_list as $warehouse)
-                                                <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6 form-group">
-                                        <label>{{ trans('file.Cash in Hand') }} *</strong> </label>
-                                        <input type="number" name="cash_in_hand" required class="form-control">
-                                    </div>
-                                    <div class="col-md-12 form-group">
-                                        <button type="submit"
-                                            class="btn btn-primary">{{ trans('file.submit') }}</button>
-                                    </div>
-                                </div>
-                            </div>
-                            {{ Form::close() }}
-                        </div>
-                    </div>
-                </div>
-                <!-- cash register details modal -->
-                <div id="register-details-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true" class="modal fade text-left">
-                    <div role="document" class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 id="exampleModalLabel" class="modal-title">
-                                    {{ trans('file.Cash Register Details') }}</h5>
-                                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
-                                        aria-hidden="true"><i class="dripicons-cross"></i></span></button>
-                            </div>
-                            <div class="modal-body">
-                                <p>{{ trans('file.Please review the transaction and payments.') }}</p>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <table class="table table-hover">
-                                            <tbody>
-                                                <tr>
-                                                    <td>{{ trans('file.Cash in Hand') }}:</td>
-                                                    <td id="cash_in_hand" class="text-right">0</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ trans('file.Total Sale Amount') }}:</td>
-                                                    <td id="total_sale_amount" class="text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ trans('file.Total Payment') }}:</td>
-                                                    <td id="total_payment" class="text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ trans('file.Cash Payment') }}:</td>
-                                                    <td id="cash_payment" class="text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ trans('file.Credit Card Payment') }}:</td>
-                                                    <td id="credit_card_payment" class="text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ trans('file.Cheque Payment') }}:</td>
-                                                    <td id="cheque_payment" class="text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ trans('file.Gift Card Payment') }}:</td>
-                                                    <td id="gift_card_payment" class="text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ trans('file.Deposit Payment') }}:</td>
-                                                    <td id="deposit_payment" class="text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ trans('file.Paypal Payment') }}:</td>
-                                                    <td id="paypal_payment" class="text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ trans('file.Total Sale Return') }}:</td>
-                                                    <td id="total_sale_return" class="text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ trans('file.Total Expense') }}:</td>
-                                                    <td id="total_expense" class="text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>{{ trans('file.Total Cash') }}:</strong></td>
-                                                    <td id="total_cash" class="text-right"></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="col-md-6" id="closing-section">
-                                        <form action="{{ route('cashRegister.close') }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="cash_register_id">
-                                            <button type="submit"
-                                                class="btn btn-primary">{{ trans('file.Close Register') }}</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- today sale modal -->
-                <div id="today-sale-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true" class="modal fade text-left">
-                    <div role="document" class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 id="exampleModalLabel" class="modal-title">{{ trans('file.Today Sale') }}</h5>
-                                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
-                                        aria-hidden="true"><i class="dripicons-cross"></i></span></button>
-                            </div>
-                            <div class="modal-body">
-                                <p>{{ trans('file.Please review the transaction and payments.') }}</p>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <table class="table table-hover">
-                                            <tbody>
-                                                <tr>
-                                                    <td>{{ trans('file.Total Sale Amount') }}:</td>
-                                                    <td class="total_sale_amount text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ trans('file.Cash Payment') }}:</td>
-                                                    <td class="cash_payment text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ trans('file.Credit Card Payment') }}:</td>
-                                                    <td class="credit_card_payment text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ trans('file.Cheque Payment') }}:</td>
-                                                    <td class="cheque_payment text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ trans('file.Gift Card Payment') }}:</td>
-                                                    <td class="gift_card_payment text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ trans('file.Deposit Payment') }}:</td>
-                                                    <td class="deposit_payment text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ trans('file.Paypal Payment') }}:</td>
-                                                    <td class="paypal_payment text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ trans('file.Total Payment') }}:</td>
-                                                    <td class="total_payment text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ trans('file.Total Sale Return') }}:</td>
-                                                    <td class="total_sale_return text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ trans('file.Total Expense') }}:</td>
-                                                    <td class="total_expense text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>{{ trans('file.Total Cash') }}:</strong></td>
-                                                    <td class="total_cash text-right"></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- today profit modal -->
-                <div id="today-profit-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true" class="modal fade text-left">
-                    <div role="document" class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 id="exampleModalLabel" class="modal-title">{{ trans('file.Today Profit') }}</h5>
-                                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
-                                        aria-hidden="true"><i class="dripicons-cross"></i></span></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <select required name="warehouseId" class="form-control">
-                                            <option value="0">{{ trans('file.All Warehouse') }}</option>
-                                            @foreach ($lims_warehouse_list as $warehouse)
-                                                <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-md-12 mt-2">
-                                        <table class="table table-hover">
-                                            <tbody>
-                                                <tr>
-                                                    <td>{{ trans('file.Product Revenue') }}:</td>
-                                                    <td class="product_revenue text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ trans('file.Product Cost') }}:</td>
-                                                    <td class="product_cost text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ trans('file.Expense') }}:</td>
-                                                    <td class="expense_amount text-right"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>{{ trans('file.Profit') }}:</strong></td>
-                                                    <td class="profit text-right"></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {{-- Product Row --}}
+                @include('backend.sale.partials.product')
             </div>
         </div>
     </section>
@@ -1910,6 +109,7 @@
         // array data with selection
         var product_price = [];
         var product_discount = [];
+        var product_cashback = [];
         var tax_rate = [];
         var tax_name = [];
         var tax_method = [];
@@ -1945,6 +145,7 @@
         var localStorageQty = [];
         var localStorageProductId = [];
         var localStorageProductDiscount = [];
+        var localStorageProductCashback = [];
         var localStorageTaxRate = [];
         var localStorageNetUnitPrice = [];
         var localStorageTaxValue = [];
@@ -1959,9 +160,15 @@
         var localStorageSaleUnitOperationValue = [];
 
         $("#reference-no").val(getSavedValue("reference-no"));
+
         $("#order-discount").val(getSavedValue("order-discount"));
         $("#order-discount-val").val(getSavedValue("order-discount-val"));
         $("#order-discount-type").val(getSavedValue("order-discount-type"));
+
+        $("#order-cashback").val(getSavedValue("order-cashback"));
+        $("#order-cashback-val").val(getSavedValue("order-cashback-val"));
+        $("#order-cashback-type").val(getSavedValue("order-cashback-type"));
+
         $("#order-tax-rate-select").val(getSavedValue("order-tax-rate-select"));
 
 
@@ -1987,6 +194,7 @@
         if (getSavedValue("localStorageQty")) {
             localStorageQty = getSavedValue("localStorageQty").split(",");
             localStorageProductDiscount = getSavedValue("localStorageProductDiscount").split(",");
+            localStorageProductCashback = getSavedValue("localStorageProductCashback").split(",");
             localStorageTaxRate = getSavedValue("localStorageTaxRate").split(",");
             localStorageNetUnitPrice = getSavedValue("localStorageNetUnitPrice").split(",");
             localStorageTaxValue = getSavedValue("localStorageTaxValue").split(",");
@@ -2006,6 +214,8 @@
                 $('table.order-list tbody tr:nth-child(' + (i + 1) + ') .qty').val(localStorageQty[i]);
                 $('table.order-list tbody tr:nth-child(' + (i + 1) + ')').find('.discount-value').val(
                     localStorageProductDiscount[i]);
+                $('table.order-list tbody tr:nth-child(' + (i + 1) + ')').find('.cashback-value').val(
+                    localStorageProductCashback[i]);
                 $('table.order-list tbody tr:nth-child(' + (i + 1) + ')').find('.tax-rate').val(localStorageTaxRate[i]);
                 $('table.order-list tbody tr:nth-child(' + (i + 1) + ')').find('.net_unit_price').val(
                     localStorageNetUnitPrice[i]);
@@ -2035,6 +245,7 @@
                     '.product_price').val()));
                 var quantity = parseFloat($('table.order-list tbody tr:nth-child(' + (i + 1) + ')').find('.qty').val());
                 product_discount.push(parseFloat(localStorageProductDiscount[i] / localStorageQty[i]).toFixed(2));
+                product_cashback.push(parseFloat(localStorageProductCashback[i] / localStorageQty[i]).toFixed(2));
                 tax_rate.push(parseFloat($('table.order-list tbody tr:nth-child(' + (i + 1) + ')').find('.tax-rate')
                     .val()));
                 tax_name.push($('table.order-list tbody tr:nth-child(' + (i + 1) + ')').find('.tax-name').val());
@@ -2407,13 +618,13 @@
                     var product_info = data['code'][index] + ' (' + data['name'][index] + ')';
                     if (index % 5 == 0 && index != 0)
                         tableData += '</tr><tr><td class="product-img sound-btn" title="' + data['name'][index] +
-                        '" data-product = "' + product_info + '"><img  src="public/images/product/' + data['image'][
+                        '" data-product = "' + product_info + '"><img  src="/images/product/' + data['image'][
                             index
                         ] + '" width="100%" /><p>' + data['name'][index] + '</p><span>' + data['code'][index] +
                         '</span></td>';
                     else
                         tableData += '<td class="product-img sound-btn" title="' + data['name'][index] +
-                        '" data-product = "' + product_info + '"><img  src="public/images/product/' + data['image'][
+                        '" data-product = "' + product_info + '"><img  src="/images/product/' + data['image'][
                             index
                         ] + '" width="100%" /><p>' + data['name'][index] + '</p><span>' + data['code'][index] +
                         '</span></td>';
@@ -2612,6 +823,7 @@
             rowindex = $(this).closest('tr').index();
             product_price.splice(rowindex, 1);
             product_discount.splice(rowindex, 1);
+            product_cashback.splice(rowindex, 1);
             tax_rate.splice(rowindex, 1);
             tax_name.splice(rowindex, 1);
             tax_method.splice(rowindex, 1);
@@ -2623,6 +835,7 @@
             localStorageQty.splice(rowindex, 1);
             localStorageSaleUnit.splice(rowindex, 1);
             localStorageProductDiscount.splice(rowindex, 1);
+            localStorageProductCashback.splice(rowindex, 1);
             localStorageTaxRate.splice(rowindex, 1);
             localStorageNetUnitPrice.splice(rowindex, 1);
             localStorageTaxValue.splice(rowindex, 1);
@@ -2641,6 +854,7 @@
             localStorage.setItem("localStorageSaleUnit", localStorageSaleUnit);
             localStorage.setItem("localStorageProductCode", localStorageProductCode);
             localStorage.setItem("localStorageProductDiscount", localStorageProductDiscount);
+            localStorage.setItem("localStorageProductCashback", localStorageProductCashback);
             localStorage.setItem("localStorageTaxRate", localStorageTaxRate);
             localStorage.setItem("localStorageTaxName", localStorageTaxName);
             localStorage.setItem("localStorageTaxMethod", localStorageTaxMethod);
@@ -2672,11 +886,17 @@
             }
 
             var edit_discount = $('input[name="edit_discount"]').val();
+            var edit_cashback = $('input[name="edit_cashback"]').val();
             var edit_qty = $('input[name="edit_qty"]').val();
             var edit_unit_price = $('input[name="edit_unit_price"]').val();
 
             if (parseFloat(edit_discount) > parseFloat(edit_unit_price)) {
                 alert('Invalid Discount Input!');
+                return;
+            }
+
+            if (parseFloat(edit_cashback) > parseFloat(edit_unit_price)) {
+                alert('Invalid Cashback Input!');
                 return;
             }
 
@@ -2694,6 +914,7 @@
                 .text();
 
             product_discount[rowindex] = $('input[name="edit_discount"]').val();
+            product_cashback[rowindex] = $('input[name="edit_cashback"]').val();
             if (product_type[pos] == 'standard') {
                 var row_unit_operator = unit_operator[rowindex].slice(0, unit_operator[rowindex].indexOf(","));
                 var row_unit_operation_value = unit_operation_value[rowindex].slice(0, unit_operation_value[
@@ -2734,6 +955,10 @@
         });
 
         $('button[name="order_discount_btn"]').on("click", function() {
+            calculateGrandTotal();
+        });
+
+        $('button[name="order_cashback_btn"]').on("click", function() {
             calculateGrandTotal();
         });
 
@@ -3007,6 +1232,7 @@
             cols += '<input type="hidden" class="sale-unit" name="sale_unit[]" value="' + temp_unit_name[0] + '"/>';
             cols += '<input type="hidden" class="net_unit_price" name="net_unit_price[]" />';
             cols += '<input type="hidden" class="discount-value" name="discount[]" />';
+            cols += '<input type="hidden" class="cashback-value" name="cashback[]" />';
             cols += '<input type="hidden" class="tax-rate" name="tax_rate[]" value="' + data[3] + '"/>';
             cols += '<input type="hidden" class="tax-value" name="tax[]" />';
             cols += '<input type="hidden" class="tax-name" value="' + data[4] + '" />';
@@ -3047,6 +1273,7 @@
             product_price.splice(rowindex, 0, parseFloat(data[2] * currency['exchange_rate']) + parseFloat(data[2] *
                 currency['exchange_rate'] * customer_group_rate));
             product_discount.splice(rowindex, 0, '0.00');
+            product_cashback.splice(rowindex, 0, '0.00');
             tax_rate.splice(rowindex, 0, parseFloat(data[3]));
             tax_name.splice(rowindex, 0, data[4]);
             tax_method.splice(rowindex, 0, data[5]);
@@ -3062,6 +1289,7 @@
             localStorageProductCode.splice(rowindex, 0, data[1]);
             localStorageSaleUnit.splice(rowindex, 0, temp_unit_name[0]);
             localStorageProductDiscount.splice(rowindex, 0, product_discount[rowindex]);
+            localStorageProductCashback.splice(rowindex, 0, product_cashback[rowindex]);
             localStorageTaxRate.splice(rowindex, 0, tax_rate[rowindex].toFixed(2));
             localStorageTaxName.splice(rowindex, 0, data[4]);
             localStorageTaxMethod.splice(rowindex, 0, data[5]);
@@ -3110,6 +1338,7 @@
             $('input[name="edit_qty"]').val(qty);
 
             $('input[name="edit_discount"]').val(parseFloat(product_discount[rowindex]).toFixed(2));
+            $('input[name="edit_cashback"]').val(parseFloat(product_cashback[rowindex]).toFixed(2));
 
             var tax_name_all = JSON.parse('{!! json_encode($tax_name_all) !!}');
             pos = tax_name_all.indexOf(tax_name[rowindex]);
@@ -3146,52 +1375,78 @@
             } else if ($("#coupon-code").val() != '') {
                 valid = 0;
                 $.each(coupon_list, function(key, value) {
-                    if ($("#coupon-code").val() == value['code']) {
+                    var code = value['code'].split('-')
+                    var coupon_prefix = code['0']
+                    var coupon_code = code['1']
+
+                    if ($("#coupon-code").val() == coupon_code) {
                         valid = 1;
-                        todyDate = JSON.parse('{!! json_encode(
-                            date('
-                                                                                                                                                                                                                                                                                                                                                Y - m - d '),
-                        ) !!}');
+                        todyDate = JSON.parse('@json(date('Y-m-d'))');
                         if (parseFloat(value['quantity']) <= parseFloat(value['used']))
                             alert('This Coupon is no longer available');
                         else if (todyDate > value['expired_date'])
                             alert('This Coupon has expired!');
-                        else if (value['type'] == 'fixed') {
-                            if (parseFloat($('input[name="grand_total"]').val()) >= value['minimum_amount']) {
-                                $('input[name="grand_total"]').val($('input[name="grand_total"]').val() - value[
-                                    'amount']);
-                                $('#grand-total').text(parseFloat($('input[name="grand_total"]').val()).toFixed(2));
-                                if (!$('input[name="coupon_active"]').val())
-                                    alert('Congratulation! You got ' + value['amount'] + ' ' + currency +
-                                        ' discount');
-                                $(".coupon-check").prop("disabled", true);
-                                $("#coupon-code").prop("disabled", true);
-                                $('input[name="coupon_active"]').val(1);
-                                $("#coupon-modal").modal('hide');
-                                $('input[name="coupon_id"]').val(value['id']);
-                                $('input[name="coupon_discount"]').val(value['amount']);
-                                $('#coupon-text').text(parseFloat(value['amount']).toFixed(2));
-                            } else
-                                alert('Grand Total is not sufficient for discount! Required ' + value[
-                                    'minimum_amount'] + ' ' + currency);
-                        } else {
-                            var grand_total = $('input[name="grand_total"]').val();
-                            var coupon_discount = grand_total * (value['amount'] / 100);
-                            grand_total = grand_total - coupon_discount;
-                            $('input[name="grand_total"]').val(grand_total);
-                            $('#grand-total').text(parseFloat(grand_total).toFixed(2));
-                            if (!$('input[name="coupon_active"]').val())
-                                alert('Congratulation! You got ' + value['amount'] + '% discount');
+                        else {
+                            var input_grand_total = $('input[name="grand_total"]')
+                            if (value['type'] == 'fixed') {
+                                if (parseFloat(input_grand_total.val()) >= value['minimum_amount']) {
+                                    var coupon_discount = value['amount'];
+                                    var coupon_cashback = value['amount'];
+
+                                    var coupon_type = 'cashback';
+                                    if (coupon_prefix == 'DS') {
+                                        input_grand_total.val(input_grand_total.val() - value['amount']);
+                                        $('#grand-total').text(parseFloat(input_grand_total.val()).toFixed(2));
+
+                                        coupon_type = 'discount';
+                                    }
+
+                                    if (!$('input[name="coupon_active"]').val()) {
+                                        var amount = currency['code'] + '. ' + value['amount'];
+                                        alert('Congratulation! You got ' + amount + ' ' + coupon_type);
+                                    }
+
+                                } else {
+                                    var minimum_amount = currency['code'] + '. ' + value['minimum_amount'];
+                                    alert('Grand Total is not sufficient for ' + coupon_type + '! Required ' +
+                                        minimum_amount);
+                                }
+                            } else {
+                                var grand_total = input_grand_total.val();
+                                var coupon_discount = grand_total * (value['amount'] / 100);
+                                var coupon_cashback = grand_total * (value['amount'] / 100);
+                                grand_total = grand_total - coupon_discount;
+
+                                var coupon_type = 'cashback';
+                                if (coupon_prefix == 'DS') {
+                                    input_grand_total.val(grand_total);
+                                    $('#grand-total').text(parseFloat(grand_total).toFixed(2));
+
+                                    coupon_type = 'discount';
+                                }
+
+                                if (!$('input[name="coupon_active"]').val()) {
+                                    alert('Congratulation! You got ' + value['amount'] + '% ' + coupon_type);
+                                }
+                            }
+
                             $(".coupon-check").prop("disabled", true);
                             $("#coupon-code").prop("disabled", true);
                             $('input[name="coupon_active"]').val(1);
                             $("#coupon-modal").modal('hide');
                             $('input[name="coupon_id"]').val(value['id']);
-                            $('input[name="coupon_discount"]').val(coupon_discount);
-                            $('#coupon-text').text(parseFloat(coupon_discount).toFixed(2));
+
+                            if (coupon_prefix == 'DS') {
+                                $('input[name="coupon_discount"]').val(coupon_discount);
+                                $('#coupon-text').text(parseFloat(coupon_discount).toFixed(2));
+                            } else {
+                                $('input[name="coupon_cashback"]').val(coupon_cashback);
+                                $('#coupon-text').text(parseFloat(coupon_cashback).toFixed(2));
+                            }
                         }
                     }
                 });
+
                 if (!valid)
                     alert('Invalid coupon code!');
             }
@@ -3207,7 +1462,6 @@
                     url: 'sales/check-discount?qty=' + qty + '&customer_id=' + customer_id + '&product_id=' +
                         product_id,
                     success: function(data) {
-                        //console.log(data);
                         pos = product_code.indexOf($('table.order-list tbody tr:nth-child(' + (rowindex + 1) +
                             ') .product-code').val());
                         product_price[rowindex] = parseFloat(data[0] * currency['exchange_rate']) + parseFloat(
@@ -3311,6 +1565,8 @@
 
             $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.discount-value').val((product_discount[
                 rowindex] * quantity).toFixed(2));
+            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.cashback-value').val((product_cashback[
+                rowindex] * quantity).toFixed(2));
             $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.tax-rate').val(tax_rate[rowindex]
                 .toFixed(2));
             $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.net_unit_price').val(net_unit_price
@@ -3323,12 +1579,14 @@
                 2));
 
             localStorageProductDiscount.splice(rowindex, 1, (product_discount[rowindex] * quantity).toFixed(2));
+            localStorageProductCashback.splice(rowindex, 1, (product_cashback[rowindex] * quantity).toFixed(2));
             localStorageTaxRate.splice(rowindex, 1, tax_rate[rowindex].toFixed(2));
             localStorageNetUnitPrice.splice(rowindex, 1, net_unit_price.toFixed(2));
             localStorageTaxValue.splice(rowindex, 1, tax.toFixed(2));
             localStorageSubTotalUnit.splice(rowindex, 1, sub_total_unit.toFixed(2));
             localStorageSubTotal.splice(rowindex, 1, sub_total.toFixed(2));
             localStorage.setItem("localStorageProductDiscount", localStorageProductDiscount);
+            localStorage.setItem("localStorageProductCashback", localStorageProductCashback);
             localStorage.setItem("localStorageTaxRate", localStorageTaxRate);
             localStorage.setItem("localStorageNetUnitPrice", localStorageNetUnitPrice);
             localStorage.setItem("localStorageTaxValue", localStorageTaxValue);
@@ -3355,8 +1613,15 @@
             $("table.order-list tbody .discount-value").each(function() {
                 total_discount += parseFloat($(this).val());
             });
-
             $('input[name="total_discount"]').val(total_discount.toFixed(2));
+
+            //Sum of cashback
+            var total_cashback = 0;
+            $("table.order-list tbody .cashback-value").each(function() {
+                total_cashback += parseFloat($(this).val());
+            });
+            $('input[name="total_cashback"]').val(total_cashback.toFixed(2));
+
 
             //Sum of tax
             var total_tax = 0;
@@ -3383,6 +1648,8 @@
             var order_tax = parseFloat($('select[name="order_tax_rate_select"]').val());
             var order_discount_type = $('select[name="order_discount_type_select"]').val();
             var order_discount_value = parseFloat($('input[name="order_discount_value"]').val());
+            var order_cashback_type = $('select[name="order_cashback_type_select"]').val();
+            var order_cashback_value = parseFloat($('input[name="order_cashback_value"]').val());
 
             if (!order_discount_value)
                 order_discount_value = 0.00;
@@ -3392,11 +1659,25 @@
             else
                 var order_discount = parseFloat(subtotal * (order_discount_value / 100));
 
+            if (!order_cashback_value)
+                order_cashback_value = 0.00;
+
+            if (order_cashback_type == 'Flat')
+                var order_cashback = parseFloat(order_cashback_value);
+            else
+                var order_cashback = parseFloat(subtotal * (order_cashback_value / 100));
+
             localStorage.setItem("order-tax-rate-select", order_tax);
             localStorage.setItem("order-discount-type", order_discount_type);
+            localStorage.setItem("order-cashback-type", order_cashback_type);
+
             $("#discount").text(order_discount.toFixed(2));
             $('input[name="order_discount"]').val(order_discount);
             $('input[name="order_discount_type"]').val(order_discount_type);
+
+            $("#cashback").text(order_cashback.toFixed(2));
+            $('input[name="order_cashback"]').val(order_cashback);
+            $('input[name="order_cashback_type"]').val(order_cashback_type);
 
             var shipping_cost = parseFloat($('input[name="shipping_cost"]').val());
             if (!shipping_cost)
@@ -3494,6 +1775,7 @@
             while (rownumber >= 0) {
                 product_price.pop();
                 product_discount.pop();
+                product_cashback.pop();
                 tax_rate.pop();
                 tax_name.pop();
                 tax_method.pop();
@@ -3505,6 +1787,7 @@
             }
             $('input[name="shipping_cost"]').val('');
             $('input[name="order_discount"]').val('');
+            $('input[name="order_cashback"]').val('');
             $('select[name="order_tax_rate_select"]').val(0);
             calculateTotal();
         }

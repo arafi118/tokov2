@@ -181,7 +181,7 @@ class DummySeeder extends Seeder
                 'last_date' => date('Y-m-d'),
                 'tax_id' => null,
                 'tax_method' => null,
-                'image' => $faker->imageUrl(320, 240, 'animals', true),
+                'image' => 'no_image.png',
                 'featured' => true,
                 'product_details' => $faker->paragraph($nb = 4),
                 'is_active' => true,

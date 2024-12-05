@@ -22,6 +22,7 @@ class CreateReturnsTable extends Migration
             $table->integer('item');
             $table->double('total_qty');
             $table->double('total_discount');
+            $table->double('cashback');
             $table->double('total_tax');
             $table->double('total_price');
             $table->double('order_tax_rate')->nullable();

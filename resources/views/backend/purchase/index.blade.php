@@ -148,6 +148,7 @@
                         <th>{{ trans('file.Unit Cost') }}</th>
                         <th>{{ trans('file.Tax') }}</th>
                         <th>{{ trans('file.Discount') }}</th>
+                        <th>{{ trans('file.Cashback') }}</th>
                         <th>{{ trans('file.Subtotal') }}</th>
                     </thead>
                     <tbody>
@@ -234,7 +235,7 @@
                             <select name="paid_by_id" id="paid_by_id_add"class="form-control selectpicker">
                                 <option value="1">Cash</option>
                                 <!--  <option value="3">Credit Card</option>
-                                    <option value="4">Cheque</option> -->
+                                                        <option value="4">Cheque</option> -->
                                 <option value="5">Debit Card</option>
                                 <!-- <option value="6">Tempo / Utang</option> -->
                             </select>
@@ -321,7 +322,7 @@
                             <select name="edit_paid_by_id" class="form-control selectpicker">
                                 <option value="1">Cash</option>
                                 <!--  <option value="3">Credit Card</option>
-                                    <option value="4">Cheque</option> -->
+                                                        <option value="4">Cheque</option> -->
                                 <option value="5">Debit Card</option>
                                 <option value="6">Tempo / Utang</option>
                             </select>
@@ -443,7 +444,7 @@
             a.document.write('<html>');
             a.document.write(
                 '<body><style>body{font-family: sans-serif;line-height: 1.15;-webkit-text-size-adjust: 100%;}.d-print-none{display:none}.text-center{text-align:center}.row{width:100%;margin-right: -15px;margin-left: -15px;}.col-md-12{width:100%;display:block;padding: 5px 15px;}.col-md-6{width: 50%;float:left;padding: 5px 15px;}table{width:100%;margin-top:30px;}th{text-aligh:left;}td{padding:10px}table, th, td{border: 1px solid black; border-collapse: collapse;}</style><style>@media print {.modal-dialog { max-width: 1000px;} }</style>'
-                );
+            );
             a.document.write(divContents);
             a.document.write('</body></html>');
             a.document.close();
@@ -916,6 +917,7 @@
                     var discount = data[5];
                     var subtotal = data[6];
                     var batch_no = data[7];
+                    var cashback = data[8];
                     var newBody = $("<tbody>");
                     $.each(name_code, function(index) {
                         var newRow = $("<tr>");
@@ -927,6 +929,7 @@
                         cols += '<td>' + (subtotal[index] / qty[index]) + '</td>';
                         cols += '<td>' + tax[index] + '(' + tax_rate[index] + '%)' + '</td>';
                         cols += '<td>' + discount[index] + '</td>';
+                        cols += '<td>' + cashback[index] + '</td>';
                         cols += '<td>' + subtotal[index] + '</td>';
                         newRow.append(cols);
                         newBody.append(newRow);
@@ -952,6 +955,13 @@
                     cols = '';
                     cols += '<td colspan=7><strong>{{ trans('file.Order Discount') }}:</strong></td>';
                     cols += '<td>' + purchase[18] + '</td>';
+                    newRow.append(cols);
+                    newBody.append(newRow);
+
+                    var newRow = $("<tr>");
+                    cols = '';
+                    cols += '<td colspan=7><strong>{{ trans('file.Order Cashback') }}:</strong></td>';
+                    cols += '<td>' + purchase[26] + '</td>';
                     newRow.append(cols);
                     newBody.append(newRow);
 
@@ -1032,7 +1042,7 @@
                     2));
                 e.preventDefault();
             } else if ($('input[name="edit_paying_amount"]').val() < parseFloat($('input[name="edit_amount"]')
-                .val())) {
+                    .val())) {
                 alert('Paying amount cannot be bigger than recieved amount');
                 $('input[name="edit_amount"]').val('');
                 $(".change").text(parseFloat($('input[name="edit_paying_amount"]').val() - $(

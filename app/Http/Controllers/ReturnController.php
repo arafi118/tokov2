@@ -438,7 +438,6 @@ class ReturnController extends Controller
             }
 
             $data = $request->except('document');
-            // return dd($data);
             //$data['reference_no'] = 'rr-' . date("Ymd") . '-'. date("his");
             $data['reference_no'] = $this->jurnal->notaCounter('retur_penjualan');
             $data['user_id'] = Auth::id();
@@ -506,6 +505,7 @@ class ReturnController extends Controller
             $sale_unit = $data['sale_unit'];
             $net_unit_price = $data['net_unit_price'];
             $discount = $data['discount'];
+            $cashback = $data['cashback'];
             $tax_rate = $data['tax_rate'];
             $tax = $data['tax'];
             $total = $data['subtotal'];
@@ -608,24 +608,23 @@ class ReturnController extends Controller
 
                 $mail_data['qty'][$key] = $qty[$key];
                 $mail_data['total'][$key] = $total[$key];
-                ProductReturn::insert(
-                    [
-                        'return_id' => $lims_return_data->id,
-                        'product_id' => $pro_id,
-                        'product_batch_id' => $product_batch_id[$key],
-                        'variant_id' => $variant_id,
-                        'imei_number' => $imei_number[$key],
-                        'qty' => $qty[$key],
-                        'sale_unit_id' => $sale_unit_id,
-                        'net_unit_price' => $net_unit_price[$key],
-                        'discount' => $discount[$key],
-                        'tax_rate' => $tax_rate[$key],
-                        'tax' => $tax[$key],
-                        'total' => $total[$key],
-                        'created_at' => \Carbon\Carbon::now(),
-                        'updated_at' => \Carbon\Carbon::now()
-                    ]
-                );
+                ProductReturn::insert([
+                    'return_id' => $lims_return_data->id,
+                    'product_id' => $pro_id,
+                    'product_batch_id' => $product_batch_id[$key],
+                    'variant_id' => $variant_id,
+                    'imei_number' => $imei_number[$key],
+                    'qty' => $qty[$key],
+                    'sale_unit_id' => $sale_unit_id,
+                    'net_unit_price' => $net_unit_price[$key],
+                    'discount' => $discount[$key],
+                    'cashback' => $cashback[$key],
+                    'tax_rate' => $tax_rate[$key],
+                    'tax' => $tax[$key],
+                    'total' => $total[$key],
+                    'created_at' => \Carbon\Carbon::now(),
+                    'updated_at' => \Carbon\Carbon::now()
+                ]);
             }
 
             $fdata = $lims_return_data->toArray();

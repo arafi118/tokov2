@@ -146,17 +146,24 @@
                     </p>
                     {!! Form::open(['route' => 'coupons.store', 'method' => 'post']) !!}
                     <div class="row">
-                        <div class="col-md-6 form-group">
+                        <div class="col-md-8 form-group">
                             <label>{{ trans('file.Coupon Code') }} *</label>
                             <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <select class="form-control" name="prefix">
+                                        <option value="DS">Discount</option>
+                                        <option value="CS">Cashback</option>
+                                    </select>
+                                </div>
                                 {{ Form::text('code', null, ['required' => 'required', 'class' => 'form-control']) }}
                                 <div class="input-group-append">
-                                    <button type="button"
-                                        class="btn btn-default btn-sm genbutton">{{ trans('file.Generate') }}</button>
+                                    <button type="button" class="btn btn-default btn-sm genbutton">
+                                        {{ trans('file.Generate') }}
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 form-group">
+                        <div class="col-md-4 form-group">
                             <label>{{ trans('file.Type') }} *</label>
                             <select class="form-control" name="type">
                                 <option value="percentage">Percentage</option>
