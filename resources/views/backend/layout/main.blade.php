@@ -1065,11 +1065,11 @@
                                 <select class="form-control selectpicker" name="account_id">
                                     @foreach ($lims_account_list as $account)
                                         @if ($account->is_default)
-                                            <option selected value="{{ $account->id }}">{{ $account->name }}
-                                                [{{ $account->account_no }}]</option>
+                                            <option selected value="{{ $account->id }}">{{ $account->nama }}
+                                                [{{ $account->kode }}]</option>
                                         @else
-                                            <option value="{{ $account->id }}">{{ $account->name }}
-                                                [{{ $account->account_no }}]</option>
+                                            <option value="{{ $account->id }}">{{ $account->nama }}
+                                                [{{ $account->kode }}]</option>
                                         @endif
                                     @endforeach
                                 </select>
