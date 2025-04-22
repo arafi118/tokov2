@@ -1150,8 +1150,8 @@
                                 <label> {{ trans('file.Account') }}</label>
                                 <select class="form-control selectpicker" name="account_id">
                                     @foreach ($lims_account_list as $account)
-                                        <option value="{{ $account->id }}">{{ $account->name }}
-                                            [{{ $account->account_no }}]</option>
+                                        <option value="{{ $account->id }}">{{ $account->nama }}
+                                            [{{ $account->kode }}]</option>
                                     @endforeach
                                 </select>
                             </div>
