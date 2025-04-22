@@ -470,27 +470,27 @@
         });
 
         var id = $("#warehouse_id").val();
-        // $.get('sales/getproduct/' + id, function(data) {
-        //     lims_product_array = [];
-        //     product_code = data[0];
-        //     product_name = data[1];
-        //     product_qty = data[2];
-        //     product_type = data[3];
-        //     product_id = data[4];
-        //     product_list = data[5];
-        //     qty_list = data[6];
-        //     product_warehouse_price = data[7];
-        //     batch_no = data[8];
-        //     product_batch_id = data[9];
-        //     is_embeded = data[11];
-        //     $.each(product_code, function(index) {
-        //         if (is_embeded[index])
-        //             lims_product_array.push(product_code[index] + ' (' + product_name[index] + ')|' +
-        //                 is_embeded[index]);
-        //         else
-        //             lims_product_array.push(product_code[index] + ' (' + product_name[index] + ')');
-        //     });
-        // });
+        $.get('sales/getproduct/' + id, function(data) {
+            lims_product_array = [];
+            product_code = data[0];
+            product_name = data[1];
+            product_qty = data[2];
+            product_type = data[3];
+            product_id = data[4];
+            product_list = data[5];
+            qty_list = data[6];
+            product_warehouse_price = data[7];
+            batch_no = data[8];
+            product_batch_id = data[9];
+            is_embeded = data[11];
+            $.each(product_code, function(index) {
+                if (is_embeded[index])
+                    lims_product_array.push(product_code[index] + ' (' + product_name[index] + ')|' +
+                        is_embeded[index]);
+                else
+                    lims_product_array.push(product_code[index] + ' (' + product_name[index] + ')');
+            });
+        });
 
         isCashRegisterAvailable(id);
 
