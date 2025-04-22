@@ -1026,7 +1026,7 @@
                         } else {
                             $lims_warehouse_list = DB::connection(env('TENANT_DB_CONNECTION'))->table('warehouses')->where('is_active', true)->get();
                         }
-                        $lims_account_list = \App\Account::where('is_active', true)->get();
+                        $lims_account_list = \App\TbRekening::where('depth', '3')->get();
                         ?>
                         <div class="row">
                             <div class="col-md-6 form-group">
@@ -1396,25 +1396,8 @@
             <script type="text/javascript" src="<?php echo asset('vendor/tinymce/js/tinymce/tinymce.min.js'); ?>"></script>
             <script type="text/javascript" src="<?php echo asset('js/dropzone.js'); ?>"></script>
 
-            <!-- table sorter js-->
-            @if (Config::get('app.locale') == 'ar')
-                <script type="text/javascript" src="<?php echo asset('vendor/datatable/pdfmake_arabic.min.js'); ?>"></script>
-                <script type="text/javascript" src="<?php echo asset('vendor/datatable/vfs_fonts_arabic.js'); ?>"></script>
-            @else
-                <script type="text/javascript" src="<?php echo asset('vendor/datatable/pdfmake.min.js'); ?>"></script>
-                <script type="text/javascript" src="<?php echo asset('vendor/datatable/vfs_fonts.js'); ?>"></script>
-            @endif
             <script type="text/javascript" src="<?php echo asset('vendor/datatable/jquery.dataTables.min.js'); ?>"></script>
             <script type="text/javascript" src="<?php echo asset('vendor/datatable/dataTables.bootstrap4.min.js'); ?>"></script>
-            <script type="text/javascript" src="<?php echo asset('vendor/datatable/dataTables.buttons.min.js'); ?>"></script>
-            <script type="text/javascript" src="<?php echo asset('vendor/datatable/jszip.min.js'); ?>"></script>
-            <script type="text/javascript" src="<?php echo asset('vendor/datatable/buttons.bootstrap4.min.js'); ?>">
-                ">
-            </script>
-            <script type="text/javascript" src="<?php echo asset('vendor/datatable/buttons.colVis.min.js'); ?>"></script>
-            <script type="text/javascript" src="<?php echo asset('vendor/datatable/buttons.html5.min.js'); ?>"></script>
-            <script type="text/javascript" src="<?php echo asset('vendor/datatable/buttons.printnew.js'); ?>"></script>
-
             <script type="text/javascript" src="<?php echo asset('vendor/datatable/sum().js'); ?>"></script>
             <script type="text/javascript" src="<?php echo asset('vendor/datatable/dataTables.checkboxes.min.js'); ?>"></script>
             <script type="text/javascript" src="https://cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js">
@@ -1454,24 +1437,8 @@
             <script type="text/javascript" src="<?php echo asset('../../vendor/tinymce/js/tinymce/tinymce.min.js'); ?>"></script>
             <script type="text/javascript" src="<?php echo asset('../../js/dropzone.js'); ?>"></script>
 
-            <!-- table sorter js-->
-            @if (Config::get('app.locale') == 'ar')
-                <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/pdfmake_arabic.min.js'); ?>"></script>
-                <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/vfs_fonts_arabic.js'); ?>"></script>
-            @else
-                <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/pdfmake.min.js'); ?>"></script>
-                <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/vfs_fonts.js'); ?>"></script>
-            @endif
             <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/jquery.dataTables.min.js'); ?>"></script>
             <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/dataTables.bootstrap4.min.js'); ?>"></script>
-            <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/dataTables.buttons.min.js'); ?>"></script>
-            <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/buttons.bootstrap4.min.js'); ?>">
-                ">
-            </script>
-            <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/buttons.colVis.min.js'); ?>"></script>
-            <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/buttons.html5.min.js'); ?>"></script>
-            <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/buttons.printnew.js'); ?>"></script>
-
             <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/sum().js'); ?>"></script>
             <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/dataTables.checkboxes.min.js'); ?>"></script>
             <script type="text/javascript" src="https://cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js">
