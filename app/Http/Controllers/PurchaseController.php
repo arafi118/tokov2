@@ -421,6 +421,7 @@ class PurchaseController extends Controller
 
         try {
             $data = $request->except('document');
+            dd("UNDER MAINTENANCE");
 
             if (isset($data['is_po']) && $data['status'] == 1) {
                 return redirect()->back()->with('not_permitted', 'Pembelian PO tidak boleh langsung ber-status Received');

@@ -322,12 +322,17 @@
                                                                     required>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-6 mt-1">
+                                                        <div class="col-md-7 mt-1">
                                                             <label>{{ trans('file.Change') }} : </label>
-                                                            <input type="text" id="change" name="change"
-                                                                class="form-control" step="any" readonly>
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text prepend">Rp</span>
+                                                                </div>
+                                                                <input type="text" id="change" name="change"
+                                                                    class="form-control" step="any" readonly>
+                                                            </div>
                                                         </div>
-                                                        <div class="col-md-6 mt-1">
+                                                        <div class="col-md-5 mt-1">
                                                             <label>{{ trans('file.Paid By') }}</label>
                                                             <select name="paid_by_id" id="paid_by_id_add"
                                                                 class="form-control selectpicker">
@@ -1109,6 +1114,19 @@
                 $("#debit_card").hide();
             }
         });
+
+        $('input[name="amount"]').on('keyup', function() {
+            var amount = toNumber($(this).val());
+            var grand_total = toNumber($('#grand_total').text());
+            var change = grand_total - amount;
+
+            if (change < 0) {
+                $('#submit-btn').prop('disabled', true);
+            } else {
+                $('#submit-btn').prop('disabled', false);
+                $('#change').val(toDecimal(change));
+            }
+        })
     </script>
 
     <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
