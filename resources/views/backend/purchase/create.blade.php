@@ -185,7 +185,7 @@
                                                     <div class="form-group">
                                                         <label>{{ trans('file.Order Discount Type') }}</label>
                                                         <select id="order-discount-type" name="order_discount_type"
-                                                            class="form-control">
+                                                            class="form-control calculate">
                                                             <option value="Flat">{{ trans('file.Flat') }}</option>
                                                             <option value="Percentage">{{ trans('file.Percentage') }}
                                                             </option>
@@ -196,7 +196,7 @@
                                                     <div class="form-group">
                                                         <label>{{ trans('file.Value') }}</label>
                                                         <input type="text" name="order_discount_value"
-                                                            class="form-control mask" id="order-discount-val">
+                                                            class="form-control calculate mask" id="order-discount-val">
                                                         <input type="hidden" name="order_discount" class="form-control"
                                                             id="order-discount">
                                                     </div>
@@ -205,7 +205,7 @@
                                                     <div class="form-group">
                                                         <label>{{ trans('file.Order Cashback Type') }}</label>
                                                         <select id="order-cashback-type" name="order_cashback_type"
-                                                            class="form-control">
+                                                            class="form-control calculate">
                                                             <option value="Flat">{{ trans('file.Flat') }}</option>
                                                             <option value="Percentage">{{ trans('file.Percentage') }}
                                                             </option>
@@ -216,7 +216,7 @@
                                                     <div class="form-group">
                                                         <label>{{ trans('file.Value') }}</label>
                                                         <input type="text" name="order_cashback_value"
-                                                            class="form-control mask" id="order-cashback-val">
+                                                            class="form-control calculate mask" id="order-cashback-val">
                                                         <input type="hidden" name="order_cashback" class="form-control"
                                                             id="order-cashback">
                                                     </div>
@@ -224,7 +224,7 @@
                                                 <div class="col-sm-6">
                                                     <div class="form-group">
                                                         <label>{{ trans('file.Order Tax') }}</label>
-                                                        <select class="form-control" name="order_tax_rate">
+                                                        <select class="form-control calculate" name="order_tax_rate">
                                                             <option value="0">{{ trans('file.No Tax') }}</option>
                                                             @foreach ($lims_tax_list as $tax)
                                                                 <option value="{{ $tax->rate }}">{{ $tax->name }}
@@ -238,8 +238,8 @@
                                                         <label>
                                                             <strong>{{ trans('file.Shipping Cost') }}</strong>
                                                         </label>
-                                                        <input type="number" name="shipping_cost" class="form-control"
-                                                            step="any" />
+                                                        <input type="number" name="shipping_cost"
+                                                            class="form-control calculate" step="any" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -262,7 +262,7 @@
                                                             class="list-group-item pl-0 pr-0 d-flex justify-content-between">
                                                             <strong>{{ trans('file.Items') }}</strong>
                                                             <span>
-                                                                Rp. <span id="item">0.00</span>
+                                                                <span id="item">0(0)</span>
                                                             </span>
                                                         </li>
                                                         <li
@@ -1002,16 +1002,30 @@
             var total_qty = toNumber($('#total-qty').text());
             var subtotal = toNumber($('#total').text());
             var order_tax = toNumber($('select[name="order_tax_rate"]').val());
-            var order_discount = toNumber($('input[name="order_discount"]').val());
-            var order_cashback = toNumber($('input[name="order_cashback"]').val());
             var shipping_cost = toNumber($('input[name="shipping_cost"]').val());
+            var order_discount_type = $('select[name="order_discount_type"]').val();
+            var order_discount_value = toNumber($('input[name="order_discount_value"]').val());
+            var order_cashback_type = $('select[name="order_cashback_type"]').val();
+            var order_cashback_value = toNumber($('input[name="order_cashback_value"]').val());
 
-            if (!order_discount)
-                order_discount = 0.00;
-            if (!order_cashback)
-                order_cashback = 0.00;
+            if (!order_discount_value)
+                order_discount_value = 0.00;
+            if (!order_cashback_value)
+                order_cashback_value = 0.00;
             if (!shipping_cost)
                 shipping_cost = 0.00;
+
+            if (order_discount_type == 'Percentage' && order_discount_value > 0) {
+                order_discount = (subtotal / 100) * order_discount_value;
+            } else {
+                order_discount = order_discount_value;
+            }
+
+            if (order_cashback_type == 'Percentage' && order_cashback_value > 0) {
+                order_cashback = (subtotal / 100) * order_cashback_value;
+            } else {
+                order_cashback = order_cashback_value;
+            }
 
             item = ++item + '(' + total_qty + ')';
             order_tax = (subtotal - order_discount) * (order_tax / 100);
@@ -1029,19 +1043,7 @@
             $('input[name="grand_total"]').val(grand_total.toFixed(2));
         }
 
-        $('input[name="order_discount"]').on("input", function() {
-            calculateGrandTotal();
-        });
-
-        $('input[name="order_cashback"]').on("input", function() {
-            calculateGrandTotal();
-        });
-
-        $('input[name="shipping_cost"]').on("input", function() {
-            calculateGrandTotal();
-        });
-
-        $('select[name="order_tax_rate"]').on("change", function() {
+        $('.calculate').on("change", function() {
             calculateGrandTotal();
         });
 
