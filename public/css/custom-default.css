@@ -1424,3 +1424,7 @@ table.dataTable tbody td.dt-checkboxes-cell {
 .custom-checkbox .custom-control-input:focus~.custom-control-indicator {
   box-shadow: none !important;
 }
+
+.table.table-middle tr td {
+  vertical-align: middle
+}

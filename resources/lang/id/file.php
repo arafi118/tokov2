@@ -19,7 +19,7 @@ return [
 	"delete" => "Hapus",
 	"name" => "Nama",
 	"submit" => "Simpan",
-	"update" => "perbarui",
+	"update" => "Perbarui",
 	"The field labels marked with * are required input fields" => "Label bertanda * harus diisi",
 	"settings" => "pengaturan",
 	"logout" => "keluar",

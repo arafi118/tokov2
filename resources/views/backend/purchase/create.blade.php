@@ -102,7 +102,7 @@
                                         <div class="col-md-12">
                                             <h5>{{ trans('file.Order Table') }} *</h5>
                                             <div class="table-responsive mt-3">
-                                                <table id="myTable" class="table table-hover order-list">
+                                                <table id="myTable" class="table table-middle table-hover order-list">
                                                     <thead>
                                                         <tr>
                                                             <th>{{ trans('file.name') }}</th>
@@ -446,8 +446,11 @@
 
                             <input type="hidden" name="edit_qty" class="form-control" step="any">
                             <input type="hidden" name="edit_unit_cost" class="form-control" step="any">
-                            <button type="button" name="update_btn"
-                                class="btn btn-primary">{{ trans('file.update') }}</button>
+                            <div class="d-flex justify-content-end">
+                                <button type="button" name="update_btn" class="btn btn-primary">
+                                    {{ trans('file.update') }}
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -812,7 +815,7 @@
                         cols += '<td class="tax"></td>';
                         cols += '<td class="sub-total"></td>';
                         cols +=
-                            '<td><button type="button" class="ibtnDel btn btn-md btn-danger"><i class="dripicons-trash"></i></button></td>';
+                            '<td><button type="button" class="ibtnDel btn btn-sm btn-danger"><i class="dripicons-trash"></i></button></td>';
                         cols += '<input type="hidden" class="product-code" name="product_code[]" value="' +
                             data[1] + '"/>';
                         cols += '<input type="hidden" class="product-id" name="product_id[]" value="' + data[
