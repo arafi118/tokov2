@@ -235,9 +235,8 @@
                             <select name="paid_by_id" id="paid_by_id_add"class="form-control selectpicker">
                                 <option value="1">Cash</option>
                                 <!--  <option value="3">Credit Card</option>
-                                                        <option value="4">Cheque</option> -->
+                                                            <option value="4">Cheque</option> -->
                                 <option value="5">Debit Card</option>
-                                <!-- <option value="6">Tempo / Utang</option> -->
                             </select>
                         </div>
                     </div>
@@ -322,7 +321,7 @@
                             <select name="edit_paid_by_id" class="form-control selectpicker">
                                 <option value="1">Cash</option>
                                 <!--  <option value="3">Credit Card</option>
-                                                        <option value="4">Cheque</option> -->
+                                                            <option value="4">Cheque</option> -->
                                 <option value="5">Debit Card</option>
                                 <option value="6">Tempo / Utang</option>
                             </select>

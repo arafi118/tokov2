@@ -1026,7 +1026,7 @@
                         } else {
                             $lims_warehouse_list = DB::connection(env('TENANT_DB_CONNECTION'))->table('warehouses')->where('is_active', true)->get();
                         }
-                        $lims_account_list = \App\TbRekening::where('depth', '3')->get();
+                        $lims_account_list = \App\Account::where('is_active', true)->get();
                         ?>
                         <div class="row">
                             <div class="col-md-6 form-group">
@@ -1065,11 +1065,11 @@
                                 <select class="form-control selectpicker" name="account_id">
                                     @foreach ($lims_account_list as $account)
                                         @if ($account->is_default)
-                                            <option selected value="{{ $account->id }}">{{ $account->nama }}
-                                                [{{ $account->kode }}]</option>
+                                            <option selected value="{{ $account->id }}">{{ $account->name }}
+                                                [{{ $account->account_no }}]</option>
                                         @else
-                                            <option value="{{ $account->id }}">{{ $account->nama }}
-                                                [{{ $account->kode }}]</option>
+                                            <option value="{{ $account->id }}">{{ $account->name }}
+                                                [{{ $account->account_no }}]</option>
                                         @endif
                                     @endforeach
                                 </select>
@@ -1150,8 +1150,8 @@
                                 <label> {{ trans('file.Account') }}</label>
                                 <select class="form-control selectpicker" name="account_id">
                                     @foreach ($lims_account_list as $account)
-                                        <option value="{{ $account->id }}">{{ $account->nama }}
-                                            [{{ $account->kode }}]</option>
+                                        <option value="{{ $account->id }}">{{ $account->name }}
+                                            [{{ $account->account_no }}]</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -1396,8 +1396,25 @@
             <script type="text/javascript" src="<?php echo asset('vendor/tinymce/js/tinymce/tinymce.min.js'); ?>"></script>
             <script type="text/javascript" src="<?php echo asset('js/dropzone.js'); ?>"></script>
 
+            <!-- table sorter js-->
+            @if (Config::get('app.locale') == 'ar')
+                <script type="text/javascript" src="<?php echo asset('vendor/datatable/pdfmake_arabic.min.js'); ?>"></script>
+                <script type="text/javascript" src="<?php echo asset('vendor/datatable/vfs_fonts_arabic.js'); ?>"></script>
+            @else
+                <script type="text/javascript" src="<?php echo asset('vendor/datatable/pdfmake.min.js'); ?>"></script>
+                <script type="text/javascript" src="<?php echo asset('vendor/datatable/vfs_fonts.js'); ?>"></script>
+            @endif
             <script type="text/javascript" src="<?php echo asset('vendor/datatable/jquery.dataTables.min.js'); ?>"></script>
             <script type="text/javascript" src="<?php echo asset('vendor/datatable/dataTables.bootstrap4.min.js'); ?>"></script>
+            <script type="text/javascript" src="<?php echo asset('vendor/datatable/dataTables.buttons.min.js'); ?>"></script>
+            <script type="text/javascript" src="<?php echo asset('vendor/datatable/jszip.min.js'); ?>"></script>
+            <script type="text/javascript" src="<?php echo asset('vendor/datatable/buttons.bootstrap4.min.js'); ?>">
+                ">
+            </script>
+            <script type="text/javascript" src="<?php echo asset('vendor/datatable/buttons.colVis.min.js'); ?>"></script>
+            <script type="text/javascript" src="<?php echo asset('vendor/datatable/buttons.html5.min.js'); ?>"></script>
+            <script type="text/javascript" src="<?php echo asset('vendor/datatable/buttons.printnew.js'); ?>"></script>
+
             <script type="text/javascript" src="<?php echo asset('vendor/datatable/sum().js'); ?>"></script>
             <script type="text/javascript" src="<?php echo asset('vendor/datatable/dataTables.checkboxes.min.js'); ?>"></script>
             <script type="text/javascript" src="https://cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js">
@@ -1437,8 +1454,24 @@
             <script type="text/javascript" src="<?php echo asset('../../vendor/tinymce/js/tinymce/tinymce.min.js'); ?>"></script>
             <script type="text/javascript" src="<?php echo asset('../../js/dropzone.js'); ?>"></script>
 
+            <!-- table sorter js-->
+            @if (Config::get('app.locale') == 'ar')
+                <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/pdfmake_arabic.min.js'); ?>"></script>
+                <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/vfs_fonts_arabic.js'); ?>"></script>
+            @else
+                <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/pdfmake.min.js'); ?>"></script>
+                <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/vfs_fonts.js'); ?>"></script>
+            @endif
             <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/jquery.dataTables.min.js'); ?>"></script>
             <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/dataTables.bootstrap4.min.js'); ?>"></script>
+            <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/dataTables.buttons.min.js'); ?>"></script>
+            <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/buttons.bootstrap4.min.js'); ?>">
+                ">
+            </script>
+            <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/buttons.colVis.min.js'); ?>"></script>
+            <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/buttons.html5.min.js'); ?>"></script>
+            <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/buttons.printnew.js'); ?>"></script>
+
             <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/sum().js'); ?>"></script>
             <script type="text/javascript" src="<?php echo asset('../../vendor/datatable/dataTables.checkboxes.min.js'); ?>"></script>
             <script type="text/javascript" src="https://cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js">
@@ -1449,6 +1482,7 @@
             </script>
         @endif
     @endif
+    <script src="https://cdn.jsdelivr.net/gh/plentz/jquery-maskmoney@master/dist/jquery.maskMoney.min.js"></script>
     <script type="text/javascript" src="<?php echo asset('../../vendor/sweetalert/js/sweetalert2.all.min.js'); ?>"></script>
     @stack('scripts')
     <script>
@@ -1466,6 +1500,7 @@
     </script>
     <script type="text/javascript">
         $("input").attr("autocomplete", "off");
+
         var theme = <?php echo json_encode($theme); ?>;
         if (theme == 'dark') {
             $('body').addClass('dark-mode');
@@ -1621,6 +1656,36 @@
         $('.selectpicker').selectpicker({
             style: 'btn-link',
         });
+
+        function toDecimal(angka) {
+            let decimal = angka.toLocaleString('en-US', {
+                minimumFractionDigits: 2
+            });
+            return decimal;
+        }
+
+        function toNumber(angka) {
+            let number = parseFloat(angka.replace(/,/g, ''));
+            return number;
+        }
+
+        function preLoad() {
+            $('.form-control.mask').maskMoney({
+                precision: 0
+            })
+            $('.form-control.decimal').maskMoney()
+
+            $('input.form-control').on('focus', function() {
+                let input = this;
+                setTimeout(function() {
+                    input.select();
+                }, 100);
+            });
+        }
+
+        $(document).ready(function() {
+            preLoad()
+        })
     </script>
 </body>
 

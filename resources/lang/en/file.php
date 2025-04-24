@@ -685,4 +685,5 @@ return [
 	"Type of book" => "Type of Book",
 	"Inventory type" => "Inventory Type",
 	"Journal" => "Journal",
+	"Payment Details" => "Payment Details",
 ];

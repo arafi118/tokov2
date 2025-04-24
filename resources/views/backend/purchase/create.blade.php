@@ -23,7 +23,7 @@
                                             <div class="form-group">
                                                 <label>{{ trans('file.Date') }}</label>
                                                 <input type="text" name="created_at" class="form-control date"
-                                                    placeholder="Choose date" />
+                                                    placeholder="Choose date" value="{{ date('d-m-Y') }}" />
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -56,8 +56,8 @@
 
                                                 <select name="status" id="status" class="form-control">
                                                     <option value="1">{{ trans('file.Recieved') }}</option>
-                                                    <!--  <option value="2">{{ trans('file.Partial') }}</option>
-                                                                                                            <option value="3">{{ trans('file.Pending') }}</option> -->
+                                                    {{-- <option value="2">{{ trans('file.Partial') }}</option> --}}
+                                                    <option value="3">{{ trans('file.Pending') }}</option>
                                                     <option value="4">{{ trans('file.Ordered') }}</option>
                                                 </select>
 
@@ -106,12 +106,10 @@
                                                     <thead>
                                                         <tr>
                                                             <th>{{ trans('file.name') }}</th>
-                                                            <th>{{ trans('file.Code') }}</th>
                                                             <th>{{ trans('file.Quantity') }}</th>
                                                             <th class="recieved-product-qty d-none">
                                                                 {{ trans('file.Recieved') }}
                                                             </th>
-                                                            <th>{{ trans('file.Batch No') }}</th>
                                                             <th>{{ trans('file.Expired Date') }}</th>
                                                             <th>{{ trans('file.Net Unit Cost') }}</th>
                                                             <th>{{ trans('file.Discount') }}</th>
@@ -124,10 +122,9 @@
                                                     <tbody>
                                                     </tbody>
                                                     <tfoot class="tfoot active">
-                                                        <th colspan="2">{{ trans('file.Total') }}</th>
+                                                        <th>{{ trans('file.Total') }}</th>
                                                         <th id="total-qty">0</th>
                                                         <th class="recieved-product-qty d-none"></th>
-                                                        <th></th>
                                                         <th></th>
                                                         <th></th>
                                                         <th id="total-discount">0.00</th>
@@ -180,57 +177,191 @@
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="row mt-3">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>{{ trans('file.Order Tax') }}</label>
-                                                <select class="form-control" name="order_tax_rate">
-                                                    <option value="0">{{ trans('file.No Tax') }}</option>
-                                                    @foreach ($lims_tax_list as $tax)
-                                                        <option value="{{ $tax->rate }}">{{ $tax->name }}</option>
-                                                    @endforeach
-                                                </select>
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label>{{ trans('file.Order Discount Type') }}</label>
+                                                        <select id="order-discount-type" name="order_discount_type"
+                                                            class="form-control">
+                                                            <option value="Flat">{{ trans('file.Flat') }}</option>
+                                                            <option value="Percentage">{{ trans('file.Percentage') }}
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label>{{ trans('file.Value') }}</label>
+                                                        <input type="text" name="order_discount_value"
+                                                            class="form-control mask" id="order-discount-val">
+                                                        <input type="hidden" name="order_discount" class="form-control"
+                                                            id="order-discount">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label>{{ trans('file.Order Cashback Type') }}</label>
+                                                        <select id="order-cashback-type" name="order_cashback_type"
+                                                            class="form-control">
+                                                            <option value="Flat">{{ trans('file.Flat') }}</option>
+                                                            <option value="Percentage">{{ trans('file.Percentage') }}
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label>{{ trans('file.Value') }}</label>
+                                                        <input type="text" name="order_cashback_value"
+                                                            class="form-control mask" id="order-cashback-val">
+                                                        <input type="hidden" name="order_cashback" class="form-control"
+                                                            id="order-cashback">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label>{{ trans('file.Order Tax') }}</label>
+                                                        <select class="form-control" name="order_tax_rate">
+                                                            <option value="0">{{ trans('file.No Tax') }}</option>
+                                                            @foreach ($lims_tax_list as $tax)
+                                                                <option value="{{ $tax->rate }}">{{ $tax->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            <strong>{{ trans('file.Shipping Cost') }}</strong>
+                                                        </label>
+                                                        <input type="number" name="shipping_cost" class="form-control"
+                                                            step="any" />
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>
-                                                    <strong>{{ trans('file.Discount') }}</strong>
-                                                </label>
-                                                <input type="number" name="order_discount" class="form-control"
-                                                    step="any" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>
-                                                    <strong>{{ trans('file.Cashback') }}</strong>
-                                                </label>
-                                                <input type="number" name="order_cashback" class="form-control"
-                                                    step="any" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>
-                                                    <strong>{{ trans('file.Shipping Cost') }}</strong>
-                                                </label>
-                                                <input type="number" name="shipping_cost" class="form-control"
-                                                    step="any" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
+                                        <div class="col-md-6 d-flex flex-column">
+                                            <div class="form-group form-group flex-grow-1 d-flex flex-column h-100">
                                                 <label>{{ trans('file.Note') }}</label>
-                                                <textarea rows="5" class="form-control" name="note"></textarea>
+                                                <textarea class="form-control h-100 flex-grow-1" name="note"></textarea>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <button type="submit" class="btn btn-primary"
-                                            id="submit-btn">{{ trans('file.submit') }}</button>
+
+                                    <div class="card border mt-3">
+                                        <div class="card-body">
+                                            <h4 class="text-center">{{ trans('file.Payment Details') }}</h4>
+                                            <div class="row border-top">
+                                                <div class="col-md-6">
+                                                    <ul class="list-group list-group-flush">
+                                                        <li
+                                                            class="list-group-item pl-0 pr-0 d-flex justify-content-between">
+                                                            <strong>{{ trans('file.Items') }}</strong>
+                                                            <span>
+                                                                Rp. <span id="item">0.00</span>
+                                                            </span>
+                                                        </li>
+                                                        <li
+                                                            class="list-group-item pl-0 pr-0 d-flex justify-content-between">
+                                                            <strong>{{ trans('file.Total') }}</strong>
+                                                            <span>
+                                                                Rp. <span id="subtotal">0.00</span>
+                                                            </span>
+                                                        </li>
+                                                        <li
+                                                            class="list-group-item pl-0 pr-0 d-flex justify-content-between">
+                                                            <strong>{{ trans('file.Order Tax') }}</strong>
+                                                            <span>
+                                                                Rp. <span id="order_tax">0.00</span>
+                                                            </span>
+                                                        </li>
+                                                        <li
+                                                            class="list-group-item pl-0 pr-0 d-flex justify-content-between">
+                                                            <strong>{{ trans('file.Order Discount') }}</strong>
+                                                            <span>
+                                                                Rp. <span id="order_discount">0.00</span>
+                                                            </span>
+                                                        </li>
+                                                        <li
+                                                            class="list-group-item pl-0 pr-0 d-flex justify-content-between">
+                                                            <strong>{{ trans('file.Order Cashback') }}</strong>
+                                                            <span>
+                                                                Rp. <span id="order_cashback">0.00</span>
+                                                            </span>
+                                                        </li>
+                                                        <li
+                                                            class="list-group-item pl-0 pr-0 d-flex justify-content-between">
+                                                            <strong>{{ trans('file.Shipping Cost') }}</strong>
+                                                            <span>
+                                                                Rp. <span id="shipping_cost">0.00</span>
+                                                            </span>
+                                                        </li>
+                                                        <li
+                                                            class="list-group-item pl-0 pr-0 d-flex justify-content-between">
+                                                            <strong>{{ trans('file.grand total') }}</strong>
+                                                            <span>
+                                                                Rp. <span id="grand_total">0.00</span>
+                                                            </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="col-md-6 d-flex flex-column justify-content-between">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <label>{{ trans('file.Paying Amount') }} *</label>
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text prepend">Rp</span>
+                                                                </div>
+                                                                <input type="text" id="amount" name="amount"
+                                                                    class="form-control text-right decimal" step="any"
+                                                                    required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 mt-1">
+                                                            <label>{{ trans('file.Change') }} : </label>
+                                                            <input type="text" id="change" name="change"
+                                                                class="form-control" step="any" readonly>
+                                                        </div>
+                                                        <div class="col-md-6 mt-1">
+                                                            <label>{{ trans('file.Paid By') }}</label>
+                                                            <select name="paid_by_id" id="paid_by_id_add"
+                                                                class="form-control selectpicker">
+                                                                <option value="1">Cash</option>
+                                                                <option value="5">Debit Card</option>
+                                                            </select>
+                                                        </div>
+                                                        <div id="debit_card" class="col-md-12 mt-1">
+                                                            <div class="form-group">
+                                                                <label>Transfer / Debit Card</label>
+                                                                <select class="form-control selectpicker"
+                                                                    name="no_rek_bank">
+                                                                    @foreach ($rekening as $rek)
+                                                                        <option value="{{ $rek->id }}">
+                                                                            {{ $rek->nama }} -
+                                                                            {{ $rek->no_rek_bank }} -
+                                                                            {{ $rek->atas_nama_rek }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="d-flex justify-content-end">
+                                                        <div class="form-group">
+                                                            <button type="submit" class="btn btn-primary"
+                                                                id="submit-btn">
+                                                                {{ trans('file.submit') }}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -240,31 +371,7 @@
                 </div>
             </div>
         </div>
-        <div class="container-fluid">
-            <table class="table table-bordered table-condensed totals">
-                <td><strong>{{ trans('file.Items') }}</strong>
-                    <span class="pull-right" id="item">0.00</span>
-                </td>
-                <td><strong>{{ trans('file.Total') }}</strong>
-                    <span class="pull-right" id="subtotal">0.00</span>
-                </td>
-                <td><strong>{{ trans('file.Order Tax') }}</strong>
-                    <span class="pull-right" id="order_tax">0.00</span>
-                </td>
-                <td><strong>{{ trans('file.Order Discount') }}</strong>
-                    <span class="pull-right" id="order_discount">0.00</span>
-                </td>
-                <td><strong>{{ trans('file.Order Cashback') }}</strong>
-                    <span class="pull-right" id="order_cashback">0.00</span>
-                </td>
-                <td><strong>{{ trans('file.Shipping Cost') }}</strong>
-                    <span class="pull-right" id="shipping_cost">0.00</span>
-                </td>
-                <td><strong>{{ trans('file.grand total') }}</strong>
-                    <span class="pull-right" id="grand_total">0.00</span>
-                </td>
-            </table>
-        </div>
+
         <div id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
             class="modal fade text-left">
             <div role="document" class="modal-dialog">
@@ -277,44 +384,68 @@
                     <div class="modal-body">
                         <form>
                             <div class="row modal-element">
-                                <div class="col-md-4 form-group">
-                                    <label>{{ trans('file.Quantity') }}</label>
-                                    <input type="number" name="edit_qty" class="form-control" step="any">
+                                <div class="col-md-8">
+                                    <div class="row">
+                                        <div class="col-sm-6 form-group">
+                                            <label>{{ trans('file.Order Discount Type') }}</label>
+                                            <select name="edit_discount_type" class="form-control">
+                                                <option value="Flat">{{ trans('file.Flat') }}</option>
+                                                <option value="Percentage">
+                                                    {{ trans('file.Percentage') }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-6 form-group">
+                                            <label>{{ trans('file.Unit Discount') }}</label>
+                                            <input type="number" name="edit_discount" class="form-control mask"
+                                                step="any">
+                                        </div>
+
+                                        <div class="col-sm-6 form-group">
+                                            <label>{{ trans('file.Order Cashback Type') }}</label>
+                                            <select name="edit_cashback_type" class="form-control">
+                                                <option value="Flat">{{ trans('file.Flat') }}</option>
+                                                <option value="Percentage">
+                                                    {{ trans('file.Percentage') }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-6 form-group">
+                                            <label>{{ trans('file.Unit Cashback') }}</label>
+                                            <input type="number" name="edit_cashback" class="form-control mask"
+                                                step="any">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-md-4 form-group">
-                                    <label>{{ trans('file.Unit Discount') }}</label>
-                                    <input type="number" name="edit_discount" class="form-control" step="any">
-                                </div>
-                                <div class="col-md-4 form-group">
-                                    <label>{{ trans('file.Unit Cashback') }}</label>
-                                    <input type="number" name="edit_cashback" class="form-control" step="any">
-                                </div>
-                                <div class="col-md-4 form-group">
-                                    <label>{{ trans('file.Unit Cost') }}</label>
-                                    <input type="number" name="edit_unit_cost" class="form-control" step="any">
-                                </div>
-                                <?php
-                                $tax_name_all[] = 'No Tax';
-                                $tax_rate_all[] = 0;
-                                foreach ($lims_tax_list as $tax) {
-                                    $tax_name_all[] = $tax->name;
-                                    $tax_rate_all[] = $tax->rate;
-                                }
-                                ?>
-                                <div class="col-md-4 form-group">
-                                    <label>{{ trans('file.Tax Rate') }}</label>
-                                    <select name="edit_tax_rate" class="form-control selectpicker">
-                                        @foreach ($tax_name_all as $key => $name)
-                                            <option value="{{ $key }}">{{ $name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-4 form-group">
-                                    <label>{{ trans('file.Product Unit') }}</label>
-                                    <select name="edit_unit" class="form-control selectpicker">
-                                    </select>
+                                <div class="col-md-4">
+                                    <div class="row">
+                                        <?php
+                                        $tax_name_all[] = 'No Tax';
+                                        $tax_rate_all[] = 0;
+                                        foreach ($lims_tax_list as $tax) {
+                                            $tax_name_all[] = $tax->name;
+                                            $tax_rate_all[] = $tax->rate;
+                                        }
+                                        ?>
+                                        <div class="col-sm-12 form-group">
+                                            <label>{{ trans('file.Tax Rate') }}</label>
+                                            <select name="edit_tax_rate" class="form-control selectpicker">
+                                                @foreach ($tax_name_all as $key => $name)
+                                                    <option value="{{ $key }}">{{ $name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-12 form-group">
+                                            <label>{{ trans('file.Product Unit') }}</label>
+                                            <select name="edit_unit" class="form-control selectpicker">
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+
+                            <input type="hidden" name="edit_qty" class="form-control" step="any">
+                            <input type="hidden" name="edit_unit_cost" class="form-control" step="any">
                             <button type="button" name="update_btn"
                                 class="btn btn-primary">{{ trans('file.update') }}</button>
                         </form>
@@ -329,6 +460,7 @@
         $("ul#purchase").siblings('a').attr('aria-expanded', 'true');
         $("ul#purchase").addClass("show");
         $("ul#purchase #purchase-create-menu").addClass("active");
+        $("#debit_card").hide();
 
         // array data depend on warehouse
         var product_code = [];
@@ -339,6 +471,8 @@
         var product_cost = [];
         var product_discount = [];
         var product_cashback = [];
+        var product_discount_type = [];
+        var product_cashback_type = [];
         var tax_rate = [];
         var tax_name = [];
         var tax_method = [];
@@ -447,8 +581,6 @@
             });
         });
 
-
-
         //Change quantity
         $("#myTable").on('input', '.qty', function() {
             rowindex = $(this).closest('tr').index();
@@ -458,7 +590,6 @@
             }
             checkQuantity($(this).val(), true);
         });
-
 
         //Delete product
         $("table.order-list tbody").on("click", ".ibtnDel", function(event) {
@@ -480,10 +611,11 @@
         //Edit product
         $("table.order-list").on("click", ".edit-product", function() {
             rowindex = $(this).closest('tr').index();
+            var table_row = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')');
+
             $(".imei-section").remove();
             if (is_imei[rowindex]) {
-                var imeiNumbers = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find(
-                    '.imei-number').val();
+                var imeiNumbers = table_row.find('.imei-number').val();
 
                 htmlText =
                     '<div class="col-md-12 form-group imei-section"><label>IMEI or Serial Numbers</label><input type="text" name="imei_numbers" value="' +
@@ -492,17 +624,18 @@
                 $("#editModal .modal-element").append(htmlText);
             }
 
-            var row_product_name = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find(
-                'td:nth-child(1)').text();
-            var row_product_code = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find(
-                'td:nth-child(2)').text();
+            var row_product_name = table_row.find('td:nth-child(1)').text();
+            var row_product_code = table_row.find('td:nth-child(2)').text();
             $('#modal-header').text(row_product_name + '(' + row_product_code + ')');
 
             var qty = $(this).closest('tr').find('.qty').val();
             $('input[name="edit_qty"]').val(qty);
 
-            $('input[name="edit_discount"]').val(parseFloat(product_discount[rowindex]).toFixed(2));
-            $('input[name="edit_cashback"]').val(parseFloat(product_cashback[rowindex]).toFixed(2));
+            $('input[name="edit_discount"]').val(toDecimal(product_discount[rowindex]));
+            $('input[name="edit_cashback"]').val(toDecimal(product_cashback[rowindex]));
+
+            $('select[name="edit_discount_type"]').val(product_discount_type[rowindex]).change();
+            $('select[name="edit_cashback_type"]').val(product_cashback_type[rowindex]).change();
 
             unitConversion();
             $('input[name="edit_unit_cost"]').val(row_product_cost.toFixed(2));
@@ -526,16 +659,29 @@
 
         //Update product
         $('button[name="update_btn"]').on("click", function() {
+            var table_row = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')');
             if (is_imei[rowindex]) {
                 var imeiNumbers = $("#editModal input[name=imei_numbers]").val();
-                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.imei-number').val(
-                    imeiNumbers);
+                table_row.find('.imei-number').val(imeiNumbers);
             }
 
-            var edit_discount = $('input[name="edit_discount"]').val();
-            var edit_cashback = $('input[name="edit_cashback"]').val();
+            var edit_discount_value = toNumber($('input[name="edit_discount"]').val());
+            var edit_cashback_value = toNumber($('input[name="edit_cashback"]').val());
             var edit_qty = $('input[name="edit_qty"]').val();
             var edit_unit_cost = $('input[name="edit_unit_cost"]').val();
+            var edit_product_cost = product_cost[rowindex];
+
+            if ($('select[name="edit_discount_type"]').val() == 'Percentage') {
+                edit_discount = (parseFloat(edit_discount_value) / 100) * edit_product_cost;
+            } else {
+                edit_discount = parseFloat(edit_discount_value);
+            }
+
+            if ($('select[name="edit_cashback_type"]').val() == 'Percentage') {
+                edit_cashback = (parseFloat(edit_cashback_value) / 100) * edit_product_cost;
+            } else {
+                edit_cashback = parseFloat(edit_cashback_value);
+            }
 
             if (parseFloat(edit_discount) > parseFloat(edit_unit_cost)) {
                 alert('Invalid Discount Input!');
@@ -568,14 +714,16 @@
                 product_cost[rowindex] = $('input[name="edit_unit_cost"]').val() * row_unit_operation_value;
             }
 
-            product_discount[rowindex] = $('input[name="edit_discount"]').val();
-            product_cashback[rowindex] = $('input[name="edit_cashback"]').val();
+            product_discount[rowindex] = edit_discount_value;
+            product_discount_type[rowindex] = $('select[name="edit_discount_type"]').val();
+
+            product_cashback[rowindex] = edit_cashback_value;
+            product_cashback_type[rowindex] = $('select[name="edit_cashback_type"]').val();
 
             var position = $('select[name="edit_unit"]').val();
             var temp_operator = temp_unit_operator[position];
             var temp_operation_value = temp_unit_operation_value[position];
-            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.purchase-unit').val(
-                temp_unit_name[position]);
+            table_row.find('.purchase-unit').val(temp_unit_name[position]);
             temp_unit_name.splice(position, 1);
             temp_unit_operator.splice(position, 1);
             temp_unit_operation_value.splice(position, 1);
@@ -589,6 +737,18 @@
             unit_operation_value[rowindex] = temp_unit_operation_value.toString() + ',';
             checkQuantity(edit_qty, false);
         });
+
+        $('table.order-list').on('change', '.edit_net_unit_cost', function(e) {
+            e.preventDefault();
+
+            rowindex = $(this).closest('tr').index();
+            var this_product_cost = toNumber($(this).val());
+            var this_product_qty = $(this).closest('tr').find('.qty').val();
+
+            $(this).closest('tr').find('.net_unit_cost').val(this_product_cost);
+            product_cost[rowindex] = this_product_cost;
+            checkQuantity(this_product_qty, false);
+        })
 
         function productSearch(data) {
             $.ajax({
@@ -620,9 +780,8 @@
                         var newRow = $("<tr>");
                         var cols = '';
                         temp_unit_name = (data[6]).split(',');
-                        cols += '<td>' + data[0] +
-                            '<button type="button" class="edit-product btn btn-link" data-toggle="modal" data-target="#editModal"> <i class="dripicons-document-edit"></i></button></td>';
-                        cols += '<td>' + data[1] + '</td>';
+                        cols += '<td>' + data[0] + ' (' + data[1] + ') ' +
+                            '<a class="edit-product badge badge-warning" data-toggle="modal" data-target="#editModal"> <i class="dripicons-document-edit"></i></a></td>';
                         cols +=
                             '<td><input type="number" class="form-control form-control-sm qty" name="qty[]" value="1" step="any" required/></td>';
                         if ($('select[name="status"]').val() == 1)
@@ -635,18 +794,19 @@
                             cols +=
                             '<td class="recieved-product-qty d-none"><input type="number" class="form-control form-control-sm recieved" name="recieved[]" value="0" step="any"/></td>';
                         if (data[10]) {
-                            cols +=
-                                '<td><input type="text" class="form-control form-control-sm batch-no" name="batch_no[]" required/></td>';
+                            // cols +=
+                            //     '<td><input type="text" class="form-control form-control-sm batch-no" name="batch_no[]" required/></td>';
                             cols +=
                                 '<td><input type="text" class="form-control form-control-sm expired-date" name="expired_date[]" required/></td>';
                         } else {
-                            cols +=
-                                '<td><input type="text" class="form-control form-control-sm batch-no" name="batch_no[]" disabled/></td>';
+                            // cols +=
+                            //     '<td><input type="text" class="form-control form-control-sm batch-no" name="batch_no[]" disabled/></td>';
                             cols +=
                                 '<td><input type="text" class="form-control form-control-sm expired-date" name="expired_date[]" disabled/></td>';
                         }
 
-                        cols += '<td class="net_unit_cost"></td>';
+                        cols +=
+                            '<td><input type="text" class="form-control form-control-sm edit_net_unit_cost decimal" /></td>';
                         cols += '<td class="discount">0.00</td>';
                         cols += '<td class="cashback">0.00</td>';
                         cols += '<td class="tax"></td>';
@@ -659,7 +819,7 @@
                             9] + '"/>';
                         cols += '<input type="hidden" class="purchase-unit" name="purchase_unit[]" value="' +
                             temp_unit_name[0] + '"/>';
-                        cols += '<input type="hidden" class="net_unit_cost" name="net_unit_cost[]" />';
+                        cols += '<<input type="hidden" class="net_unit_cost" name="net_unit_cost[]" />';
                         cols += '<input type="hidden" class="discount-value" name="discount[]" />';
                         cols += '<input type="hidden" class="cashback-value" name="cashback[]" />';
                         cols += '<input type="hidden" class="tax-rate" name="tax_rate[]" value="' + data[3] +
@@ -673,8 +833,10 @@
 
                         rowindex = newRow.index();
                         product_cost.splice(rowindex, 0, parseFloat(data[2]));
-                        product_discount.splice(rowindex, 0, '0.00');
-                        product_cashback.splice(rowindex, 0, '0.00');
+                        product_discount.splice(rowindex, 0, '0');
+                        product_cashback.splice(rowindex, 0, '0');
+                        product_discount_type.splice(rowindex, 0, 'Flat');
+                        product_cashback_type.splice(rowindex, 0, 'Flat');
                         tax_rate.splice(rowindex, 0, parseFloat(data[3]));
                         tax_name.splice(rowindex, 0, data[4]);
                         tax_method.splice(rowindex, 0, data[5]);
@@ -689,30 +851,26 @@
                         }
                     }
 
+                    preLoad()
                 }
             });
         }
 
         function checkPo() {
-
             if ($('#is_tempo').is(':checked')) {
                 $('#is_tempo').prop('checked', false);
             }
 
             if ($('#is_po').is(':checked')) {
-
                 $('#is_tempo').attr('disabled', 'disabled');
             } else {
-
                 $('#is_tempo').removeAttr('disabled');
-
             }
-
         }
 
         function checkQuantity(purchase_qty, flag) {
-            var row_product_code = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('td:nth-child(2)')
-                .text();
+            var table_row = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')');
+            var row_product_code = table_row.find('td:nth-child(2)').text();
             var pos = product_code.indexOf(row_product_code);
             var operator = unit_operator[rowindex].split(',');
             var operation_value = unit_operation_value[rowindex].split(',');
@@ -721,62 +879,55 @@
             else if (operator[0] == '/')
                 total_qty = purchase_qty / operation_value[0];
 
-            $('#editModal').modal('hide');
-            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.qty').val(purchase_qty);
+            table_row.find('.qty').val(purchase_qty);
             var status = $('select[name="status"]').val();
             if (status == '1' || status == '2')
-                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.recieved').val(purchase_qty);
+                table_row.find('.recieved').val(purchase_qty);
             else
-                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.recieved').val(0);
+                table_row.find('.recieved').val(0);
+
+            $('#editModal').modal('hide');
             calculateRowProductData(purchase_qty);
         }
 
         function calculateRowProductData(quantity) {
             unitConversion();
 
-            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.discount').text((product_discount[
-                rowindex] * quantity).toFixed(2));
-            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.discount-value').val((product_discount[
-                rowindex] * quantity).toFixed(2));
-            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.cashback').text((product_cashback[
-                rowindex] * quantity).toFixed(2));
-            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.cashback-value').val((product_cashback[
-                rowindex] * quantity).toFixed(2));
-            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.tax-rate').val(tax_rate[rowindex]
-                .toFixed(2));
-
+            var table_row = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')');
             if (tax_method[rowindex] == 1) {
-                var net_unit_cost = row_product_cost - product_discount[rowindex];
+                var net_unit_cost = row_product_cost;
                 var tax = net_unit_cost * quantity * (tax_rate[rowindex] / 100);
-                var sub_total = (net_unit_cost * quantity) + tax;
-
-                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.net_unit_cost').text(net_unit_cost
-                    .toFixed(2));
-                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.net_unit_cost').val(net_unit_cost
-                    .toFixed(2));
-                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.tax').text(tax.toFixed(2));
-                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.tax-value').val(tax.toFixed(2));
-                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.sub-total').text(sub_total.toFixed(
-                    2));
-                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.subtotal-value').val(sub_total
-                    .toFixed(2));
+                var sub_total = ((net_unit_cost * quantity) + tax);
             } else {
-                var sub_total_unit = row_product_cost - product_discount[rowindex];
+                var sub_total_unit = row_product_cost;
                 var net_unit_cost = (100 / (100 + tax_rate[rowindex])) * sub_total_unit;
                 var tax = (sub_total_unit - net_unit_cost) * quantity;
-                var sub_total = sub_total_unit * quantity;
-
-                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.net_unit_cost').text(net_unit_cost
-                    .toFixed(2));
-                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.net_unit_cost').val(net_unit_cost
-                    .toFixed(2));
-                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.tax').text(tax.toFixed(2));
-                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.tax-value').val(tax.toFixed(2));
-                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.sub-total').text(sub_total.toFixed(
-                    2));
-                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.subtotal-value').val(sub_total
-                    .toFixed(2));
+                var sub_total = (sub_total_unit * quantity);
             }
+
+            var discount = product_discount[rowindex];
+            if (product_discount_type[rowindex] == 'Percentage') {
+                discount = (product_discount[rowindex] / 100) * net_unit_cost;
+            }
+
+            var cashback = product_cashback[rowindex];
+            if (product_cashback_type[rowindex] == 'Percentage') {
+                cashback = (product_cashback[rowindex] / 100) * net_unit_cost;
+            }
+
+            table_row.find('.tax-rate').val(tax_rate[rowindex].toFixed(2));
+            table_row.find('.discount').text(toDecimal(discount * quantity));
+            table_row.find('.discount-value').val((discount * quantity).toFixed(2));
+
+            table_row.find('.cashback').text(toDecimal(cashback * quantity));
+            table_row.find('.cashback-value').val((cashback * quantity).toFixed(2));
+
+            table_row.find('.edit_net_unit_cost').val(toDecimal(net_unit_cost));
+            table_row.find('.net_unit_cost').val(net_unit_cost.toFixed(2));
+            table_row.find('.tax').text(toDecimal(tax));
+            table_row.find('.tax-value').val(tax.toFixed(2));
+            table_row.find('.sub-total').text(toDecimal(sub_total - discount));
+            table_row.find('.subtotal-value').val((sub_total - discount).toFixed(2));
 
             calculateTotal();
         }
@@ -810,7 +961,7 @@
             //Sum of discount
             var total_discount = 0;
             $(".discount").each(function() {
-                total_discount += parseFloat($(this).text());
+                total_discount += toNumber($(this).text());
             });
             $("#total-discount").text(total_discount.toFixed(2));
             $('input[name="total_discount"]').val(total_discount.toFixed(2));
@@ -818,43 +969,44 @@
             //Sum of cashback
             var total_cashback = 0;
             $(".cashback").each(function() {
-                total_cashback += parseFloat($(this).text());
+                total_cashback += toNumber($(this).text());
             });
-            $("#total-cashback").text(total_cashback.toFixed(2));
+            $("#total-cashback").text(toDecimal(total_cashback));
             $('input[name="total_cashback"]').val(total_cashback.toFixed(2));
 
             //Sum of tax
             var total_tax = 0;
             $(".tax").each(function() {
-                total_tax += parseFloat($(this).text());
+                total_tax += toNumber($(this).text());
             });
-            $("#total-tax").text(total_tax.toFixed(2));
+            $("#total-tax").text(toDecimal(total_tax));
             $('input[name="total_tax"]').val(total_tax.toFixed(2));
 
-            //Sum of subtotal
             var total = 0;
             $(".sub-total").each(function() {
-                total += parseFloat($(this).text());
+                total += toNumber($(this).text());
             });
-            $("#total").text(total.toFixed(2));
+
+            $("#total").text(toDecimal(total));
             $('input[name="total_cost"]').val(total.toFixed(2));
 
             calculateGrandTotal();
         }
 
         function calculateGrandTotal() {
-
             var item = $('table.order-list tbody tr:last').index();
 
-            var total_qty = parseFloat($('#total-qty').text());
-            var subtotal = parseFloat($('#total').text());
-            var order_tax = parseFloat($('select[name="order_tax_rate"]').val());
-            var order_discount = parseFloat($('input[name="order_discount"]').val());
-            var order_cashback = parseFloat($('input[name="order_cashback"]').val());
-            var shipping_cost = parseFloat($('input[name="shipping_cost"]').val());
+            var total_qty = toNumber($('#total-qty').text());
+            var subtotal = toNumber($('#total').text());
+            var order_tax = toNumber($('select[name="order_tax_rate"]').val());
+            var order_discount = toNumber($('input[name="order_discount"]').val());
+            var order_cashback = toNumber($('input[name="order_cashback"]').val());
+            var shipping_cost = toNumber($('input[name="shipping_cost"]').val());
 
             if (!order_discount)
                 order_discount = 0.00;
+            if (!order_cashback)
+                order_cashback = 0.00;
             if (!shipping_cost)
                 shipping_cost = 0.00;
 
@@ -864,13 +1016,13 @@
 
             $('#item').text(item);
             $('input[name="item"]').val($('table.order-list tbody tr:last').index() + 1);
-            $('#subtotal').text(subtotal.toFixed(2));
-            $('#order_tax').text(order_tax.toFixed(2));
+            $('#subtotal').text(toDecimal(subtotal));
+            $('#order_tax').text(toDecimal(order_tax));
             $('input[name="order_tax"]').val(order_tax.toFixed(2));
-            $('#order_discount').text(order_discount.toFixed(2));
-            $('#order_cashback').text(order_cashback.toFixed(2));
-            $('#shipping_cost').text(shipping_cost.toFixed(2));
-            $('#grand_total').text(grand_total.toFixed(2));
+            $('#order_discount').text(toDecimal(order_discount));
+            $('#order_cashback').text(toDecimal(order_cashback));
+            $('#shipping_cost').text(toDecimal(shipping_cost));
+            $('#grand_total').text(toDecimal(grand_total));
             $('input[name="grand_total"]').val(grand_total.toFixed(2));
         }
 
@@ -909,12 +1061,10 @@
         });
 
         $('#purchase-form').on('submit', function(e) {
-
             var rownumber = $('table.order-list tbody tr:last').index();
 
             if ($('#is_po').is(':checked') && $('select[name="status"]').val() == '1') {
                 alert("Pembelian PO tidak boleh langsung ber-status Received");
-
                 e.preventDefault();
             }
 
@@ -942,6 +1092,16 @@
             } else {
                 $(".batch-no, .expired-date").prop('disabled', false);
                 $("#submit-btn").prop('disabled', true);
+            }
+        });
+
+        $('select[name="paid_by_id"]').on("change", function() {
+            var id = $(this).val();
+
+            if (id == 5) {
+                $("#debit_card").show();
+            } else {
+                $("#debit_card").hide();
             }
         });
     </script>

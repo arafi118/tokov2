@@ -23,11 +23,13 @@
     @endif
 
     <section>
-        <div class="container-fluid">
-            <button class="btn btn-info" data-toggle="modal" data-target="#createModal"><i class="dripicons-plus"></i>
-                {{ trans('file.Add Brand') }} </button>&nbsp;
-            <button class="btn btn-primary" data-toggle="modal" data-target="#importBrand"><i class="dripicons-copy"></i>
-                {{ trans('file.Import Brand') }}</button>
+        <div class="container-fluid d-flex justify-content-end">
+            <button class="btn btn-info" data-toggle="modal" data-target="#createModal">
+                <i class="dripicons-plus"></i> {{ trans('file.Add Brand') }}
+            </button>
+            {{-- <button class="btn btn-primary" data-toggle="modal" data-target="#importBrand">
+                <i class="dripicons-copy"></i> {{ trans('file.Import Brand') }}
+            </button> --}}
         </div>
         <div class="table-responsive">
             <table id="biller-table" class="table">
@@ -95,7 +97,8 @@
                 </div>
                 <div class="modal-body">
                     <p class="italic">
-                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small></p>
+                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small>
+                    </p>
                     <div class="form-group">
                         <label>{{ trans('file.Title') }} *</label>
                         {{ Form::text('title', null, ['required' => 'required', 'class' => 'form-control', 'placeholder' => 'Type brand title...']) }}
@@ -125,7 +128,8 @@
                 </div>
                 <div class="modal-body">
                     <p class="italic">
-                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small></p>
+                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small>
+                    </p>
                     <p>{{ trans('file.The correct column order is') }} (title*, image [file name])
                         {{ trans('file.and you must follow this') }}.</p>
                     <p>{{ trans('file.To display Image it must be stored in') }} public/images/brand
@@ -164,7 +168,8 @@
                 </div>
                 <div class="modal-body">
                     <p class="italic">
-                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small></p>
+                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small>
+                    </p>
                     <div class="form-group">
                         <label>{{ trans('file.Title') }} *</label>
                         {{ Form::text('title', null, ['required' => 'required', 'class' => 'form-control']) }}

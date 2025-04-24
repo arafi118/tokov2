@@ -23,11 +23,13 @@
     @endif
 
     <section>
-        <div class="container-fluid">
-            <a href="#" data-toggle="modal" data-target="#createModal" class="btn btn-info"><i
-                    class="dripicons-plus"></i> {{ trans('file.Add Unit') }}</a>&nbsp;
-            <a href="#" data-toggle="modal" data-target="#importUnit" class="btn btn-primary"><i
-                    class="dripicons-copy"></i> {{ trans('file.Import Unit') }}</a>
+        <div class="container-fluid d-flex justify-content-end">
+            <a href="#" data-toggle="modal" data-target="#createModal" class="btn btn-info">
+                <i class="dripicons-plus"></i> {{ trans('file.Add Unit') }}
+            </a>
+            {{-- <a href="#" data-toggle="modal" data-target="#importUnit" class="btn btn-primary">
+                <i class="dripicons-copy"></i> {{ trans('file.Import Unit') }}
+            </a> --}}
         </div>
         <div class="table-responsive">
             <table id="unit-table" class="table">
@@ -49,10 +51,7 @@
                             <td>{{ $unit->unit_code }}</td>
                             <td>{{ $unit->unit_name }}</td>
                             @if ($unit->base_unit)
-                                <?php $base_unit = DB::connection(env('TENANT_DB_CONNECTION'))
-                                    ->table('units')
-                                    ->where('id', $unit->base_unit)
-                                    ->first(); ?>
+                                <?php $base_unit = DB::connection(env('TENANT_DB_CONNECTION'))->table('units')->where('id', $unit->base_unit)->first(); ?>
                                 <td>{{ $base_unit->unit_name }}</td>
                             @else
                                 <td>N/A</td>
@@ -114,7 +113,8 @@
                 </div>
                 <div class="modal-body">
                     <p class="italic">
-                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small></p>
+                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small>
+                    </p>
                     <form>
                         <div class="form-group">
                             <label>{{ trans('file.Code') }} *</label>
@@ -163,7 +163,8 @@
                 </div>
                 <div class="modal-body">
                     <p class="italic">
-                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small></p>
+                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small>
+                    </p>
                     <form>
                         <input type="hidden" name="unit_id">
                         <div class="form-group">
@@ -214,7 +215,8 @@
                 </div>
                 <div class="modal-body">
                     <p class="italic">
-                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small></p>
+                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small>
+                    </p>
                     <p>{{ trans('file.The correct column order is') }} (unit_code*, unit_name*, base_unit [unit code],
                         operator, operation_value) {{ trans('file.and you must follow this') }}.</p>
                     <div class="row">

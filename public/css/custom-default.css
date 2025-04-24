@@ -9,6 +9,7 @@ nav.navbar {
 .dark-mode .count-title,
 .dark-mode .modal-content,
 .dark-mode .side-navbar,
+.dark-mode .list-group-item,
 .dark-mode nav.navbar {
   background-color: #283046
 }
@@ -26,7 +27,7 @@ nav.navbar a.menu-btn:hover {
 }
 
 .side-navbar {
-  box-shadow: 0 0 15px 0 rgba(34, 41, 47, .05);
+  box-shadow: 0 0 15px 0 hsla(208, 16%, 16%, 0.05);
   position: fixed;
   top: 0;
   left: 0;

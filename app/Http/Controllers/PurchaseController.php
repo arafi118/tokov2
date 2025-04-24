@@ -303,6 +303,8 @@ class PurchaseController extends Controller
 
     public function create()
     {
+        $rekening = $this->rekening->getRekening();
+
         $role = Role::find(Auth::user()->role_id);
         if ($role->hasPermissionTo('purchases-add')) {
             $lims_supplier_list = Supplier::where('is_active', true)->get();
@@ -312,7 +314,7 @@ class PurchaseController extends Controller
             $lims_product_list_with_variant = $this->productWithVariant();
             /*$lims_new_product_list_with_variant = $this->newProductWithVariant();*/
 
-            return view('backend.purchase.create', compact('lims_supplier_list', 'lims_warehouse_list', 'lims_tax_list', 'lims_product_list_without_variant', 'lims_product_list_with_variant'));
+            return view('backend.purchase.create', compact('lims_supplier_list', 'lims_warehouse_list', 'lims_tax_list', 'lims_product_list_without_variant', 'lims_product_list_with_variant', 'rekening'));
         } else
             return redirect()->back()->with('not_permitted', 'Sorry! You are not allowed to access this module');
     }
@@ -421,7 +423,6 @@ class PurchaseController extends Controller
             $data = $request->except('document');
 
             if (isset($data['is_po']) && $data['status'] == 1) {
-
                 return redirect()->back()->with('not_permitted', 'Pembelian PO tidak boleh langsung ber-status Received');
             }
 

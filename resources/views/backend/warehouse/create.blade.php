@@ -18,11 +18,13 @@
     @endif
 
     <section>
-        <div class="container-fluid">
-            <a href="#" data-toggle="modal" data-target="#createModal" class="btn btn-info"><i
-                    class="dripicons-plus"></i> {{ trans('file.Add Warehouse') }}</a>
-            <a href="#" data-toggle="modal" data-target="#importWarehouse" class="btn btn-primary"><i
-                    class="dripicons-copy"></i> {{ trans('file.Import Warehouse') }}</a>
+        <div class="container-fluid d-flex justify-content-end">
+            <a href="#" data-toggle="modal" data-target="#createModal" class="btn btn-info">
+                <i class="dripicons-plus"></i> {{ trans('file.Add Warehouse') }}
+            </a>
+            {{-- <a href="#" data-toggle="modal" data-target="#importWarehouse" class="btn btn-primary">
+                    <i class="dripicons-copy"></i> {{ trans('file.Import Warehouse') }}
+                </a> --}}
         </div>
         <div class="table-responsive">
             <table id="warehouse-table" class="table">
@@ -103,7 +105,8 @@
                 </div>
                 <div class="modal-body">
                     <p class="italic">
-                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small></p>
+                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small>
+                    </p>
                     <div class="form-group">
                         <label>{{ trans('file.name') }} *</label>
                         <input type="text" placeholder="Type WareHouse Name..." name="name" required="required"
@@ -142,7 +145,8 @@
                 </div>
                 <div class="modal-body">
                     <p class="italic">
-                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small></p>
+                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small>
+                    </p>
                     <div class="form-group">
                         <input type="hidden" name="warehouse_id">
                         <label>{{ trans('file.name') }} *</label>
@@ -182,7 +186,8 @@
                 </div>
                 <div class="modal-body">
                     <p class="italic">
-                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small></p>
+                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small>
+                    </p>
                     <p>{{ trans('file.The correct column order is') }} (name*, phone, email, address*)
                         {{ trans('file.and you must follow this') }}.</p>
                     <div class="row">
@@ -290,31 +295,39 @@
             dom: '<"row"lfB>rtip',
             buttons: [{
                     extend: 'pdf',
+                    text: '<i title="export to pdf" class="fa fa-file-pdf-o"></i>',
                     exportOptions: {
                         columns: ':visible:Not(.not-exported)',
                         rows: ':visible'
                     },
+                    footer: true
                 },
                 {
                     extend: 'excel',
+                    text: '<i title="export to excel" class="dripicons-document-new"></i>',
                     exportOptions: {
                         columns: ':visible:Not(.not-exported)',
                         rows: ':visible'
                     },
+                    footer: true
                 },
                 {
                     extend: 'csv',
+                    text: '<i title="export to csv" class="fa fa-file-text-o"></i>',
                     exportOptions: {
                         columns: ':visible:Not(.not-exported)',
                         rows: ':visible'
                     },
+                    footer: true
                 },
                 {
                     extend: 'print',
+                    text: '<i title="print" class="fa fa-print"></i>',
                     exportOptions: {
                         columns: ':visible:Not(.not-exported)',
                         rows: ':visible'
                     },
+                    footer: true
                 },
                 {
                     text: '<i title="delete" class="dripicons-cross"></i>',
@@ -350,6 +363,7 @@
                 },
                 {
                     extend: 'colvis',
+                    text: '<i title="column visibility" class="fa fa-eye"></i>',
                     columns: ':gt(0)'
                 },
             ],
