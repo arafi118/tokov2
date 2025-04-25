@@ -421,7 +421,6 @@ class PurchaseController extends Controller
 
         try {
             $data = $request->except('document');
-            dd("UNDER MAINTENANCE");
 
             if (isset($data['is_po']) && $data['status'] == 1) {
                 return redirect()->back()->with('not_permitted', 'Pembelian PO tidak boleh langsung ber-status Received');
@@ -430,10 +429,19 @@ class PurchaseController extends Controller
             $data['user_id'] = Auth::id();
             // $data['reference_no'] = 'pr-' . date("Ymd") . '-'. date("his");
             $trans = isset($data['is_po']) ? 'pembelian_po' : 'pembelian';
-            $data['reference_no'] = $this->jurnal->notaCounter($trans);
+            if ($data['reference_no'] == null) {
+                $data['reference_no'] = $this->jurnal->notaCounter($trans);
+            }
 
             $supplier = Supplier::find($data['supplier_id']);
-            //return dd($data);
+
+            $paying_method = 'Cash';
+            $cara_bayar = 'tunai';
+            if ($data['paid_by_id'] == 5) {
+                $paying_method = 'Debit Card';
+                $cara_bayar    = 'transfer';
+            }
+            $payment_reference = $this->jurnal->notaCounter('pembayaran');
 
             $document = $request->document;
             if ($document) {
@@ -476,6 +484,18 @@ class PurchaseController extends Controller
             $imei_numbers = $data['imei_number'];
             $product_purchase = [];
 
+            $lims_payment_data = new Payment();
+            $lims_payment_data->user_id = Auth::id();
+            $lims_payment_data->purchase_id = $lims_purchase_data->id;
+            $lims_payment_data->account_id = 0;
+            $lims_payment_data->payment_reference = $payment_reference;
+            $lims_payment_data->amount = $data['paid_amount'];
+            $lims_payment_data->paying_method = $paying_method;
+            $lims_payment_data->payment_note = $data['note'];
+            $lims_payment_data->save();
+
+            $lims_payment_data = Payment::latest()->first();
+            $data['payment_id'] = $lims_payment_data->id;
             $fdata = $lims_purchase_data->toArray();
 
             foreach ($product_id as $i => $id) {
@@ -487,7 +507,6 @@ class PurchaseController extends Controller
                     $quantity = $recieved[$i] / $lims_purchase_unit_data->operation_value;
                 }
                 $lims_product_data = Product::find($id);
-
 
                 //dealing with product barch
                 if ($batch_no[$i]) {
@@ -582,22 +601,29 @@ class PurchaseController extends Controller
 
                 ProductPurchase::create($product_purchase);
 
-                if ($data['is_tempo'] == 'Ya') {
-                    $fdata += ['cara_bayar' => 'tempo'];
-                    $fdata += ['supplier'  => $supplier->company_name];
-                    $fdata += ['tanggal'   => \Carbon\Carbon::parse($lims_purchase_data['created_at'])->format('Y-m-d')];
+                if ($paying_method == 'Debit Card') {
+                    $dcdata = TbRekening::find($data['no_rek_bank']);
 
-                    $this->sendToJournal($fdata);
+                    $py = new PaymentWithDebitCard;
+                    $py->payment_id  = $lims_payment_data->id;
+                    $py->no_rekening = $dcdata->no_rek_bank;
+                    $py->atas_nama_rekening = $dcdata->atas_nama_rek;
+                    $py->save();
                 }
+
+                $fdata += ['cara_bayar' => $cara_bayar];
+                $fdata += ['supplier'  => $supplier->company_name];
+                $fdata += ['tanggal'   => \Carbon\Carbon::parse($lims_purchase_data['created_at'])->format('Y-m-d')];
+
+                $this->sendToJournal($fdata);
             }
         } catch (\Exception $e) {
-
             \DB::rollback();
             \Log::error("purchase add : {$e->getMessage()}");
 
             // Response Message
             $response = false;
-            return abort(500);
+            return $e->getMessage();
         }
 
         \DB::commit();

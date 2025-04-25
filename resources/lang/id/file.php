@@ -313,7 +313,7 @@ return [
 	"Purchase Status" => "Status Pembelian",
 	"Add Gift Card" => "Tambah Kartu Hadiah",
 	"Card No" => "Nomor kartu",
-	"Reference No" => "No referensi",
+	"Reference No" => "No Referensi",
 	"Add Coupon" => "Tambah kupon",
 	"Coupon Code" => "Kode Kupon",
 	"Minimum Amount" => "Jumlah Minimum",

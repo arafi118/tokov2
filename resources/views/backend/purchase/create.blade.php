@@ -19,14 +19,14 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>{{ trans('file.Date') }}</label>
                                                 <input type="text" name="created_at" class="form-control date"
                                                     placeholder="Choose date" value="{{ date('d-m-Y') }}" />
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>{{ trans('file.Warehouse') }} *</label>
                                                 <select required name="warehouse_id" class="selectpicker form-control"
@@ -37,7 +37,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>{{ trans('file.Supplier') }}</label>
                                                 <select required name="supplier_id" class="selectpicker form-control"
@@ -50,18 +50,26 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>{{ trans('file.Reference No') }}</label>
+                                                <input type="text" name="reference_no" class="form-control" />
+                                            </div>
+                                        </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>{{ trans('file.Purchase Status') }}</label>
 
                                                 <select name="status" id="status" class="form-control">
                                                     <option value="1">{{ trans('file.Recieved') }}</option>
-                                                    {{-- <option value="2">{{ trans('file.Partial') }}</option> --}}
                                                     <option value="3">{{ trans('file.Pending') }}</option>
                                                     <option value="4">{{ trans('file.Ordered') }}</option>
                                                 </select>
-
                                             </div>
+
+                                            <span class="d-none">
+                                                <input type="checkbox" name="is_po" id="is_po" onclick="checkPo();">
+                                            </span>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
@@ -77,15 +85,12 @@
                                             </div>
                                         </div>
                                         <div class="col-md-2">
+                                            <label>Tempo</label>
                                             <div class="form-group">
-                                                <label>Pre Order</label><br>
-                                                <input type="checkbox" name="is_po" id="is_po" onclick="checkPo();">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label>Tempo</label><br>
-                                                <input type="checkbox" name="is_tempo" id="is_tempo">
+                                                <label class="switch">
+                                                    <input type="checkbox" class="default" name="is_tempo" id="is_tempo">
+                                                    <span class="slider"></span>
+                                                </label>
                                             </div>
                                         </div>
                                         <div class="col-md-12 mt-3">
@@ -322,17 +327,7 @@
                                                                     required>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-7 mt-1">
-                                                            <label>{{ trans('file.Change') }} : </label>
-                                                            <div class="input-group">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text prepend">Rp</span>
-                                                                </div>
-                                                                <input type="text" id="change" name="change"
-                                                                    class="form-control" step="any" readonly>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-5 mt-1">
+                                                        <div class="col-md-12 mt-1">
                                                             <label>{{ trans('file.Paid By') }}</label>
                                                             <select name="paid_by_id" id="paid_by_id_add"
                                                                 class="form-control selectpicker">
@@ -827,7 +822,8 @@
                             9] + '"/>';
                         cols += '<input type="hidden" class="purchase-unit" name="purchase_unit[]" value="' +
                             temp_unit_name[0] + '"/>';
-                        cols += '<<input type="hidden" class="net_unit_cost" name="net_unit_cost[]" />';
+                        cols += '<input type="hidden" class="net_unit_cost" name="net_unit_cost[]" />';
+                        cols += '<input type="hidden" class="batch-no" name="batch_no[]"/>';
                         cols += '<input type="hidden" class="discount-value" name="discount[]" />';
                         cols += '<input type="hidden" class="cashback-value" name="cashback[]" />';
                         cols += '<input type="hidden" class="tax-rate" name="tax_rate[]" value="' + data[3] +
@@ -971,7 +967,7 @@
             $(".discount").each(function() {
                 total_discount += toNumber($(this).text());
             });
-            $("#total-discount").text(total_discount.toFixed(2));
+            $("#total-discount").text(toDecimal(total_discount));
             $('input[name="total_discount"]').val(total_discount.toFixed(2));
 
             //Sum of cashback
@@ -1124,8 +1120,14 @@
                 $('#submit-btn').prop('disabled', true);
             } else {
                 $('#submit-btn').prop('disabled', false);
-                $('#change').val(toDecimal(change));
             }
+
+            $('input[name="payment_status"]').val('1')
+            if (change == '0') {
+                $('input[name="payment_status"]').val('2')
+            }
+
+            $('input[name="paid_amount"]').val(amount);
         })
     </script>
 

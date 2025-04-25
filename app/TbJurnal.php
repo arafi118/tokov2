@@ -142,10 +142,8 @@ class TbJurnal extends Model
 
         $u      = $trans['kode'];
         $table  = $trans['table'];
-        $column = $table == 'payments' ? 'payment_reference' : 'reference_no';
 
         $column = 'reference_no';
-
         if ($table == 'payments') {
             $column = 'payment_reference';
         } elseif ($table == 'tb_jurnals') {
