@@ -830,8 +830,19 @@ table#product-table.dataTable {
   margin: 15px 0 !important
 }
 
+.pos-page table#product-table.dataTable {
+  margin-top: 0 !important;
+}
+
 #product-table_paginate {
   float: right
+}
+
+.pos-page #product-table_paginate {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  float: unset;
 }
 
 #product-table tr:last-child td:hover {
@@ -1174,9 +1185,10 @@ div.has-error>.form-text {
   bottom: 0;
   left: 0;
   padding: 0 10px;
-  position: fixed;
   width: 100%;
-  z-index: 999
+  z-index: 999;
+  display: flex;
+  justify-content: center;
 }
 
 .dark-mode .payment-options {

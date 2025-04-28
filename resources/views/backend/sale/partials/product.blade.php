@@ -1,4 +1,4 @@
-<div class="col-md-5">
+<div class="col-md-5 d-none d-md-block" id="salepos-product">
     <!-- navbar-->
     <header>
         <nav class="navbar">
@@ -172,18 +172,26 @@
     </div>
 
     <div class="row">
-        <div class="col-md-4">
-            <button class="btn btn-block btn-sm btn-primary"
-                id="category-filter">{{ trans('file.category') }}</button>
+        <div class="col-md-3">
+            <button class="btn btn-block btn-sm btn-warning" id="all-filter">
+                {{ trans('file.All') }}
+            </button>
         </div>
-        <div class="col-md-4">
-            <button class="btn btn-block btn-sm btn-info" id="brand-filter">{{ trans('file.Brand') }}</button>
+        <div class="col-md-3">
+            <button class="btn btn-block btn-sm btn-primary" id="category-filter">
+                {{ trans('file.category') }}
+            </button>
         </div>
-        <div class="col-md-4">
-            <button class="btn btn-block btn-sm btn-danger"
-                id="featured-filter">{{ trans('file.Featured') }}</button>
+        <div class="col-md-3">
+            <button class="btn btn-block btn-sm btn-info" id="brand-filter">
+                {{ trans('file.Brand') }}
+            </button>
         </div>
-        <div class="col-md-12 table-container">
+        <div class="col-md-3">
+            <button class="btn btn-block btn-sm btn-danger" id="featured-filter">{{ trans('file.Featured') }}
+            </button>
+        </div>
+        <div class="col-md-12 table-container pt-2">
             <table id="product-table" class="table no-shadow product-list">
                 <thead class="d-none">
                     <tr>

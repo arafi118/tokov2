@@ -9,13 +9,13 @@
 7. Harga kelompok pelanggan/member
 
 # Pembelian
-1. Tambah nomor referensi
-2. Tambah jenis pembayaran (kas/bank)
+<!-- 1. Tambah nomor referensi -->
+<!-- 2. Tambah jenis pembayaran (kas/bank) -->
 
 # Penjualan
-1. Produk promo auto tampil di POS
-2. Hidden menu kartu hadiah
-3. Hidden menu kupon
+<!-- 1. Produk promo auto tampil di POS -->
+<!-- 2. Hidden menu kartu hadiah -->
+<!-- 3. Hidden menu kupon -->
 4. Pre order => Jenis pelayanan (Ambil, Antar)
 5. Penjualan Tempo => Rekening penjualan dengan Piutang
 6. Automatisasi penjualan kurang (penjualan ke piutang, piutang ke kas/bank)

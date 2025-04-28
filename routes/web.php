@@ -183,6 +183,7 @@ Route::group(['middleware' => ['common', 'auth:web', 'active']], function () {
 	Route::get('sales/getproduct/{id}', [SaleController::class, 'getProduct'])->name('sale.getproduct');
 	Route::get('sales/getproduct/{category_id}/{brand_id}', [SaleController::class, 'getProductByFilter']);
 	Route::get('sales/getfeatured', [SaleController::class, 'getFeatured']);
+	Route::get('sales/allproduct', [SaleController::class, 'allProduct']);
 	Route::get('sales/get_gift_card', [SaleController::class, 'getGiftCard']);
 	Route::get('sales/paypalSuccess', [SaleController::class, 'paypalSuccess']);
 	Route::get('sales/paypalPaymentSuccess/{id}', [SaleController::class, 'paypalPaymentSuccess']);

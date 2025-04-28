@@ -68,7 +68,6 @@ table {
   transition: width .3s linear;
   width: 100%;
   min-height: 100vh;
-  padding-bottom: 50px
 }
 
 .page.active {

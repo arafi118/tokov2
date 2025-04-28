@@ -1,4 +1,4 @@
-<div class="col-md-7">
+<div class="col-md-7" id="salepos-payment">
     {!! Form::open(['route' => 'sales.store', 'method' => 'post', 'files' => true, 'class' => 'payment-form']) !!}
     <div class="card">
         <div class="card-body" style="padding-bottom: 0">
@@ -37,8 +37,8 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group" style="display:none;">
+                        <div class="col-md-4" style="display:none;">
+                            <div class="form-group">
                                 @if ($lims_pos_setting_data)
                                     <input type="hidden" name="biller_id_hidden"
                                         value="{{ $lims_pos_setting_data->biller_id }}">
@@ -53,7 +53,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-5">
                             <div class="form-group">
                                 @if ($lims_pos_setting_data)
                                     <input type="hidden" name="customer_id_hidden"
@@ -79,7 +79,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-7">
                             <div class="search-box form-group">
                                 <input type="text" name="product_code_name" id="lims_productcodeSearch"
                                     placeholder="Scan/Search product by name/code" class="form-control" />
@@ -234,8 +234,8 @@
                     {{ trans('file.Cash') }}</button>
             </div>
             <!-- <div class="column-5">
-                                  <button style="background-color: #213170" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="paypal-btn"><i class="fa fa-paypal"></i> {{ trans('file.PayPal') }}</button>
-                              </div> -->
+                <button style="background-color: #213170" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="paypal-btn"><i class="fa fa-paypal"></i> {{ trans('file.PayPal') }}</button>
+            </div> -->
             <div class="column-5">
                 <button style="background-color: #e28d02" type="button" class="btn btn-custom" id="draft-btn">
                     <i class="dripicons-flag"></i>
@@ -243,18 +243,18 @@
                 </button>
             </div>
             <!--  <div class="column-5">
-                                  <button style="background-color: #fd7272" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="cheque-btn"><i class="fa fa-money"></i> {{ trans('file.Cheque') }}</button>
-                              </div>
-                              <div class="column-5">
-                                  <button style="background-color: #5f27cd" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="gift-card-btn"><i class="fa fa-credit-card-alt"></i> {{ trans('file.Gift Card') }}</button>
-                              </div>
-                              <div class="column-5">
-                                  <button style="background-color: #b33771" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="deposit-btn"><i class="fa fa-university"></i> {{ trans('file.Deposit') }}</button>
-                              </div> -->
+                    <button style="background-color: #fd7272" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="cheque-btn"><i class="fa fa-money"></i> {{ trans('file.Cheque') }}</button>
+                </div>
+                <div class="column-5">
+                    <button style="background-color: #5f27cd" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="gift-card-btn"><i class="fa fa-credit-card-alt"></i> {{ trans('file.Gift Card') }}</button>
+                </div>
+                <div class="column-5">
+                    <button style="background-color: #b33771" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="deposit-btn"><i class="fa fa-university"></i> {{ trans('file.Deposit') }}</button>
+                </div> -->
             {{-- @if ($lims_reward_point_setting_data->is_active) --}}
             <!-- <div class="column-5">
-                                  <button style="background-color: #319398" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="point-btn"><i class="dripicons-rocket"></i> {{ trans('file.Points') }}</button>
-                              </div> -->
+                    <button style="background-color: #319398" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="point-btn"><i class="dripicons-rocket"></i> {{ trans('file.Points') }}</button>
+                </div> -->
             {{-- @endif --}}
             <div class="column-5">
                 <button style="background-color: #d63031;" type="button" class="btn btn-custom" id="cancel-btn"

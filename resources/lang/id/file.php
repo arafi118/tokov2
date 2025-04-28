@@ -4,7 +4,7 @@ return [
 	"language" => "bahasa",
 	"revenue" => "pendapatan",
 	"product" => "Produk",
-	"category" => "kategori",
+	"category" => "Kategori",
 	"product_list" => "Daftar produk",
 	"add_product" => "Tambah produk",
 	"import_product" => "Import produk",

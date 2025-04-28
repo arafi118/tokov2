@@ -16,65 +16,67 @@
                 <div class="card-header mt-2">
                     <h3 class="text-center">{{ trans('file.Purchase List') }}</h3>
                 </div>
-                {!! Form::open(['route' => 'purchases.index', 'method' => 'get']) !!}
-                <div class="row ml-1 mt-2">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label><strong>{{ trans('file.Date') }}</strong></label>
-                            <input type="text" class="daterangepicker-field form-control"
-                                value="{{ $starting_date }} To {{ $ending_date }}" required />
-                            <input type="hidden" name="starting_date" value="{{ $starting_date }}" />
-                            <input type="hidden" name="ending_date" value="{{ $ending_date }}" />
+                <div class="card-body">
+                    {!! Form::open(['route' => 'purchases.index', 'method' => 'get']) !!}
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label><strong>{{ trans('file.Date') }}</strong></label>
+                                <input type="text" class="daterangepicker-field form-control"
+                                    value="{{ $starting_date }} To {{ $ending_date }}" required />
+                                <input type="hidden" name="starting_date" value="{{ $starting_date }}" />
+                                <input type="hidden" name="ending_date" value="{{ $ending_date }}" />
+                            </div>
+                        </div>
+                        <div class="col-md-3 @if (\Auth::user()->role_id > 2) {{ 'd-none' }} @endif">
+                            <div class="form-group">
+                                <label><strong>{{ trans('file.Warehouse') }}</strong></label>
+                                <select id="warehouse_id" name="warehouse_id" class="selectpicker form-control"
+                                    data-live-search="true" data-live-search-style="begins">
+                                    <option value="0">{{ trans('file.All Warehouse') }}</option>
+                                    @foreach ($lims_warehouse_list as $warehouse)
+                                        <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label><strong>{{ trans('file.Purchase Status') }}</strong></label>
+                                <select id="purchase-status" class="form-control" name="purchase_status">
+                                    <option value="0">{{ trans('file.All') }}</option>
+                                    <option value="1">{{ trans('file.Recieved') }}</option>
+                                    <option value="2">{{ trans('file.Partial') }}</option>
+                                    <option value="3">{{ trans('file.Pending') }}</option>
+                                    <option value="4">{{ trans('file.Ordered') }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label><strong>{{ trans('file.Payment Status') }}</strong></label>
+                                <select id="payment-status" class="form-control" name="payment_status">
+                                    <option value="0">{{ trans('file.All') }}</option>
+                                    <option value="1">{{ trans('file.Due') }}</option>
+                                    <option value="2">{{ trans('file.Paid') }}</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-3 @if (\Auth::user()->role_id > 2) {{ 'd-none' }} @endif">
-                        <div class="form-group">
-                            <label><strong>{{ trans('file.Warehouse') }}</strong></label>
-                            <select id="warehouse_id" name="warehouse_id" class="selectpicker form-control"
-                                data-live-search="true" data-live-search-style="begins">
-                                <option value="0">{{ trans('file.All Warehouse') }}</option>
-                                @foreach ($lims_warehouse_list as $warehouse)
-                                    <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                    <div class="d-flex justify-content-end mt-3">
+                        <button class="btn btn-primary" id="filter-btn" type="submit">{{ trans('file.Search') }}</button>
                     </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label><strong>{{ trans('file.Purchase Status') }}</strong></label>
-                            <select id="purchase-status" class="form-control" name="purchase_status">
-                                <option value="0">{{ trans('file.All') }}</option>
-                                <option value="1">{{ trans('file.Recieved') }}</option>
-                                <option value="2">{{ trans('file.Partial') }}</option>
-                                <option value="3">{{ trans('file.Pending') }}</option>
-                                <option value="4">{{ trans('file.Ordered') }}</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label><strong>{{ trans('file.Payment Status') }}</strong></label>
-                            <select id="payment-status" class="form-control" name="payment_status">
-                                <option value="0">{{ trans('file.All') }}</option>
-                                <option value="1">{{ trans('file.Due') }}</option>
-                                <option value="2">{{ trans('file.Paid') }}</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-2 mt-3">
-                        <div class="form-group">
-                            <button class="btn btn-primary" id="filter-btn"
-                                type="submit">{{ trans('file.submit') }}</button>
-                        </div>
-                    </div>
+                    {!! Form::close() !!}
                 </div>
-                {!! Form::close() !!}
             </div>
             @if (in_array('purchases-add', $all_permission))
-                <a href="{{ route('purchases.create') }}" class="btn btn-info"><i class="dripicons-plus"></i>
-                    {{ trans('file.Add Purchase') }}</a>&nbsp;
-                <a href="{{ url('purchases/purchase_by_csv') }}" class="btn btn-primary"><i class="dripicons-copy"></i>
-                    {{ trans('file.Import Purchase') }}</a>
+                <div class="d-flex justify-content-end">
+                    <a href="{{ route('purchases.create') }}" class="btn btn-info">
+                        <i class="dripicons-plus"></i> {{ trans('file.Add Purchase') }}
+                    </a>
+                </div>
+                {{-- <a href="{{ url('purchases/purchase_by_csv') }}" class="btn btn-primary"><i class="dripicons-copy"></i>
+                    {{ trans('file.Import Purchase') }}</a> --}}
             @endif
         </div>
         <div class="table-responsive">
@@ -235,7 +237,7 @@
                             <select name="paid_by_id" id="paid_by_id_add"class="form-control selectpicker">
                                 <option value="1">Cash</option>
                                 <!--  <option value="3">Credit Card</option>
-                                                            <option value="4">Cheque</option> -->
+                                                                                    <option value="4">Cheque</option> -->
                                 <option value="5">Debit Card</option>
                             </select>
                         </div>
@@ -321,7 +323,7 @@
                             <select name="edit_paid_by_id" class="form-control selectpicker">
                                 <option value="1">Cash</option>
                                 <!--  <option value="3">Credit Card</option>
-                                                            <option value="4">Cheque</option> -->
+                                                                                    <option value="4">Cheque</option> -->
                                 <option value="5">Debit Card</option>
                                 <option value="6">Tempo / Utang</option>
                             </select>

@@ -74,11 +74,11 @@
                     </source>
                 </audio>
 
-                {{-- Payment Row --}}
-                @include('backend.sale.partials.payment')
-
                 {{-- Product Row --}}
                 @include('backend.sale.partials.product')
+
+                {{-- Payment Row --}}
+                @include('backend.sale.partials.payment')
             </div>
         </div>
     </section>
@@ -577,7 +577,6 @@
             var category_id = $(this).data('category');
             var brand_id = 0;
 
-            $(".table-container").children().remove();
             $.get('sales/getproduct/' + category_id + '/' + brand_id, function(data) {
                 populateProduct(data);
             });
@@ -595,28 +594,32 @@
         $('.brand-img').on('click', function() {
             var brand_id = $(this).data('brand');
             var category_id = 0;
-
-            $(".table-container").children().remove();
             $.get('sales/getproduct/' + category_id + '/' + brand_id, function(data) {
                 populateProduct(data);
             });
         });
 
         $('#featured-filter').on('click', function() {
-            $(".table-container").children().remove();
             $.get('sales/getfeatured', function(data) {
+                populateProduct(data);
+            });
+        });
+
+        $('#all-filter').on('click', function() {
+            $.get('sales/allproduct', function(data) {
                 populateProduct(data);
             });
         });
 
         function populateProduct(data) {
             var tableData =
-                '<table id="product-table" class="table no-shadow product-list"> <thead class="d-none"> <tr> <th></th> <th></th> <th></th> <th></th> <th></th> </tr></thead> <tbody><tr>';
+                '<thead class="d-none"> <tr> <th></th> <th></th> <th></th> <th></th> </tr></thead> <tbody>';
 
             if (Object.keys(data).length != 0) {
+                tableData += '<tr>';
                 $.each(data['name'], function(index) {
                     var product_info = data['code'][index] + ' (' + data['name'][index] + ')';
-                    if (index % 5 == 0 && index != 0)
+                    if (index % 4 == 0 && index != 0)
                         tableData += '</tr><tr><td class="product-img sound-btn" title="' + data['name'][index] +
                         '" data-product = "' + product_info + '"><img  src="/images/product/' + data['image'][
                             index
@@ -630,16 +633,17 @@
                         '</span></td>';
                 });
 
-                if (data['name'].length % 5) {
-                    var number = 5 - (data['name'].length % 5);
+                if (data['name'].length % 4) {
+                    var number = 4 - (data['name'].length % 4);
                     while (number > 0) {
                         tableData += '<td style="border:none;"></td>';
                         number--;
                     }
                 }
 
-                tableData += '</tr></tbody></table>';
-                $(".table-container").html(tableData);
+                tableData += '</tr></tbody>';
+                $('#product-table').DataTable().destroy();
+                $("#product-table").html(tableData);
                 $('#product-table').DataTable({
                     "order": [],
                     'pageLength': product_row_number,
@@ -654,8 +658,17 @@
                 $('table.product-list').hide();
                 $('table.product-list').show(500);
             } else {
-                tableData += '<td class="text-center">No data avaialable</td></tr></tbody></table>'
-                $(".table-container").html(tableData);
+                tableData += '</tbody>'
+                $('#product-table').DataTable().destroy();
+                $("#product-table").html(tableData);
+                $('#product-table').DataTable({
+                    "language": {
+                        "emptyTable": "No data available"
+                    },
+                    "paging": false,
+                    "info": false,
+                    "searching": false
+                })
             }
         }
 

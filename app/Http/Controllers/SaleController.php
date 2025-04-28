@@ -1338,7 +1338,9 @@ class SaleController extends Controller
         $data = [];
         $lims_product_list = Product::where([
             ['is_active', true],
-            ['featured', true]
+            ['promotion', '1'],
+            ['starting_date', '<=', date('Y-m-d')],
+            ['last_date', '>=', date('Y-m-d')]
         ])->select('products.id', 'products.name', 'products.code', 'products.image', 'products.is_variant')->get();
 
         $index = 0;
@@ -1346,6 +1348,38 @@ class SaleController extends Controller
             if ($product->is_variant) {
                 $lims_product_data = Product::select('id')->find($product->id);
                 $lims_product_variant_data = $lims_product_data->variant()->orderBy('position')->get();
+                foreach ($lims_product_variant_data as $key => $variant) {
+                    $data['name'][$index] = $product->name . ' [' . $variant->name . ']';
+                    $data['code'][$index] = $variant->pivot['item_code'];
+                    $images = explode(",", $product->image);
+                    $data['image'][$index] = $images[0];
+                    $index++;
+                }
+            } else {
+                $data['name'][$index] = $product->name;
+                $data['code'][$index] = $product->code;
+                $images = explode(",", $product->image);
+                $data['image'][$index] = $images[0];
+                $index++;
+            }
+        }
+        return $data;
+    }
+
+    public function allProduct()
+    {
+        $data = [];
+        $lims_product_list = Product::select('products.id', 'products.name', 'products.code', 'products.image', 'products.is_variant')
+            ->with([
+                'variant' => function ($query) {
+                    $query->orderBy('position');
+                }
+            ])->get();
+
+        $index = 0;
+        foreach ($lims_product_list as $product) {
+            if ($product->is_variant) {
+                $lims_product_variant_data = $product->variant;
                 foreach ($lims_product_variant_data as $key => $variant) {
                     $data['name'][$index] = $product->name . ' [' . $variant->name . ']';
                     $data['code'][$index] = $variant->pivot['item_code'];

@@ -335,16 +335,16 @@
                             </li>
                         @endif
                     @endif
-                    @if ($gift_card_active)
+                    {{-- @if ($gift_card_active)
                         <li id="gift-card-menu">
                             <a href="{{ route('gift_cards.index') }}">{{ trans('file.Gift Card List') }}</a>
                         </li>
-                    @endif
-                    @if ($coupon_active)
+                    @endif --}}
+                    {{-- @if ($coupon_active)
                         <li id="coupon-menu">
                             <a href="{{ route('coupons.index') }}">{{ trans('file.Coupon List') }}</a>
                         </li>
-                    @endif
+                    @endif --}}
                     <li id="delivery-menu">
                         <a href="{{ route('delivery.index') }}">{{ trans('file.Delivery List') }}</a>
                     </li>
