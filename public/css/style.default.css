@@ -138,9 +138,14 @@ section header {
 }
 
 @media (min-width:768px) {
-  .container-fluid {
+  .container-fluid:not(.dataTables_wrapper) {
     padding: 0 1.5rem
   }
+}
+
+
+.container-fluid.dataTables_wrapper {
+  padding: 0 !important;
 }
 
 nav.navbar {

@@ -310,6 +310,12 @@
                                     href="{{ url('purchases/purchase_by_csv') }}">{{ trans('file.Import Purchase By CSV') }}</a>
                             </li>
                         @endif
+                        @if ($purchase_return_index_active)
+                            <li id="purchase-return-menu">
+                                <a
+                                    href="{{ route('return-purchase.index') }}">{{ trans('file.Purchase Return') }}</a>
+                            </li>
+                        @endif
                     </ul>
                 </li>
             @endif
@@ -348,10 +354,15 @@
                     <li id="delivery-menu">
                         <a href="{{ route('delivery.index') }}">{{ trans('file.Delivery List') }}</a>
                     </li>
+                    @if ($returns_index_active)
+                        <li id="sale-return-menu">
+                            <a href="{{ route('return-sale.index') }}">{{ trans('file.Sale Return') }}</a>
+                        </li>
+                    @endif
                 </ul>
             </li>
 
-            @if ($expenses_index_active)
+            {{-- @if ($expenses_index_active)
                 <li>
                     <a href="#expense" aria-expanded="false" data-toggle="collapse">
                         <i class="dripicons-wallet"></i><span>{{ trans('file.Expense') }}</span>
@@ -372,9 +383,9 @@
                         @endif
                     </ul>
                 </li>
-            @endif
+            @endif --}}
 
-            @if ($quotes_index_active)
+            {{-- @if ($quotes_index_active)
                 <li>
                     <a href="#quotation" aria-expanded="false" data-toggle="collapse">
                         <i class="dripicons-document"></i><span>{{ trans('file.Quotation') }}</span>
@@ -390,9 +401,9 @@
                         @endif
                     </ul>
                 </li>
-            @endif
+            @endif --}}
 
-            @if ($transfers_index_active)
+            {{-- @if ($transfers_index_active)
                 <li>
                     <a href="#transfer" aria-expanded="false" data-toggle="collapse">
                         <i class="dripicons-export"></i><span>{{ trans('file.Transfer') }}</span>
@@ -412,25 +423,7 @@
                         @endif
                     </ul>
                 </li>
-            @endif
-
-            <li>
-                <a href="#return" aria-expanded="false" data-toggle="collapse">
-                    <i class="dripicons-return"></i><span>{{ trans('file.return') }}</span>
-                </a>
-                <ul id="return" class="collapse list-unstyled ">
-                    @if ($returns_index_active)
-                        <li id="sale-return-menu">
-                            <a href="{{ route('return-sale.index') }}">{{ trans('file.Sale') }}</a>
-                        </li>
-                    @endif
-                    @if ($purchase_return_index_active)
-                        <li id="purchase-return-menu">
-                            <a href="{{ route('return-purchase.index') }}">{{ trans('file.Purchase') }}</a>
-                        </li>
-                    @endif
-                </ul>
-            </li>
+            @endif --}}
 
             @if ($account_index_active || $balance_sheet_active || $account_statement_active)
                 <li class="">

@@ -22,16 +22,16 @@
 <!-- 7. Tambah jenis pembayaran (kas/bank) -->
 
 # Pengeluaran
-1. Hidden menu pengeluaran
+<!-- 1. Hidden menu pengeluaran -->
 
 # Sebut Harga
-1. Hidden menu sebut harga
+<!-- 1. Hidden menu sebut harga -->
 
 # Transfer
-1. Hidden menu transfer
+<!-- 1. Hidden menu transfer -->
 
 # Retur
-1. Pindah menu retur ke penjualan/pembelian
+<!-- 1. Pindah menu retur ke penjualan/pembelian -->
 2. Tambah jenis pembayaran (kas/bank)
 
 # Akutansi

@@ -26,34 +26,37 @@
     @endif
 
     <section>
-        <div class="container-fluid d-flex justify-content-end">
+        <div class="container-fluid">
             @if (in_array('products-add', $all_permission))
-                <a href="{{ route('products.create') }}" class="btn btn-info">
-                    <i class="dripicons-plus"></i> {{ __('file.add_product') }}
-                </a>
-                {{-- <a href="#" data-toggle="modal" data-target="#importProduct" class="btn btn-primary">
+                <div class="d-flex justify-content-end">
+                    <a href="{{ route('products.create') }}" class="btn btn-info">
+                        <i class="dripicons-plus"></i> {{ __('file.add_product') }}
+                    </a>
+                    {{-- <a href="#" data-toggle="modal" data-target="#importProduct" class="btn btn-primary">
                     <i class="dripicons-copy"></i> {{ __('file.import_product') }}
                 </a> --}}
+                </div>
             @endif
-        </div>
-        <div class="table-responsive">
-            <table id="product-data-table" class="table" style="width: 100%">
-                <thead>
-                    <tr>
-                        <th class="not-exported"></th>
-                        <th>{{ trans('file.Image') }}</th>
-                        <th>{{ trans('file.name') }}</th>
-                        <th>{{ trans('file.Code') }}</th>
-                        <th>{{ trans('file.Brand') }}</th>
-                        <th>{{ trans('file.category') }}</th>
-                        <th>{{ trans('file.In Stock') }}</th>
-                        <th>{{ trans('file.Unit') }}</th>
-                        <th>{{ trans('file.Price') }}</th>
-                        <th>{{ trans('file.Cost') }}</th>
-                        <th class="not-exported">{{ trans('file.action') }}</th>
-                    </tr>
-                </thead>
-            </table>
+
+            <div class="table-responsive">
+                <table id="product-data-table" class="table" style="width: 100%">
+                    <thead>
+                        <tr>
+                            <th class="not-exported"></th>
+                            <th>{{ trans('file.Image') }}</th>
+                            <th>{{ trans('file.name') }}</th>
+                            <th>{{ trans('file.Code') }}</th>
+                            <th>{{ trans('file.Brand') }}</th>
+                            <th>{{ trans('file.category') }}</th>
+                            <th>{{ trans('file.In Stock') }}</th>
+                            <th>{{ trans('file.Unit') }}</th>
+                            <th>{{ trans('file.Price') }}</th>
+                            <th>{{ trans('file.Cost') }}</th>
+                            <th class="not-exported">{{ trans('file.action') }}</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
         </div>
     </section>
 

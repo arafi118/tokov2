@@ -62,57 +62,62 @@
                                 </select>
                             </div>
                         </div>
-                    </div>
-                    <div class="d-flex justify-content-end mt-3">
-                        <button class="btn btn-primary" id="filter-btn" type="submit">{{ trans('file.Search') }}</button>
+                        <div class="col-12">
+                            <div class="d-flex justify-content-end">
+                                <button class="btn btn-primary" id="filter-btn"
+                                    type="submit">{{ trans('file.Search') }}</button>
+                            </div>
+                        </div>
                     </div>
                     {!! Form::close() !!}
+
+                    @if (in_array('purchases-add', $all_permission))
+                        <div class="d-flex justify-content-end mt-3">
+                            <a href="{{ route('purchases.create') }}" class="btn btn-info">
+                                <i class="dripicons-plus"></i> {{ trans('file.Add Purchase') }}
+                            </a>
+                        </div>
+                        {{-- <a href="{{ url('purchases/purchase_by_csv') }}" class="btn btn-primary"><i class="dripicons-copy"></i>
+                    {{ trans('file.Import Purchase') }}</a> --}}
+                    @endif
+
+                    <div class="table-responsive">
+                        <table id="purchase-table" class="table purchase-list" style="width: 100%">
+                            <thead>
+                                <tr>
+                                    <th class="not-exported"></th>
+                                    <th>{{ trans('file.Date') }}</th>
+                                    <th>{{ trans('file.reference') }}</th>
+                                    <th>{{ trans('file.Supplier') }}</th>
+                                    <th>{{ trans('file.Purchase Status') }}</th>
+                                    <th>{{ trans('file.grand total') }}</th>
+                                    <th>{{ trans('file.Returned Amount') }}</th>
+                                    <th>{{ trans('file.Paid') }}</th>
+                                    <th>{{ trans('file.Due') }}</th>
+                                    <th>{{ trans('file.Payment Status') }}</th>
+                                    <th>Pre Order</th>
+                                    <th class="not-exported">{{ trans('file.action') }}</th>
+                                </tr>
+                            </thead>
+
+                            <tfoot class="tfoot active">
+                                <th></th>
+                                <th>{{ trans('file.Total') }}</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
             </div>
-            @if (in_array('purchases-add', $all_permission))
-                <div class="d-flex justify-content-end">
-                    <a href="{{ route('purchases.create') }}" class="btn btn-info">
-                        <i class="dripicons-plus"></i> {{ trans('file.Add Purchase') }}
-                    </a>
-                </div>
-                {{-- <a href="{{ url('purchases/purchase_by_csv') }}" class="btn btn-primary"><i class="dripicons-copy"></i>
-                    {{ trans('file.Import Purchase') }}</a> --}}
-            @endif
-        </div>
-        <div class="table-responsive">
-            <table id="purchase-table" class="table purchase-list" style="width: 100%">
-                <thead>
-                    <tr>
-                        <th class="not-exported"></th>
-                        <th>{{ trans('file.Date') }}</th>
-                        <th>{{ trans('file.reference') }}</th>
-                        <th>{{ trans('file.Supplier') }}</th>
-                        <th>{{ trans('file.Purchase Status') }}</th>
-                        <th>{{ trans('file.grand total') }}</th>
-                        <th>{{ trans('file.Returned Amount') }}</th>
-                        <th>{{ trans('file.Paid') }}</th>
-                        <th>{{ trans('file.Due') }}</th>
-                        <th>{{ trans('file.Payment Status') }}</th>
-                        <th>Pre Order</th>
-                        <th class="not-exported">{{ trans('file.action') }}</th>
-                    </tr>
-                </thead>
-
-                <tfoot class="tfoot active">
-                    <th></th>
-                    <th>{{ trans('file.Total') }}</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                </tfoot>
-            </table>
         </div>
     </section>
 
@@ -237,7 +242,7 @@
                             <select name="paid_by_id" id="paid_by_id_add"class="form-control selectpicker">
                                 <option value="1">Cash</option>
                                 <!--  <option value="3">Credit Card</option>
-                                                                                    <option value="4">Cheque</option> -->
+                                                                                                        <option value="4">Cheque</option> -->
                                 <option value="5">Debit Card</option>
                             </select>
                         </div>
@@ -323,7 +328,7 @@
                             <select name="edit_paid_by_id" class="form-control selectpicker">
                                 <option value="1">Cash</option>
                                 <!--  <option value="3">Credit Card</option>
-                                                                                    <option value="4">Cheque</option> -->
+                                                                                                        <option value="4">Cheque</option> -->
                                 <option value="5">Debit Card</option>
                                 <option value="6">Tempo / Utang</option>
                             </select>

@@ -360,7 +360,7 @@ return [
 	"Sold Qty" => "Dijual Qty",
 	"Payment Reference" => "Rujukan pembayaran",
 	"Sale Reference" => "Rujukan Penjualan",
-	"Purchase Reference" => "Rujukan Pembelian",
+	"Purchase Reference" => "No. Referensi Pembelian",
 	"Paid By" => "Dibayar oleh",
 	"Total Item" => "Jumlah item",
 	"Total Quantity" => "Kuantitas keseluruhan",

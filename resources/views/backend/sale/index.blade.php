@@ -62,20 +62,24 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-2 mt-3">
-                            <div class="form-group">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-end">
                                 <button class="btn btn-primary" id="filter-btn"
-                                    type="submit">{{ trans('file.submit') }}</button>
+                                    type="submit">{{ trans('file.Search') }}</button>
                             </div>
                         </div>
                     </div>
                     {!! Form::close() !!}
 
                     @if (in_array('sales-add', $all_permission))
-                        <a href="{{ route('sales.create') }}" class="btn btn-info"><i class="dripicons-plus"></i>
-                            {{ trans('file.Add Sale') }}</a>&nbsp;
-                        <a href="{{ url('sales/sale_by_csv') }}" class="btn btn-primary"><i class="dripicons-copy"></i>
-                            {{ trans('file.Import Sale') }}</a>
+                        <div class="d-flex justify-content-end mt-3">
+                            <a href="{{ route('sales.create') }}" class="btn btn-info">
+                                <i class="dripicons-plus"></i>
+                                {{ trans('file.Add Sale') }}
+                            </a>
+                        </div>
+                        {{-- <a href="{{ url('sales/sale_by_csv') }}" class="btn btn-primary"><i class="dripicons-copy"></i>
+                            {{ trans('file.Import Sale') }}</a> --}}
                     @endif
                     <div class="table-responsive">
                         <table id="sale-table" class="table sale-list" style="width: 100%">
@@ -247,20 +251,20 @@
                         <div class="col-md-6 mt-1">
                             <label>{{ trans('file.Paid By') }}</label>
                             <!-- <select name="paid_by_id" class="form-control">
-                                                                                                                                        <option value="1">Cash</option>
-                                                                                                                                        <option value="2">Gift Card</option>
-                                                                                                                                        <option value="3">Credit Card</option>
-                                                                                                                                        <option value="4">Cheque</option>
-                                                                                                                                        <option value="5">Paypal</option>
-                                                                                                                                        <option value="6">Deposit</option>
-                                                                                                                                        @if ($lims_reward_point_setting_data->is_active)
+                                                                                                                                                                <option value="1">Cash</option>
+                                                                                                                                                                <option value="2">Gift Card</option>
+                                                                                                                                                                <option value="3">Credit Card</option>
+                                                                                                                                                                <option value="4">Cheque</option>
+                                                                                                                                                                <option value="5">Paypal</option>
+                                                                                                                                                                <option value="6">Deposit</option>
+                                                                                                                                                                @if ($lims_reward_point_setting_data->is_active)
     <option value="7">Points</option>
     @endif
-                                                                                                                                    </select> -->
+                                                                                                                                                            </select> -->
                             <select name="paid_by_id" id="paid_by_id_add" class="form-control selectpicker">
                                 <option value="1">Cash</option>
                                 <!--  <option value="3">Credit Card</option>
-                                                                                                                                        <option value="4">Cheque</option> -->
+                                                                                                                                                                <option value="4">Cheque</option> -->
                                 <option value="5">Debit Card</option>
                                 <!-- <option value="6">Tempo / Utang</option> -->
                             </select>

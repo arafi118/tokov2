@@ -19,25 +19,28 @@
     @endif
 
     <section>
-        <div class="container-fluid d-flex justify-content-end">
-            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#createModal">
-                <i class="dripicons-plus"></i> {{ trans('file.Add Category') }}
-            </button>
-            {{-- <button class="btn btn-primary" data-toggle="modal" data-target="#importCategory">
-                <i class="dripicons-copy"></i> {{ trans('file.Import Category') }}
-            </button> --}}
-        </div>
-        <div class="table-responsive">
-            <table id="category-table" class="table" style="width: 100%">
-                <thead>
-                    <tr>
-                        <th class="not-exported"></th>
-                        <th>{{ trans('file.Image') }}</th>
-                        <th>{{ trans('file.category') }}</th>
-                        <th class="not-exported">{{ trans('file.action') }}</th>
-                    </tr>
-                </thead>
-            </table>
+        <div class="container-fluid">
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#createModal">
+                    <i class="dripicons-plus"></i> {{ trans('file.Add Category') }}
+                </button>
+                {{-- <button class="btn btn-primary" data-toggle="modal" data-target="#importCategory">
+                    <i class="dripicons-copy"></i> {{ trans('file.Import Category') }}
+                </button> --}}
+            </div>
+
+            <div class="table-responsive">
+                <table id="category-table" class="table" style="width: 100%">
+                    <thead>
+                        <tr>
+                            <th class="not-exported"></th>
+                            <th>{{ trans('file.Image') }}</th>
+                            <th>{{ trans('file.category') }}</th>
+                            <th class="not-exported">{{ trans('file.action') }}</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
         </div>
     </section>
 

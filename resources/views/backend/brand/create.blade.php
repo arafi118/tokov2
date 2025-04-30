@@ -23,65 +23,68 @@
     @endif
 
     <section>
-        <div class="container-fluid d-flex justify-content-end">
-            <button class="btn btn-info" data-toggle="modal" data-target="#createModal">
-                <i class="dripicons-plus"></i> {{ trans('file.Add Brand') }}
-            </button>
-            {{-- <button class="btn btn-primary" data-toggle="modal" data-target="#importBrand">
-                <i class="dripicons-copy"></i> {{ trans('file.Import Brand') }}
-            </button> --}}
-        </div>
-        <div class="table-responsive">
-            <table id="biller-table" class="table">
-                <thead>
-                    <tr>
-                        <th class="not-exported"></th>
-                        <th>{{ trans('file.Image') }}</th>
-                        <th>{{ trans('file.Brand') }}</th>
-                        <th class="not-exported">{{ trans('file.action') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($lims_brand_all as $key => $brand)
-                        <tr data-id="{{ $brand->id }}">
-                            <td>{{ $key }}</td>
-                            @if ($brand->image)
-                                <td> <img src="{{ url('public/images/brand', $brand->image) }}" height="80"
-                                        width="80">
-                                </td>
-                            @else
-                                <td>No Image</td>
-                            @endif
-                            <td>{{ $brand->title }}</td>
-                            <td>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default btn-sm dropdown-toggle"
-                                        data-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false">{{ trans('file.action') }}
-                                        <span class="caret"></span>
-                                        <span class="sr-only">Toggle Dropdown</span>
-                                    </button>
-                                    <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
-                                        user="menu">
-                                        <li><button type="button" data-id="{{ $brand->id }}"
-                                                class="open-EditbrandDialog btn btn-link" data-toggle="modal"
-                                                data-target="#editModal"><i class="dripicons-document-edit"></i>
-                                                {{ trans('file.edit') }}</button></li>
-                                        <li class="divider"></li>
-                                        {{ Form::open(['route' => ['brand.destroy', $brand->id], 'method' => 'DELETE']) }}
-                                        <li>
-                                            <button type="submit" class="btn btn-link"
-                                                onclick="return confirm('Are you sure want to delete?')"><i
-                                                    class="dripicons-trash"></i> {{ trans('file.delete') }}</button>
-                                        </li>
-                                        {{ Form::close() }}
-                                    </ul>
-                                </div>
-                            </td>
+        <div class="container-fluid">
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-info" data-toggle="modal" data-target="#createModal">
+                    <i class="dripicons-plus"></i> {{ trans('file.Add Brand') }}
+                </button>
+                {{-- <button class="btn btn-primary" data-toggle="modal" data-target="#importBrand">
+                    <i class="dripicons-copy"></i> {{ trans('file.Import Brand') }}
+                </button> --}}
+            </div>
+
+            <div class="table-responsive">
+                <table id="biller-table" class="table">
+                    <thead>
+                        <tr>
+                            <th class="not-exported"></th>
+                            <th>{{ trans('file.Image') }}</th>
+                            <th>{{ trans('file.Brand') }}</th>
+                            <th class="not-exported">{{ trans('file.action') }}</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ($lims_brand_all as $key => $brand)
+                            <tr data-id="{{ $brand->id }}">
+                                <td>{{ $key }}</td>
+                                @if ($brand->image)
+                                    <td> <img src="{{ url('public/images/brand', $brand->image) }}" height="80"
+                                            width="80">
+                                    </td>
+                                @else
+                                    <td>No Image</td>
+                                @endif
+                                <td>{{ $brand->title }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                            data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">{{ trans('file.action') }}
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
+                                            user="menu">
+                                            <li><button type="button" data-id="{{ $brand->id }}"
+                                                    class="open-EditbrandDialog btn btn-link" data-toggle="modal"
+                                                    data-target="#editModal"><i class="dripicons-document-edit"></i>
+                                                    {{ trans('file.edit') }}</button></li>
+                                            <li class="divider"></li>
+                                            {{ Form::open(['route' => ['brand.destroy', $brand->id], 'method' => 'DELETE']) }}
+                                            <li>
+                                                <button type="submit" class="btn btn-link"
+                                                    onclick="return confirm('Are you sure want to delete?')"><i
+                                                        class="dripicons-trash"></i> {{ trans('file.delete') }}</button>
+                                            </li>
+                                            {{ Form::close() }}
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </section>
 

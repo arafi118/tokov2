@@ -23,80 +23,84 @@
     @endif
 
     <section>
-        <div class="container-fluid d-flex justify-content-end">
-            <a href="#" data-toggle="modal" data-target="#createModal" class="btn btn-info">
-                <i class="dripicons-plus"></i> {{ trans('file.Add Unit') }}
-            </a>
-            {{-- <a href="#" data-toggle="modal" data-target="#importUnit" class="btn btn-primary">
-                <i class="dripicons-copy"></i> {{ trans('file.Import Unit') }}
-            </a> --}}
-        </div>
-        <div class="table-responsive">
-            <table id="unit-table" class="table">
-                <thead>
-                    <tr>
-                        <th class="not-exported"></th>
-                        <th>{{ trans('file.Code') }}</th>
-                        <th>{{ trans('file.name') }}</th>
-                        <th>{{ trans('file.Base Unit') }}</th>
-                        <th>{{ trans('file.Operator') }}</th>
-                        <th>{{ trans('file.Operation Value') }}</th>
-                        <th class="not-exported">{{ trans('file.action') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($lims_unit_all as $key => $unit)
-                        <tr data-id="{{ $unit->id }}">
-                            <td>{{ $key }}</td>
-                            <td>{{ $unit->unit_code }}</td>
-                            <td>{{ $unit->unit_name }}</td>
-                            @if ($unit->base_unit)
-                                <?php $base_unit = DB::connection(env('TENANT_DB_CONNECTION'))->table('units')->where('id', $unit->base_unit)->first(); ?>
-                                <td>{{ $base_unit->unit_name }}</td>
-                            @else
-                                <td>N/A</td>
-                            @endif
-                            @if ($unit->operator)
-                                <td>{{ $unit->operator }}</td>
-                            @else
-                                <td>N/A</td>
-                            @endif
-                            @if ($unit->operation_value)
-                                <td>{{ $unit->operation_value }}</td>
-                            @else
-                                <td>N/A</td>
-                            @endif
-                            <td>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default btn-sm dropdown-toggle"
-                                        data-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false">{{ trans('file.action') }}
-                                        <span class="caret"></span>
-                                        <span class="sr-only">Toggle Dropdown</span>
-                                    </button>
-                                    <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
-                                        user="menu">
-                                        <li>
-                                            <button type="button" data-id="{{ $unit->id }}"
-                                                class="open-EditUnitDialog btn btn-link" data-toggle="modal"
-                                                data-target="#editModal"><i class="dripicons-document-edit"></i>
-                                                {{ trans('file.edit') }}
-                                            </button>
-                                        </li>
-                                        <li class="divider"></li>
-                                        {{ Form::open(['route' => ['unit.destroy', $unit->id], 'method' => 'DELETE']) }}
-                                        <li>
-                                            <button type="submit" class="btn btn-link" onclick="return confirmDelete()"><i
-                                                    class="dripicons-trash"></i> {{ trans('file.delete') }}</button>
-                                        </li>
-                                        {{ Form::close() }}
-                                    </ul>
-                                </div>
-                            </td>
+        <div class="container-fluid">
+            <div class="d-flex justify-content-end">
+                <a href="#" data-toggle="modal" data-target="#createModal" class="btn btn-info">
+                    <i class="dripicons-plus"></i> {{ trans('file.Add Unit') }}
+                </a>
+                {{-- <a href="#" data-toggle="modal" data-target="#importUnit" class="btn btn-primary">
+                    <i class="dripicons-copy"></i> {{ trans('file.Import Unit') }}
+                </a> --}}
+            </div>
+
+            <div class="table-responsive">
+                <table id="unit-table" class="table">
+                    <thead>
+                        <tr>
+                            <th class="not-exported"></th>
+                            <th>{{ trans('file.Code') }}</th>
+                            <th>{{ trans('file.name') }}</th>
+                            <th>{{ trans('file.Base Unit') }}</th>
+                            <th>{{ trans('file.Operator') }}</th>
+                            <th>{{ trans('file.Operation Value') }}</th>
+                            <th class="not-exported">{{ trans('file.action') }}</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ($lims_unit_all as $key => $unit)
+                            <tr data-id="{{ $unit->id }}">
+                                <td>{{ $key }}</td>
+                                <td>{{ $unit->unit_code }}</td>
+                                <td>{{ $unit->unit_name }}</td>
+                                @if ($unit->base_unit)
+                                    <?php $base_unit = DB::connection(env('TENANT_DB_CONNECTION'))->table('units')->where('id', $unit->base_unit)->first(); ?>
+                                    <td>{{ $base_unit->unit_name }}</td>
+                                @else
+                                    <td>N/A</td>
+                                @endif
+                                @if ($unit->operator)
+                                    <td>{{ $unit->operator }}</td>
+                                @else
+                                    <td>N/A</td>
+                                @endif
+                                @if ($unit->operation_value)
+                                    <td>{{ $unit->operation_value }}</td>
+                                @else
+                                    <td>N/A</td>
+                                @endif
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                            data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">{{ trans('file.action') }}
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
+                                            user="menu">
+                                            <li>
+                                                <button type="button" data-id="{{ $unit->id }}"
+                                                    class="open-EditUnitDialog btn btn-link" data-toggle="modal"
+                                                    data-target="#editModal"><i class="dripicons-document-edit"></i>
+                                                    {{ trans('file.edit') }}
+                                                </button>
+                                            </li>
+                                            <li class="divider"></li>
+                                            {{ Form::open(['route' => ['unit.destroy', $unit->id], 'method' => 'DELETE']) }}
+                                            <li>
+                                                <button type="submit" class="btn btn-link"
+                                                    onclick="return confirmDelete()"><i class="dripicons-trash"></i>
+                                                    {{ trans('file.delete') }}</button>
+                                            </li>
+                                            {{ Form::close() }}
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </section>
     <!-- Modal -->
