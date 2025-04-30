@@ -17,9 +17,9 @@
 <!-- 2. Hidden menu kartu hadiah -->
 <!-- 3. Hidden menu kupon -->
 4. Pre order => Jenis pelayanan (Ambil, Antar)
-5. Penjualan Tempo => Rekening penjualan dengan Piutang
+<!-- 5. Penjualan Tempo => Rekening penjualan dengan Piutang -->
 6. Automatisasi penjualan kurang (penjualan ke piutang, piutang ke kas/bank)
-7. Tambah jenis pembayaran (kas/bank)
+<!-- 7. Tambah jenis pembayaran (kas/bank) -->
 
 # Pengeluaran
 1. Hidden menu pengeluaran
