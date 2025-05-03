@@ -46,7 +46,8 @@
 
 # Orang
 1. Menu hanya tampil di bagian admin
-2. Ganti nama menjadi daftar user
+2. Ganti nama menjadi Kontak
+3. Hidden biller
 
 # Pengaturan
 1. Diskon plan => Harga Member

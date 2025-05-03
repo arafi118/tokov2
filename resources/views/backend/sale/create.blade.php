@@ -151,7 +151,7 @@
                                                             <th>{{ trans('file.name') }}</th>
                                                             <th>{{ trans('file.Code') }}</th>
                                                             <th width="100">{{ trans('file.Quantity') }}</th>
-                                                            <th>{{ trans('file.Batch No') }}</th>
+                                                            {{-- <th>{{ trans('file.Batch No') }}</th> --}}
                                                             <th>{{ trans('file.Net Unit Price') }}</th>
                                                             <th>{{ trans('file.Discount') }}</th>
                                                             <th>{{ trans('file.Cashback') }}</th>
@@ -165,7 +165,7 @@
                                                     <tfoot class="tfoot active">
                                                         <th colspan="2">{{ trans('file.Total') }}</th>
                                                         <th id="total-qty">0</th>
-                                                        <th></th>
+                                                        {{-- <th></th> --}}
                                                         <th></th>
                                                         <th id="total-discount">0.00</th>
                                                         <th id="total-cashback">0.00</th>
@@ -923,16 +923,16 @@
                             '<td><input type="number" class="form-control form-control-sm qty" name="qty[]" value="' +
                             data[
                                 15] + '" step="any" required/></td>';
-                        if (data[12]) {
-                            cols +=
-                                '<td><input type="text" class="form-control form-control-sm batch-no" value="' +
-                                batch_no[pos] +
-                                '" required/> <input type="hidden" class="product-batch-id" name="product_batch_id[]" value="' +
-                                product_batch_id[pos] + '"/> </td>';
-                        } else {
-                            cols +=
-                                '<td><input type="text" class="form-control form-control-sm batch-no" disabled/> <input type="hidden" class="product-batch-id" name="product_batch_id[]"/> </td>';
-                        }
+                        // if (data[12]) {
+                        //     cols +=
+                        //         '<td><input type="text" class="form-control form-control-sm batch-no" value="' +
+                        //         batch_no[pos] +
+                        //         '" required/> <input type="hidden" class="product-batch-id" name="product_batch_id[]" value="' +
+                        //         product_batch_id[pos] + '"/> </td>';
+                        // } else {
+                        //     cols +=
+                        //         '<td><input type="text" class="form-control form-control-sm batch-no" disabled/> <input type="hidden" class="product-batch-id" name="product_batch_id[]"/> </td>';
+                        // }
 
                         cols += '<td class="net_unit_price"></td>';
                         cols += '<td class="discount">0</td>';
@@ -947,6 +947,11 @@
                             9] + '"/>';
                         cols += '<input type="hidden" class="sale-unit" name="sale_unit[]" value="' +
                             temp_unit_name[0] + '"/>';
+                        cols += '<input type="hidden" class="form-control form-control-sm batch-no" value="' +
+                            batch_no[pos] + '"/>';
+                        cols +=
+                            '<input type="hidden" class="product-batch-id" name="product_batch_id[]" value="' +
+                            product_batch_id[pos] + '"/> ';
                         cols += '<input type="hidden" class="net_unit_price" name="net_unit_price[]" />';
                         cols += '<input type="hidden" class="discount-value" name="discount[]" />';
                         cols += '<input type="hidden" class="cashback-value" name="cashback[]" />';

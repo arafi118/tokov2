@@ -101,16 +101,16 @@
                                                                         max="{{ $product_purchase->qty }}" />
                                                                 </td>
                                                                 <td class="net_unit_cost">
-                                                                    {{ number_format((float) $product_purchase->net_unit_cost, 2, '.', '') }}
+                                                                    {{ number_format($product_purchase->net_unit_cost, 28) }}
                                                                 </td>
                                                                 <td class="discount">
-                                                                    {{ number_format((float) $product_purchase->discount, 2, '.', '') }}
+                                                                    {{ number_format($product_purchase->discount, 28) }}
                                                                 </td>
                                                                 <td class="tax">
-                                                                    {{ number_format((float) $product_purchase->tax, 2, '.', '') }}
+                                                                    {{ number_format($product_purchase->tax, 28) }}
                                                                 </td>
                                                                 <td class="sub-total">
-                                                                    {{ number_format((float) $product_purchase->total, 2, '.', '') }}
+                                                                    {{ number_format($product_purchase->total, 28) }}
                                                                 </td>
                                                                 <td><input type="checkbox" class="is-return"
                                                                         name="is_return[]" value="{{ $product_data->id }}">
@@ -313,7 +313,7 @@
         });
 
         //Change quantity
-        $("#myTable").on('input', '.qty', function() {
+        $("#myTable").on('change', '.qty', function() {
             rowindex = $(this).closest('tr').index();
             if ($(this).val() < 1 && $(this).val() != '') {
                 $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ') .qty').val(1);
@@ -346,26 +346,25 @@
                     var tax = $('table.order-list tbody tr:nth-child(' + (i + 1) + ') .unit-tax-value').val() * qty;
                     var unit_cost = $('table.order-list tbody tr:nth-child(' + (i + 1) + ') .unit-cost').val();
 
-                    total_qty += parseFloat(qty);
-                    total_discount += parseFloat(discount);
-                    total_tax += parseFloat(tax);
-                    total += parseFloat(unit_cost * qty);
+                    total_qty += toNumber(qty);
+                    total_discount += toNumber(discount);
+                    total_tax += tax;
+                    total += unit_cost * qty;
                     $('table.order-list tbody tr:nth-child(' + (i + 1) + ') .subtotal-value').val(unit_cost * qty);
-                    $('table.order-list tbody tr:nth-child(' + (i + 1) + ') .sub-total').text(parseFloat(unit_cost *
-                        qty).toFixed(2));
-                    $('table.order-list tbody tr:nth-child(' + (i + 1) + ') .tax-value').val(parseFloat(tax)
-                        .toFixed(2));
-                    $('table.order-list tbody tr:nth-child(' + (i + 1) + ') .tax').text(parseFloat(tax).toFixed(2));
+                    $('table.order-list tbody tr:nth-child(' + (i + 1) + ') .sub-total').text(toDecimal(unit_cost *
+                        qty));
+                    $('table.order-list tbody tr:nth-child(' + (i + 1) + ') .tax-value').val(tax);
+                    $('table.order-list tbody tr:nth-child(' + (i + 1) + ') .tax').text(toDecimal(tax));
                     item++;
                 }
             });
             $('input[name="total_qty"]').val(total_qty);
 
-            $('input[name="total_discount"]').val(total_discount.toFixed(2));
+            $('input[name="total_discount"]').val(total_discount);
 
-            $('input[name="total_tax"]').val(total_tax.toFixed(2));
+            $('input[name="total_tax"]').val(total_tax);
 
-            $('input[name="total_cost"]').val(total.toFixed(2));
+            $('input[name="total_cost"]').val(total);
             $('input[name="item"]').val(item);
             item += '(' + total_qty + ')';
             $('#item').text(item);
@@ -374,18 +373,18 @@
         }
 
         function calculateGrandTotal() {
-            var total_qty = parseFloat($('input[name="total_qty"]').val());
-            var subtotal = parseFloat($('input[name="total_cost"]').val());
-            var order_tax = parseFloat($('select[name="order_tax_rate"]').val());
+            var total_qty = toNumber($('input[name="total_qty"]').val());
+            var subtotal = toNumber($('input[name="total_cost"]').val());
+            var order_tax = $('select[name="order_tax_rate"]').val();
             var order_tax = subtotal * (order_tax / 100);
             var grand_total = subtotal + order_tax;
 
 
-            $('#subtotal').text(subtotal.toFixed(2));
-            $('#order_tax').text(order_tax.toFixed(2));
-            $('input[name="order_tax"]').val(order_tax.toFixed(2));
-            $('#grand_total').text(grand_total.toFixed(2));
-            $('input[name="grand_total"]').val(grand_total.toFixed(2));
+            $('#subtotal').text(toDecimal(subtotal));
+            $('#order_tax').text(order_tax);
+            $('input[name="order_tax"]').val(order_tax);
+            $('#grand_total').text(toDecimal(grand_total));
+            $('input[name="grand_total"]').val(grand_total);
         }
 
         $(window).keydown(function(e) {

@@ -2052,6 +2052,10 @@ a.text-primary:hover {
   color: #868e96
 }
 
+.bootstrap-select.btn-group .dropdown-menu .dropdown-header {
+  padding: 0 0.5rem;
+}
+
 a.bg-primary:focus,
 a.bg-primary:hover {
   background-color: #288b46 !important
