@@ -21,10 +21,9 @@ class JurnalController extends Controller
 
     public function index(Request $req)
     {
-
         $jurnal = TbJurnal::selectRaw('tb_jurnals.*,tb_induk_jenis_transaksis.nama as induk')
             ->leftJoin('tb_induk_jenis_transaksis', 'tb_induk_jenis_transaksis.id', '=', 'tb_jurnals.tb_induk_jenis_transaksi_id')
-            ->paginate(15);
+            ->orderBy('tgl_transaksi', 'desc')->get();
 
         if ($req->cetak == 'yes' || $req->xls == 'yes') {
             $data = TbJurnal::with('induk')->get();
@@ -38,10 +37,12 @@ class JurnalController extends Controller
     public function create()
     {
         $lims_warehouse_list = Warehouse::where('is_active', true)->get();
-        $induk               = TbIndukJenisTransaksi::whereIn('nama', ['Input Jurnal', 'Pembelian AT dan Inventaris', 'Penyusutan dan Amortisasi'])->get();
-        $lims_account_all    = TbRekening::where('depth', '2')->with([
-            'children'
-        ])->orderBy('kode', 'asc')->get();
+        $induk               = TbIndukJenisTransaksi::where('slug', 'LIKE', 'input-jurnal')->with([
+            'jenisTransaksi' => function ($query) {
+                $query->where('nama', 'LIKE', '%Aset%');
+            }
+        ])->first();
+        $lims_account_all    = TbRekening::where('depth', '3')->orderBy('kode', 'asc')->get();
 
         return view('backend.jurnal.form', compact('lims_warehouse_list', 'induk', 'lims_account_all'));
     }
@@ -49,8 +50,12 @@ class JurnalController extends Controller
     public function edit($id)
     {
         $lims_warehouse_list = Warehouse::where('is_active', true)->get();
-        $induk               = TbIndukJenisTransaksi::whereIn('nama', ['Input Jurnal', 'Pembelian AT dan Inventaris', 'Penyusutan dan Amortisasi'])->get();
-        $lims_account_all    = TbRekening::orderBy('kode', 'asc')->get();
+        $induk               = TbIndukJenisTransaksi::where('slug', 'LIKE', 'input-jurnal')->with([
+            'jenisTransaksi' => function ($query) {
+                $query->where('nama', 'LIKE', '%Aset%');
+            }
+        ])->first();
+        $lims_account_all    = TbRekening::where('depth', '3')->orderBy('kode', 'asc')->get();
         $jurnal              = TbJurnal::find($id);
 
         $inventaris = null;
@@ -59,14 +64,13 @@ class JurnalController extends Controller
             $inventaris = Inventaris::where('tb_jurnal_id', $id)->first();
         }
 
-        $details             = TbJurnalDetail::where('tb_jurnal_id', $jurnal->id)->get();
+        $detail             = TbJurnalDetail::where('tb_jurnal_id', $jurnal->id)->first();
 
-        return view('backend.jurnal.form', compact('lims_warehouse_list', 'induk', 'lims_account_all', 'jurnal', 'details', 'inventaris'));
+        return view('backend.jurnal.form', compact('lims_warehouse_list', 'induk', 'lims_account_all', 'jurnal', 'detail', 'inventaris'));
     }
 
     public function store(Request $req)
     {
-
         \DB::beginTransaction();
 
         try {
@@ -76,66 +80,51 @@ class JurnalController extends Controller
                 $jurnal = new TbJurnal;
             }
 
+            $jenisTransaksi = TbJenisTransaksi::where('id', $req->jenis_transaksi)->first();
             $no_trans = $req->nomor_transaksi != '' ? $req->nomor_transaksi : $this->jurnal->notaCounter('input_jurnal');
 
             $jurnal->warehouse_id = $req->warehouse_id;
-            $jurnal->tb_induk_jenis_transaksi_id = $req->induk_transaksi;
+            $jurnal->tb_induk_jenis_transaksi_id = $jenisTransaksi->tb_induk_jenis_transaksi_id;
             $jurnal->tgl_transaksi  = Carbon::parse($req->tgl_transaksi)->format('Y-m-d');
             $jurnal->tabel_transaksi = 'jurnals';
             $jurnal->nomor_transaksi  = $no_trans;
-            $jurnal->memo  = $req->memo;
+            $jurnal->memo  = $req->Keterangan;
             $jurnal->insertedby = auth()->user()->id;
             $jurnal->save();
 
-            $jurnal_detail = TbJurnalDetail::where('tb_jurnal_id', $jurnal->id)->get();
-            $jurnal_detail_ids = collect($jurnal_detail->pluck(['id']))->all();
-            $jurnal_detail_ids_posts = collect($req->input('jurnal_detail_id'))->filter(function ($value, $key) {
-                return $value > 0;
-            })->all();
-            $diffs = array_diff($jurnal_detail_ids, $jurnal_detail_ids_posts);
-
-            if (count($diffs) > 0) {
-                foreach ($diffs as $data) {
-                    $delete_detail = TbJurnalDetail::findOrFail($data);
-                    $delete_detail->delete();
-                }
-            }
-
-            if ($req->induk_transaksi == 8) {
-                $jid = TbJenisTransaksi::where('slug', 'input-jurnal')->first();
+            if ($req->jurnal_detail_id != 0) {
+                $detail = TbJurnalDetail::findOrFail($req->jurnal_detail_id);
             } else {
-                $jid =  TbJenisTransaksi::findOrFail($req->jenis_transaksi);
+                $detail = new TbJurnalDetail;
             }
 
-            foreach ($req->debit as $key => $val) {
-                if ($req->jurnal_detail_id[$key] != 0) {
-                    $detail = TbJurnalDetail::findOrFail($req->jurnal_detail_id[$key]);
-                    //$jenis_transaksi_id = $detail->tb_jenis_transaksi_id;
-                } else {
-                    $detail = new TbJurnalDetail;
-                }
-                $jenis_transaksi_id = $jid->id;
-                $detail->tb_jurnal_id = $jurnal->id;
-                $detail->tb_jenis_transaksi_id = $jenis_transaksi_id;
-                $detail->debit_kode = $req->debit[$key];
-                $detail->kredit_kode = $req->kredit[$key];
-                $detail->debit_nominal = $req->nominal[$key];
-                $detail->kredit_nominal = $req->nominal[$key];
-                $detail->deskripsi = $req->deskripsi[$key];
-                $detail->save();
-
-                $params  = [
-                    'debit_kode'         => $req->debit[$key],
-                    'debit_jenis_mutasi' => '',
-                    'kredit_kode'        => $req->kredit[$key],
-                    'kredit_jenis_mutasi' => '',
-                    'gudang'             => $req->warehouse_id,
-                    'tanggal_transaksi'  => Carbon::parse($req->tgl_transaksi)->format('Y-m-d')
-                ];
-
-                $this->jurnal->updateSaldo($params);
-                $this->jurnal->updateLabaRugi($params);
+            $deskripsi = $req->Keterangan;
+            if ($req->induk_transaksi == 9) {
+                $deskripsi = 'Pembelian AT dan Inventaris (' . $req->nama_barang . ')';
             }
+
+            $jenis_transaksi_id = $jenisTransaksi->id;
+            $detail->tb_jurnal_id = $jurnal->id;
+            $detail->tb_jenis_transaksi_id = $jenis_transaksi_id;
+            $detail->debit_kode = $req->disimpan_ke;
+            $detail->kredit_kode = $req->sumber_dana;
+            $detail->debit_nominal = str_replace(',', '', $req->nominal);
+            $detail->kredit_nominal = str_replace(',', '', $req->nominal);
+            $detail->deskripsi = $deskripsi;
+            $detail->relasi = $req->relasi;
+            $detail->save();
+
+            $params  = [
+                'debit_kode'         => $req->disimpan_ke,
+                'debit_jenis_mutasi' => '',
+                'kredit_kode'        => $req->sumber_dana,
+                'kredit_jenis_mutasi' => '',
+                'gudang'             => $req->warehouse_id,
+                'tanggal_transaksi'  => Carbon::parse($req->tgl_transaksi)->format('Y-m-d')
+            ];
+
+            $this->jurnal->updateSaldo($params);
+            $this->jurnal->updateLabaRugi($params);
 
             if ($req->induk_transaksi == 9) {
                 $jenis = TbJenisTransaksi::find($req->jenis_transaksi);
@@ -155,7 +144,7 @@ class JurnalController extends Controller
                 $inventaris->unit          = $req->unit;
                 $inventaris->harga_satuan  = $req->harga_satuan;
                 $inventaris->status        = $req->status;
-                $inventaris->tgl_validasi  = Carbon::parse($req->tgl_validasi)->format('Y-m-d');
+                $inventaris->tgl_validasi  = Carbon::parse($req->tgl_transaksi)->format('Y-m-d');
                 $inventaris->save();
             }
         } catch (\Exception $e) {
@@ -164,7 +153,7 @@ class JurnalController extends Controller
 
 
             $response = false;
-            return abort(500);
+            return $e->getMessage();
         }
 
         \DB::commit();

@@ -10,10 +10,15 @@ class TbIndukJenisTransaksi extends Model
 {
     use HasFactory;
     use UsesTenantConnection;
-    protected $fillable = ['nama','slug'];
+    protected $fillable = ['nama', 'slug'];
 
     public function details()
     {
         return $this->hasMany('App\TbJenisTransaksi');
+    }
+
+    public function jenisTransaksi()
+    {
+        return $this->hasMany(TbJenisTransaksi::class);
     }
 }

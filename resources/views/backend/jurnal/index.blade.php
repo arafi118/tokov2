@@ -52,26 +52,32 @@
                                                     $j->tb_induk_jenis_transaksi_id == 9 ||
                                                     $j->tb_induk_jenis_transaksi_id == 10 ||
                                                     $j->tb_induk_jenis_transaksi_id == 11)
-                                                <li><a href="{{ route('jurnal.edit', ['id' => $j->id]) }}"><button
-                                                            type="button" data-id="{{ $j->id }}"
+                                                <li>
+                                                    <a href="{{ route('jurnal.edit', ['id' => $j->id]) }}">
+                                                        <button type="button" data-id="{{ $j->id }}"
                                                             data-account_no="{{ $j->account_no }}"
                                                             data-name="{{ $j->name }}"
                                                             class="edit-btn btn btn-link"><i
                                                                 class="dripicons-document-edit"></i>
-                                                            {{ trans('file.edit') }}</button></a></li>
+                                                            {{ trans('file.edit') }}
+                                                        </button>
+                                                    </a>
+                                                </li>
                                                 <li class="divider"></li>
                                                 {{ Form::open(['route' => ['jurnal.destroy', $j->id], 'method' => 'DELETE']) }}
                                                 <li>
                                                     <button type="submit" class="btn btn-link"
-                                                        onclick="return confirmDelete()"><i class="dripicons-trash"></i>
-                                                        {{ trans('file.delete') }}</button>
+                                                        onclick="return confirmDelete()">
+                                                        <i class="dripicons-trash"></i> {{ trans('file.delete') }}
+                                                    </button>
                                                 </li>
                                                 {{ Form::close() }}
                                             @endif
                                             <li>
                                                 <button type="button" class="btn btn-link"
-                                                    onclick="openModalDetail('{{ $j->id }}')"><i
-                                                        class="dripicons-document"></i> Detail</button>
+                                                    onclick="openModalDetail('{{ $j->id }}')">
+                                                    <i class="dripicons-document"></i> Detail
+                                                </button>
                                             </li>
                                         </ul>
 
@@ -82,7 +88,6 @@
                     </tbody>
                 </table>
             </div>
-            <center>{{ $jurnal->links() }}</center>
         </div>
     </section>
     <div id="detailModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
@@ -144,10 +149,11 @@
                 url: '{{ url('jurnal/detail') }}/' + id,
                 success: function(i) {
                     $('#target').html(i);
+
+                    $('#detailModal').modal('show');
                 }
             });
 
-            $('#detailModal').modal('show');
         }
 
         function confirmDelete() {
@@ -157,7 +163,7 @@
             return false;
         }
         var table = $('#account-table').DataTable({
-            "order": [],
+            "order": ['3', 'DESC'],
             'language': {
                 'lengthMenu': '_MENU_ {{ trans('file.records per page') }}',
                 "info": '<small>{{ trans('file.Showing') }} _START_ - _END_ (_TOTAL_)</small>',
@@ -195,7 +201,7 @@
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
-            dom: '<"row"lfB>rt',
+            dom: '<"row"lfB>rtip',
             buttons: [{
                     extend: 'pdf',
                     text: '<i title="export to pdf" class="fa fa-file-pdf-o"></i>',
