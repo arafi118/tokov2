@@ -16,9 +16,9 @@
 @push('scripts')
     <script type="text/javascript">
         $(function() {
-            $("ul#account").siblings('a').attr('aria-expanded', 'true');
-            $("ul#account").addClass("show");
-            $("ul#account #laporan-keuangan-menu").addClass("active");
+            $("ul#report").siblings('a').attr('aria-expanded', 'true');
+            $("ul#report").addClass("show");
+            $("ul#report #laporan-keuangan-menu").addClass("active");
 
             $('#jenis_buku_id').val('');
             $('#jenis_buku_id').attr('disabled', 'disabled');

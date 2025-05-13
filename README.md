@@ -35,18 +35,18 @@
 2. Tambah jenis pembayaran (kas/bank)
 
 # Akutansi
-1. Daftar rekening disesuaikan
-2. Jurnal disamakan dengan aplikasi lain
+<!-- 1. Daftar rekening disesuaikan -->
+<!-- 2. Jurnal disamakan dengan aplikasi lain -->
 3. Laporan keuangan pindah ke menu laporan
-4. Hidden menu transfer uang, neraca dan ayat rekening
+<!-- 4. Hidden menu transfer uang, neraca dan ayat rekening -->
 5. Tutup buku nanti terakhir
 
 # HRM
-1. Hidden menu HRM
+<!-- 1. Hidden menu HRM -->
 
 # Orang
 1. Menu hanya tampil di bagian admin
-2. Ganti nama menjadi Kontak
+<!-- 2. Ganti nama menjadi Kontak -->
 3. Hidden biller
 
 # Pengaturan

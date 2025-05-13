@@ -177,7 +177,7 @@ return [
 	"Invoice" => "Invoice",
 	"Shipping" => "Pengiriman",
 	"Finalize Sale" => "Selesaikan Penjualan",
-	"People" => "Orang",
+	"People" => "Kontak",
 	"Option" => "Pilihan",
 	"Bill" => "Tagihan",
 	"Go To" => "Pergi ke",

@@ -446,13 +446,6 @@
                                 </a>
                             </li>
                         @endif
-                        @if ($account_report_active)
-                            <li id="laporan-keuangan-menu">
-                                <a href="{{ route('laporan_keuangan') }}">
-                                    {{ trans('file.Financial Statements') }}
-                                </a>
-                            </li>
-                        @endif
                         @if ($account_close_statement_active)
                             <li id="tutup-buku-menu">
                                 <a href="{{ route('tutup_buku.index') }}">
@@ -460,26 +453,26 @@
                                 </a>
                             </li>
                         @endif
-                        @if ($money_transfer_active)
+                        {{-- @if ($money_transfer_active)
                             <li id="money-transfer-menu">
                                 <a href="{{ route('money-transfers.index') }}">{{ trans('file.Money Transfer') }}</a>
                             </li>
-                        @endif
-                        @if ($balance_sheet_active)
+                        @endif --}}
+                        {{-- @if ($balance_sheet_active)
                             <li id="balance-sheet-menu">
                                 <a href="{{ route('accounts.balancesheet') }}">{{ trans('file.Balance Sheet') }}</a>
                             </li>
-                        @endif
-                        @if ($account_statement_active)
+                        @endif --}}
+                        {{-- @if ($account_statement_active)
                             <li id="account-statement-menu">
                                 <a id="account-statement" href="">{{ trans('file.Account Statement') }}</a>
                             </li>
-                        @endif
+                        @endif --}}
                     </ul>
                 </li>
             @endif
 
-            <li class="">
+            {{-- <li class="">
                 <a href="#hrm" aria-expanded="false" data-toggle="collapse">
                     <i class="dripicons-user-group"></i><span>HRM</span>
                 </a>
@@ -508,7 +501,7 @@
                         <a href="{{ route('holidays.index') }}">{{ trans('file.Holiday') }}</a>
                     </li>
                 </ul>
-            </li>
+            </li> --}}
 
             <li>
                 <a href="#people" aria-expanded="false" data-toggle="collapse">
@@ -563,6 +556,13 @@
                     <i class="dripicons-document-remove"></i><span>{{ trans('file.Reports') }}</span>
                 </a>
                 <ul id="report" class="collapse list-unstyled ">
+                    @if ($account_report_active)
+                        <li id="laporan-keuangan-menu">
+                            <a href="{{ route('laporan_keuangan') }}">
+                                {{ trans('file.Financial Statements') }}
+                            </a>
+                        </li>
+                    @endif
                     @if ($profit_loss_active)
                         <li id="profit-loss-report-menu">
                             {!! Form::open(['route' => 'report.profitLoss', 'method' => 'post', 'id' => 'profitLoss-report-form']) !!}
