@@ -440,7 +440,7 @@ return [
 	"Stock Value by Cost" => "Nilai Saham mengikut Biaya",
 	"Estimate Profit" => "Anggarkan Keuntungan",
 	"Time Zone" => "Zona waktu",
-	"Currency Position" => "Kedudukan mata uang",
+	"Currency Position" => "Posisi mata uang",
 	"Prefix" => "Awalan",
 	"Suffix" => "Akhiran",
 	"Exclusive" => "Eksklusif",

@@ -5,8 +5,8 @@
 <!-- 3. Kategori => Foto (opsional). Menu hanya ada gambar, nama dan kode/inisial -->
 4. Gudang => Tempat penyimpanan barang (Tempat penyimpanan, Keterangan)
 <!-- 5. Daftar Produk => Jumlah menjadi stok -->
-6. Harga promosi per jumlah Produk
-7. Harga kelompok pelanggan/member
+<!-- 6. Harga promosi per jumlah Produk -->
+<!-- 7. Harga kelompok pelanggan/member -->
 
 # Pembelian
 <!-- 1. Tambah nomor referensi -->
