@@ -19,58 +19,63 @@
 
     <section>
         <div class="container-fluid">
-            <a href="#" data-toggle="modal" data-target="#createModal" class="btn btn-info"><i
-                    class="dripicons-plus"></i> {{ trans('file.Add Customer Group') }}</a>
-            <a href="#" data-toggle="modal" data-target="#importcustomer_group" class="btn btn-primary"><i
-                    class="dripicons-copy"></i> {{ trans('file.Import Customer Group') }}</a>
-        </div>
-        <div class="table-responsive">
-            <table id="customer-grp-table" class="table">
-                <thead>
-                    <tr>
-                        <th class="not-exported"></th>
-                        <th>{{ trans('file.name') }}</th>
-                        <th>{{ trans('file.Percentage') }}</th>
-                        <th class="not-exported">{{ trans('file.action') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($lims_customer_group_all as $key => $customer_group)
-                        <tr data-id="{{ $customer_group->id }}">
-                            <td>{{ $key }}</td>
-                            <td>{{ $customer_group->name }}</td>
-                            <td>{{ $customer_group->percentage }}</td>
-                            <td>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default btn-sm dropdown-toggle"
-                                        data-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false">{{ trans('file.action') }}
-                                        <span class="caret"></span>
-                                        <span class="sr-only">Toggle Dropdown</span>
-                                    </button>
-                                    <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
-                                        user="menu">
-                                        <li>
-                                            <button type="button" data-id="{{ $customer_group->id }}"
-                                                class="open-EditCustomerGroupDialog btn btn-link" data-toggle="modal"
-                                                data-target="#editModal"><i class="dripicons-document-edit"></i>
-                                                {{ trans('file.edit') }}
-                                            </button>
-                                        </li>
-                                        <li class="divider"></li>
-                                        {{ Form::open(['route' => ['customer_group.destroy', $customer_group->id], 'method' => 'DELETE']) }}
-                                        <li>
-                                            <button type="submit" class="btn btn-link" onclick="return confirmDelete()"><i
-                                                    class="dripicons-trash"></i> {{ trans('file.delete') }}</button>
-                                        </li>
-                                        {{ Form::close() }}
-                                    </ul>
-                                </div>
-                            </td>
+            <div class="d-flex justify-content-end">
+                <a href="#" data-toggle="modal" data-target="#createModal" class="btn btn-info">
+                    <i class="dripicons-plus"></i> {{ trans('file.Add Customer Group') }}
+                </a>
+                {{-- <a href="#" data-toggle="modal" data-target="#importcustomer_group" class="btn btn-primary">
+                    <i class="dripicons-copy"></i> {{ trans('file.Import Customer Group') }}
+                </a> --}}
+            </div>
+            <div class="table-responsive">
+                <table id="customer-grp-table" class="table">
+                    <thead>
+                        <tr>
+                            <th class="not-exported"></th>
+                            <th>{{ trans('file.name') }}</th>
+                            <th>{{ trans('file.Percentage') }}</th>
+                            <th class="not-exported">{{ trans('file.action') }}</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ($lims_customer_group_all as $key => $customer_group)
+                            <tr data-id="{{ $customer_group->id }}">
+                                <td>{{ $key }}</td>
+                                <td>{{ $customer_group->name }}</td>
+                                <td>{{ $customer_group->percentage }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                            data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">{{ trans('file.action') }}
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
+                                            user="menu">
+                                            <li>
+                                                <button type="button" data-id="{{ $customer_group->id }}"
+                                                    class="open-EditCustomerGroupDialog btn btn-link" data-toggle="modal"
+                                                    data-target="#editModal"><i class="dripicons-document-edit"></i>
+                                                    {{ trans('file.edit') }}
+                                                </button>
+                                            </li>
+                                            <li class="divider"></li>
+                                            {{ Form::open(['route' => ['customer_group.destroy', $customer_group->id], 'method' => 'DELETE']) }}
+                                            <li>
+                                                <button type="submit" class="btn btn-link"
+                                                    onclick="return confirmDelete()"><i class="dripicons-trash"></i>
+                                                    {{ trans('file.delete') }}</button>
+                                            </li>
+                                            {{ Form::close() }}
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </section>
 
@@ -86,7 +91,8 @@
                 </div>
                 <div class="modal-body">
                     <p class="italic">
-                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small></p>
+                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small>
+                    </p>
                     <form>
                         <div class="form-group">
                             <label>{{ trans('file.name') }} *</label>
@@ -119,7 +125,8 @@
                 </div>
                 <div class="modal-body">
                     <p class="italic">
-                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small></p>
+                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small>
+                    </p>
                     <div class="form-group">
                         <input type="hidden" name="customer_group_id">
                         <label>{{ trans('file.name') }} *</label>
@@ -150,7 +157,8 @@
                 </div>
                 <div class="modal-body">
                     <p class="italic">
-                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small></p>
+                        <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small>
+                    </p>
                     <p>{{ trans('file.The correct column order is') }} (name*, percentage*)
                         {{ trans('file.and you must follow this') }}.</p>
                     <div class="row">

@@ -16,7 +16,7 @@
 <!-- 1. Produk promo auto tampil di POS -->
 <!-- 2. Hidden menu kartu hadiah -->
 <!-- 3. Hidden menu kupon -->
-4. Pre order => Jenis pelayanan (Ambil, Antar)
+4. Pre order => Jenis pelayanan (Ambil, Antar) [pending]
 <!-- 5. Penjualan Tempo => Rekening penjualan dengan Piutang -->
 6. Automatisasi penjualan kurang (penjualan ke piutang, piutang ke kas/bank)
 <!-- 7. Tambah jenis pembayaran (kas/bank) -->
@@ -37,7 +37,7 @@
 # Akutansi
 <!-- 1. Daftar rekening disesuaikan -->
 <!-- 2. Jurnal disamakan dengan aplikasi lain -->
-3. Laporan keuangan pindah ke menu laporan
+<!-- 3. Laporan keuangan pindah ke menu laporan -->
 <!-- 4. Hidden menu transfer uang, neraca dan ayat rekening -->
 5. Tutup buku nanti terakhir
 
@@ -50,10 +50,10 @@
 3. Hidden biller
 
 # Pengaturan
-1. Diskon plan => Harga Member
-2. Diskon => Harga Paket Member
-3. Group Pelanggan => Kelompok harga jual
-4. Hidden menu sms, poin dan dokumentasi
+<!-- 1. Diskon plan => Harga Member -->
+<!-- 2. Diskon => Harga Paket Member -->
+<!-- 3. Group Pelanggan => Kelompok harga jual -->
+<!-- 4. Hidden menu sms, poin dan dokumentasi -->
 5. Semua API third party dinonaktifkan
 
 # TAMBAHAN

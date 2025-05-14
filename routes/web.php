@@ -27,6 +27,7 @@ use App\Http\Controllers\CustomerGroupController;
 use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\DiscountPlanController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ExpenseCategoryController;
 use App\Http\Controllers\ExpenseController;
@@ -34,6 +35,7 @@ use App\Http\Controllers\GiftCardController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JurnalController;
+use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\LaporanKeuanganController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PayrollController;
@@ -90,7 +92,7 @@ Route::group(['middleware' => ['common', 'auth:web', 'active']], function () {
 	Route::get('/dashboard-filter/{start_date}/{end_date}', [HomeController::class, 'dashboardFilter']);
 	Route::get('check-batch-availability/{product_id}/{batch_no}/{warehouse_id}', [ProductController::class, 'checkBatchAvailability']);
 
-	Route::get('language_switch/{locale}', 'LanguageController@switchLanguage');
+	Route::get('language_switch/{locale}', [LanguageController::class, 'switchLanguage']);
 
 	Route::get('role/permission/{id}', [RoleController::class, 'permission'])->name('role.permission');
 	Route::post('role/set_permission', [RoleController::class, 'setPermission'])->name('role.setPermission');

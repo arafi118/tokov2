@@ -11,7 +11,7 @@ class LanguageController extends Controller
 {
     public function switchLanguage($locale)
     {
-    	setcookie('language', $locale, time() + (86400 * 365), "/");
-    	return Redirect::back();
+        setcookie('language', $locale, time() + (86400 * 365), "/");
+        return Redirect::back();
     }
 }

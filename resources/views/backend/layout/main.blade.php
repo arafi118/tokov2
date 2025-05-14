@@ -728,7 +728,7 @@
                     @endif
                     @if ($discount_active)
                         <li id="discount-list-menu">
-                            <a href="{{ route('discounts.index') }}">{{ trans('file.Discount') }}</a>
+                            <a href="{{ route('discounts.index') }}">{{ trans('file.Discount Group') }}</a>
                         </li>
                     @endif
                     {{-- @if ($all_notification_active)
@@ -755,11 +755,11 @@
                         <a
                             href="{{ route('user.profile', ['id' => Auth::id()]) }}">{{ trans('file.User Profile') }}</a>
                     </li>
-                    @if ($create_sms_active)
+                    {{-- @if ($create_sms_active)
                         <li id="create-sms-menu">
                             <a href="{{ route('setting.createSms') }}">{{ trans('file.Create SMS') }}</a>
                         </li>
-                    @endif
+                    @endif --}}
                     @if ($general_setting_active)
                         <li id="general-setting-menu">
                             <a href="{{ route('setting.general') }}">{{ trans('file.General Setting') }}</a>
@@ -770,38 +770,38 @@
                             <a href="{{ route('setting.mail') }}">{{ trans('file.Mail Setting') }}</a>
                         </li>
                     @endif --}}
-                    @if ($reward_point_setting_active)
+                    {{-- @if ($reward_point_setting_active)
                         <li id="reward-point-setting-menu">
                             <a
                                 href="{{ route('setting.rewardPoint') }}">{{ trans('file.Reward Point Setting') }}</a>
                         </li>
-                    @endif
-                    @if ($sms_setting_active)
+                    @endif --}}
+                    {{-- @if ($sms_setting_active)
                         <li id="sms-setting-menu">
                             <a href="{{ route('setting.sms') }}">{{ trans('file.SMS Setting') }}</a>
                         </li>
-                    @endif
+                    @endif --}}
                     @if ($pos_setting_active)
                         <li id="pos-setting-menu">
                             <a href="{{ route('setting.pos') }}">POS
                                 {{ trans('file.settings') }}</a>
                         </li>
                     @endif
-                    @if ($hrm_setting_active)
+                    {{-- @if ($hrm_setting_active)
                         <li id="hrm-setting-menu">
                             <a href="{{ route('setting.hrm') }}">
                                 {{ trans('file.HRM Setting') }}</a>
                         </li>
-                    @endif
+                    @endif --}}
                 </ul>
             </li>
-            @if (Auth::user()->role_id != 5)
+            {{-- @if (Auth::user()->role_id != 5)
                 <li>
                     <a href="{{ url('public/read_me') }}">
                         <i class="dripicons-information"></i><span>{{ trans('file.Documentation') }}</span>
                     </a>
                 </li>
-            @endif
+            @endif --}}
         </ul>
     </nav>
     <div class="page">
