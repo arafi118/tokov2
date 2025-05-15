@@ -40,40 +40,6 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="form-group">
-                                        <label>{{ trans('file.Default Biller') }} *</label>
-                                        @if ($lims_pos_setting_data)
-                                            <input type="hidden" name="biller_id_hidden"
-                                                value="{{ $lims_pos_setting_data->biller_id }}">
-                                        @endif
-                                        <select required name="biller_id" class="selectpicker form-control"
-                                            data-live-search="true" data-live-search-style="begins"
-                                            title="Select Biller...">
-                                            @foreach ($lims_biller_list as $biller)
-                                                <option value="{{ $biller->id }}">
-                                                    {{ $biller->name . ' (' . $biller->company_name . ')' }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Stripe Publishable key</label>
-                                        <input type="text" name="stripe_public_key" class="form-control"
-                                            value="@if ($lims_pos_setting_data) {{ $lims_pos_setting_data->stripe_public_key }} @endif"
-                                            required />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Paypal Pro API Username</label>
-                                        <input type="text" name="paypal_username" class="form-control"
-                                            value="{{ env('PAYPAL_SANDBOX_API_USERNAME') }}" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Paypal Pro API Signature</label>
-                                        <input type="text" name="paypal_signature" class="form-control"
-                                            value="{{ env('PAYPAL_SANDBOX_API_SECRET') }}" />
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="submit" value="{{ trans('file.submit') }}" class="btn btn-primary">
-                                    </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -90,30 +56,47 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ trans('file.Default Biller') }} *</label>
+                                        @if ($lims_pos_setting_data)
+                                            <input type="hidden" name="biller_id_hidden"
+                                                value="{{ $lims_pos_setting_data->biller_id }}">
+                                        @endif
+                                        <select required name="biller_id" class="selectpicker form-control"
+                                            data-live-search="true" data-live-search-style="begins"
+                                            title="Select Biller...">
+                                            @foreach ($lims_biller_list as $biller)
+                                                <option value="{{ $biller->id }}">
+                                                    {{ $biller->name . ' (' . $biller->company_name . ')' }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label>{{ trans('file.Displayed Number of Product Row') }} *</label>
                                         <input type="number" name="product_number" class="form-control"
-                                            value="@if ($lims_pos_setting_data) {{ $lims_pos_setting_data->product_number }} @endif"
+                                            value="{{ $lims_pos_setting_data ? $lims_pos_setting_data->product_number : 0 }}"
                                             required />
                                     </div>
-                                    <div class="form-group">
-                                        <label>Stripe Secret key *</label>
-                                        <input type="text" name="stripe_secret_key" class="form-control"
-                                            value="@if ($lims_pos_setting_data) {{ $lims_pos_setting_data->stripe_secret_key }} @endif"required />
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end">
+                                <div>
+                                    <div class="form-group mb-0">
+                                        <input class="mt-2" type="checkbox" name="keybord_active" id="keybord_active"
+                                            value="1"
+                                            {{ $lims_pos_setting_data && $lims_pos_setting_data->keybord_active ? 'checked' : '' }}>
+                                        <label class="mt-2" for="keybord_active">
+                                            <strong>{{ trans('file.Touchscreen keybord') }}</strong>
+                                        </label>
                                     </div>
-                                    <div class="form-group">
-                                        <label>Paypal Pro API Password</label>
-                                        <input type="password" name="paypal_password" class="form-control"
-                                            value="{{ env('PAYPAL_SANDBOX_API_PASSWORD') }}" />
-                                    </div>
-                                    <div class="form-group">
-                                        @if ($lims_pos_setting_data && $lims_pos_setting_data->keybord_active)
-                                            <input class="mt-2" type="checkbox" name="keybord_active" value="1"
-                                                checked>
-                                        @else
-                                            <input class="mt-2" type="checkbox" name="keybord_active" value="1">
-                                        @endif
-                                        <label class="mt-2"><strong>{{ trans('file.Touchscreen keybord') }}</label>
+                                    <div class="d-flex justify-content-end">
+                                        <input type="submit" value="{{ trans('file.submit') }}" class="btn btn-primary">
                                     </div>
                                 </div>
                             </div>
