@@ -291,7 +291,7 @@ return [
 	"Supplier Report" => "Laporan Supllier",
 	"Due Report" => "Laporan Disebabkan",
 	"User Profile" => "Profil pengguna",
-	"Cash Flow" => "Aliran tunai",
+	"Cash Flow" => "Arus Kas",
 	"Add Category" => "Tambah Kategori",
 	"Import Category" => "Import Kategori",
 	"Parent Category" => "Kategori Parent",

@@ -60,7 +60,7 @@
     @endif
 
     <!-- Side Navbar -->
-    @include('backend.sale.partials.side_navbar')
+    {{-- @include('backend.sale.partials.side_navbar') --}}
 
     <section class="forms pos-section">
         <div class="container-fluid">

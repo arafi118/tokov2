@@ -2,7 +2,7 @@
     <!-- navbar-->
     <header>
         <nav class="navbar">
-            <a id="toggle-btn" href="#" class="menu-btn btn-sm"><i class="fa fa-bars"> </i></a>
+            <a href="/sales" class="menu-btn btn-sm"><i class="dripicons-home"> </i></a>
 
             <div class="navbar-header">
                 <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">

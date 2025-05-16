@@ -54,7 +54,7 @@
 <!-- 2. Diskon => Harga Paket Member -->
 <!-- 3. Group Pelanggan => Kelompok harga jual -->
 <!-- 4. Hidden menu sms, poin dan dokumentasi -->
-5. Semua API third party dinonaktifkan
+<!-- 5. Semua API third party dinonaktifkan -->
 
 # TAMBAHAN
 1. Stok Opname

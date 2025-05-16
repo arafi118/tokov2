@@ -2095,7 +2095,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="form-group">
+                            <div class="d-flex justify-content-end">
                                 <input type="submit" value="{{ trans('file.submit') }}" class="btn btn-primary">
                             </div>
                         </div>
