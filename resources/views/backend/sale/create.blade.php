@@ -396,6 +396,8 @@
                                                                     <input type="text" name="paid_amount"
                                                                         class="form-control decimal" id="paid-amount"
                                                                         step="any" />
+                                                                    <input type="hidden" name="paying_amount"
+                                                                        id="paying-amount" />
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1461,6 +1463,8 @@
                     alert('Amount exceeds customer deposit! Customer deposit : ' + deposit[$('#customer_id')
                         .val()]);
             }
+
+            $('#paying-amount').val($(this).val());
         });
 
         $(window).keydown(function(e) {
