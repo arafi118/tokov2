@@ -211,10 +211,10 @@
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <input type="hidden" name="grand_total" />
-                                                <input type="hidden" name="used_points" />
-                                                <input type="hidden" name="pos" value="0" />
-                                                <input type="hidden" name="coupon_active" value="0" />
+                                                <input type="hidden" name="grand_total">
+                                                <input type="hidden" name="used_points">
+                                                <input type="hidden" name="pos" value="0">
+                                                <input type="hidden" name="coupon_active" value="0">
                                             </div>
                                         </div>
                                     </div>
