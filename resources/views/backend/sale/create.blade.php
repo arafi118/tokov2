@@ -1284,7 +1284,7 @@
             if ($('select[name="payment_status"]').val() == 4) {
                 $('#paid-amount').val(toDecimal(grand_total));
             }
-            $('input[name="grand_total"]').val(toDecimal(grand_total));
+            $('input[name="grand_total"]').val(grand_total);
         }
 
         $('select[name="order_discount_type"]').on("change", function() {
