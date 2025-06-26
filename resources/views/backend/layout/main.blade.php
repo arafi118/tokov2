@@ -305,10 +305,10 @@
                             <li id="purchase-create-menu">
                                 <a href="{{ route('purchases.create') }}">{{ trans('file.Add Purchase') }}</a>
                             </li>
-                            <li id="purchase-import-menu">
+                            {{-- <li id="purchase-import-menu">
                                 <a
                                     href="{{ url('purchases/purchase_by_csv') }}">{{ trans('file.Import Purchase By CSV') }}</a>
-                            </li>
+                            </li> --}}
                         @endif
                         @if ($purchase_return_index_active)
                             <li id="purchase-return-menu">

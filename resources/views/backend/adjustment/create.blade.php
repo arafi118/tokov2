@@ -21,14 +21,16 @@
                                         'id' => 'adjustment-form',
                                     ]) !!}
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-4 {{ count($lims_warehouse_list) <= 1 ? 'd-none' : '' }}">
                                             <div class="form-group">
                                                 <label>{{ trans('file.Warehouse') }} *</label>
                                                 <select required id="warehouse_id" name="warehouse_id"
                                                     class="selectpicker form-control" data-live-search="true"
                                                     data-live-search-style="begins" title="Select warehouse...">
                                                     @foreach ($lims_warehouse_list as $warehouse)
-                                                        <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
+                                                        <option {{ $loop->first ? 'selected' : '' }}
+                                                            value="{{ $warehouse->id }}">{{ $warehouse->name }}
+                                                            {{ count($lims_warehouse_list) <= 1 }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -109,27 +111,7 @@
         });
 
         $('select[name="warehouse_id"]').on('change', function() {
-            var id = $(this).val();
-            $.get('getproduct/' + id, function(data) {
-                lims_product_array = [];
-                product_code = data[0];
-                product_name = data[1];
-                product_qty = data[2];
-                product_id = data[3];
-
-                $.each(product_code, function(index) {
-                    lims_product_array.push(product_code[index] + ' (' + product_name[index] + ')');
-
-                    var tableData = [
-                        product_id[index],
-                        product_name[index],
-                        product_code[index],
-                        product_qty[index],
-                    ];
-
-                    setTableData(tableData);
-                });
-            });
+            productList()
         });
 
         $("#myTable").on('input', '.input-so', function() {
@@ -218,6 +200,30 @@
             });
         })
 
+        function productList() {
+            var id = $('#warehouse_id').val();
+            $.get('getproduct/' + id, function(data) {
+                lims_product_array = [];
+                product_code = data[0];
+                product_name = data[1];
+                product_qty = data[2];
+                product_id = data[3];
+
+                $.each(product_code, function(index) {
+                    lims_product_array.push(product_code[index] + ' (' + product_name[index] + ')');
+
+                    var tableData = [
+                        product_id[index],
+                        product_name[index],
+                        product_code[index],
+                        product_qty[index],
+                    ];
+
+                    setTableData(tableData);
+                });
+            });
+        }
+
         function setTableData(data) {
             var newRow = $("<tr>");
             var cols = '';
@@ -291,5 +297,7 @@
             $('input[name="total_qty"]').val(total_qty);
             $('input[name="item"]').val(total_item);
         }
+
+        productList()
     </script>
 @endpush
