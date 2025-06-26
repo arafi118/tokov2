@@ -151,7 +151,7 @@
                                                             <th>{{ trans('file.name') }}</th>
                                                             <th>{{ trans('file.Code') }}</th>
                                                             <th width="100">{{ trans('file.Quantity') }}</th>
-                                                            {{-- <th>{{ trans('file.Batch No') }}</th> --}}
+                                                            <th>{{ trans('file.Batch No') }}</th>
                                                             <th>{{ trans('file.Net Unit Price') }}</th>
                                                             <th>{{ trans('file.Discount') }}</th>
                                                             <th>{{ trans('file.Cashback') }}</th>
@@ -165,7 +165,7 @@
                                                     <tfoot class="tfoot active">
                                                         <th colspan="2">{{ trans('file.Total') }}</th>
                                                         <th id="total-qty">0</th>
-                                                        {{-- <th></th> --}}
+                                                        <th></th>
                                                         <th></th>
                                                         <th id="total-discount">0.00</th>
                                                         <th id="total-cashback">0.00</th>
@@ -578,7 +578,6 @@
         $("#gift-card").hide();
         $("#cheque").hide();
         $("#debit_card").hide();
-        $("#paid-amount").prop('disabled', true);
 
         // array data depend on warehouse
         var lims_product_array = [];
@@ -909,32 +908,30 @@
                         pos = product_code.indexOf(data[1]);
                         temp_unit_name = (data[6]).split(',');
 
-                        var expired_date = '<div class="text-danger small expired-date">Kadaluwarsa: N/A</div>';
+                        var expired = '<div class="text-danger small expired-date">Kadaluwarsa: N/A</div>';
                         if (data[12]) {
-                            expired_date = '<div class="text-danger small expired-date">Kadaluwarsa: ' +
-                                expired_date[
-                                    pos] +
-                                '</div>';
+                            expired = '<div class="text-danger small expired-date">Kadaluwarsa: ' +
+                                expired_date[pos] + '</div>';
                         }
 
                         cols += '<td>' + data[0] +
                             '<button type="button" class="edit-product btn btn-link" data-toggle="modal" data-target="#editModal"> <i class="dripicons-document-edit"></i></button>' +
-                            expired_date + '</td>';
+                            expired + '</td>';
                         cols += '<td>' + data[1] + '</td>';
                         cols +=
                             '<td><input type="number" class="form-control form-control-sm qty" name="qty[]" value="' +
                             data[
                                 15] + '" step="any" required/></td>';
-                        // if (data[12]) {
-                        //     cols +=
-                        //         '<td><input type="text" class="form-control form-control-sm batch-no" value="' +
-                        //         batch_no[pos] +
-                        //         '" required/> <input type="hidden" class="product-batch-id" name="product_batch_id[]" value="' +
-                        //         product_batch_id[pos] + '"/> </td>';
-                        // } else {
-                        //     cols +=
-                        //         '<td><input type="text" class="form-control form-control-sm batch-no" disabled/> <input type="hidden" class="product-batch-id" name="product_batch_id[]"/> </td>';
-                        // }
+                        if (data[12]) {
+                            cols +=
+                                '<td><input type="text" class="form-control form-control-sm batch-no" value="' +
+                                batch_no[pos] +
+                                '" required/> <input type="hidden" class="product-batch-id" name="product_batch_id[]" value="' +
+                                product_batch_id[pos] + '"/> </td>';
+                        } else {
+                            cols +=
+                                '<td><input type="text" class="form-control form-control-sm batch-no" disabled/> <input type="hidden" class="product-batch-id" name="product_batch_id[]"/> </td>';
+                        }
 
                         cols += '<td class="net_unit_price"></td>';
                         cols += '<td class="discount">0</td>';
@@ -949,11 +946,6 @@
                             9] + '"/>';
                         cols += '<input type="hidden" class="sale-unit" name="sale_unit[]" value="' +
                             temp_unit_name[0] + '"/>';
-                        cols += '<input type="hidden" class="form-control form-control-sm batch-no" value="' +
-                            batch_no[pos] + '"/>';
-                        cols +=
-                            '<input type="hidden" class="product-batch-id" name="product_batch_id[]" value="' +
-                            product_batch_id[pos] + '"/> ';
                         cols += '<input type="hidden" class="net_unit_price" name="net_unit_price[]" />';
                         cols += '<input type="hidden" class="discount-value" name="discount[]" />';
                         cols += '<input type="hidden" class="cashback-value" name="cashback[]" />';
@@ -1146,6 +1138,8 @@
                 var tax = net_unit_price * quantity * (tax_rate[rowindex] / 100);
                 var sub_total = (net_unit_price * quantity) + tax;
 
+                console.log(row_product_price, product_discount[rowindex], net_unit_price, tax, sub_total);
+
                 $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.net_unit_price').text(
                     toDecimal(net_unit_price));
                 $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.net_unit_price').val(
@@ -1153,9 +1147,8 @@
                 $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.tax').text(toDecimal(tax));
                 $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.tax-value').val(toDecimal(tax));
                 $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.sub-total').text(
-                    toNumber(sub_total));
-                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.subtotal-value').val(
                     toDecimal(sub_total));
+                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.subtotal-value').val(sub_total);
             } else {
                 var sub_total_unit = row_product_price - product_discount[rowindex];
                 var net_unit_price = (100 / (100 + tax_rate[rowindex])) * sub_total_unit;
@@ -1170,8 +1163,7 @@
                 $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.tax-value').val(toDecimal(tax));
                 $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.sub-total').text(
                     toDecimal(sub_total));
-                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.subtotal-value').val(
-                    toDecimal(sub_total));
+                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.subtotal-value').val(sub_total);
             }
 
             calculateTotal();
@@ -1231,7 +1223,7 @@
                 total += toNumber($(this).text());
             });
             $("#total").text(toDecimal(total));
-            $('input[name="total_price"]').val(toDecimal(total));
+            $('input[name="total_price"]').val(total);
 
             calculateGrandTotal();
         }
@@ -1270,8 +1262,6 @@
             order_tax = (subtotal - order_discount) * (order_tax / 100);
             var grand_total = (subtotal + order_tax + shipping_cost) - order_discount;
 
-            console.log(order_discount_value, order_discount, grand_total);
-
             $('input[name="order_discount"]').val(order_discount);
             $('input[name="order_cashback"]').val(order_cashback);
             $('#item').text(item);
@@ -1285,6 +1275,7 @@
             $('#grand_total').text(toDecimal(grand_total));
             if ($('select[name="payment_status"]').val() == 4) {
                 $('#paid-amount').val(toDecimal(grand_total));
+                $('#paying-amount').val(grand_total);
             }
             $('input[name="grand_total"]').val(grand_total);
         }
@@ -1321,6 +1312,7 @@
                 $("#paid-amount").prop('required', true);
                 if (payment_status == 4) {
                     $('input[name="paid_amount"]').val($('input[name="grand_total"]').val());
+                    $('input[name="paying_amount"]').val($('input[name="grand_total"]').val());
                 }
             } else {
                 $("#paid-amount").prop('required', false);
@@ -1446,7 +1438,7 @@
         });
 
         $('input[name="paid_amount"]').on("change", function() {
-            if ($(this).val() > toNumber($('#grand_total').text())) {
+            if (toNumber($(this).val()) > toNumber($('#grand_total').text())) {
                 alert('Paying amount cannot be bigger than grand total');
                 $(this).val('');
             }
@@ -1456,7 +1448,7 @@
                 var balance = gift_card_amount[$("#gift_card_id").val()] - gift_card_expense[$(
                         "#gift_card_id")
                     .val()];
-                if ($(this).val() > balance)
+                if (toNumber($(this).val()) > balance)
                     alert('Amount exceeds card balance! Gift Card balance: ' + balance);
             } else if (id == 6) {
                 if ($('input[name="paid_amount"]').val() > deposit[$('#customer_id').val()])
@@ -1464,7 +1456,7 @@
                         .val()]);
             }
 
-            $('#paying-amount').val($(this).val());
+            $('#paying-amount').val(toNumber($(this).val()));
         });
 
         $(window).keydown(function(e) {
@@ -1506,7 +1498,7 @@
                 $("#paid-amount").prop('disabled', false);
                 $(".batch-no").prop('disabled', false);
             }
-        });
+        })
 
         function checkPo() {
             if ($('select[name="payment_status"').val() == '2') {

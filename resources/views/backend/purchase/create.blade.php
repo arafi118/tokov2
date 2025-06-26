@@ -115,6 +115,7 @@
                                                             <th class="recieved-product-qty d-none">
                                                                 {{ trans('file.Recieved') }}
                                                             </th>
+                                                            <th>{{ trans('file.Batch No') }}</th>
                                                             <th>{{ trans('file.Expired Date') }}</th>
                                                             <th>{{ trans('file.Net Unit Cost') }}</th>
                                                             <th>{{ trans('file.Discount') }}</th>
@@ -130,6 +131,7 @@
                                                         <th>{{ trans('file.Total') }}</th>
                                                         <th id="total-qty">0</th>
                                                         <th class="recieved-product-qty d-none"></th>
+                                                        <th></th>
                                                         <th></th>
                                                         <th></th>
                                                         <th id="total-discount">0.00</th>
@@ -797,13 +799,13 @@
                             cols +=
                             '<td class="recieved-product-qty d-none"><input type="number" class="form-control form-control-sm recieved" name="recieved[]" value="0" step="any"/></td>';
                         if (data[10]) {
-                            // cols +=
-                            //     '<td><input type="text" class="form-control form-control-sm batch-no" name="batch_no[]" required/></td>';
+                            cols +=
+                                '<td><input type="text" class="form-control form-control-sm batch-no" name="batch_no[]" required/></td>';
                             cols +=
                                 '<td><input type="text" class="form-control form-control-sm expired-date" name="expired_date[]" required/></td>';
                         } else {
-                            // cols +=
-                            //     '<td><input type="text" class="form-control form-control-sm batch-no" name="batch_no[]" disabled/></td>';
+                            cols +=
+                                '<td><input type="text" class="form-control form-control-sm batch-no" name="batch_no[]" disabled/></td>';
                             cols +=
                                 '<td><input type="text" class="form-control form-control-sm expired-date" name="expired_date[]" disabled/></td>';
                         }
@@ -823,7 +825,7 @@
                         cols += '<input type="hidden" class="purchase-unit" name="purchase_unit[]" value="' +
                             temp_unit_name[0] + '"/>';
                         cols += '<input type="hidden" class="net_unit_cost" name="net_unit_cost[]" />';
-                        cols += '<input type="hidden" class="batch-no" name="batch_no[]"/>';
+                        // cols += '<input type="hidden" class="batch-no" name="batch_no[]"/>';
                         cols += '<input type="hidden" class="discount-value" name="discount[]" />';
                         cols += '<input type="hidden" class="cashback-value" name="cashback[]" />';
                         cols += '<input type="hidden" class="tax-rate" name="tax_rate[]" value="' + data[3] +

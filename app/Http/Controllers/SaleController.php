@@ -611,7 +611,7 @@ class SaleController extends Controller
                             $lims_product_variant_data->qty -= $quantity;
                             $lims_product_variant_data->save();
                             $lims_product_warehouse_data = Product_Warehouse::FindProductWithVariant($id, $lims_product_variant_data->variant_id, $data['warehouse_id'])->first();
-                        } elseif ($product_batch_id[$i] == 'none') {
+                        } elseif ($product_batch_id[$i]) {
                             $lims_product_warehouse_data = Product_Warehouse::where([
                                 ['product_batch_id', $product_batch_id[$i]],
                                 ['warehouse_id', $data['warehouse_id']]
