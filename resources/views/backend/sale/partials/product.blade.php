@@ -205,6 +205,7 @@
                     @for ($i = 0; $i < ceil($product_number / 4); $i++)
                         <tr>
                             <td class="product-img sound-btn" title="{{ $lims_product_list[0 + $i * 4]->name }}"
+                                data-qty="{{ $lims_product_list[0 + $i * 4]->qty }}"
                                 data-product="{{ $lims_product_list[0 + $i * 4]->code . ' (' . $lims_product_list[0 + $i * 4]->name . ')' }}">
                                 <img src="{{ url('/images/product', $lims_product_list[0 + $i * 4]->base_image) }}"
                                     width="100%" />
@@ -213,6 +214,7 @@
                             </td>
                             @if (!empty($lims_product_list[1 + $i * 4]))
                                 <td class="product-img sound-btn" title="{{ $lims_product_list[1 + $i * 4]->name }}"
+                                    data-qty="{{ $lims_product_list[1 + $i * 4]->qty }}"
                                     data-product="{{ $lims_product_list[1 + $i * 4]->code . ' (' . $lims_product_list[1 + $i * 4]->name . ')' }}">
                                     <img src="{{ url('/images/product', $lims_product_list[1 + $i * 4]->base_image) }}"
                                         width="100%" />
@@ -224,6 +226,7 @@
                             @endif
                             @if (!empty($lims_product_list[2 + $i * 4]))
                                 <td class="product-img sound-btn" title="{{ $lims_product_list[2 + $i * 4]->name }}"
+                                    data-qty="{{ $lims_product_list[2 + $i * 4]->qty }}"
                                     data-product="{{ $lims_product_list[2 + $i * 4]->code . ' (' . $lims_product_list[2 + $i * 4]->name . ')' }}">
                                     <img src="{{ url('/images/product', $lims_product_list[2 + $i * 4]->base_image) }}"
                                         width="100%" />
@@ -235,6 +238,7 @@
                             @endif
                             @if (!empty($lims_product_list[3 + $i * 4]))
                                 <td class="product-img sound-btn" title="{{ $lims_product_list[3 + $i * 4]->name }}"
+                                    data-qty="{{ $lims_product_list[3 + $i * 4]->qty }}"
                                     data-product="{{ $lims_product_list[3 + $i * 4]->code . ' (' . $lims_product_list[3 + $i * 4]->name . ')' }}">
                                     <img src="{{ url('/images/product', $lims_product_list[3 + $i * 4]->base_image) }}"
                                         width="100%" />

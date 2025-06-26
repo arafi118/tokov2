@@ -237,7 +237,8 @@
                 <button style="background-color: #213170" type="button" class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="paypal-btn"><i class="fa fa-paypal"></i> {{ trans('file.PayPal') }}</button>
             </div> -->
             <div class="column-5">
-                <button style="background-color: #e28d02" type="button" class="btn btn-custom" id="draft-btn">
+                <button type="button" style="background-color: #e28d02" type="button" class="btn btn-custom"
+                    id="draft-btn">
                     <i class="dripicons-flag"></i>
                     {{ trans('file.Draft') }}
                 </button>

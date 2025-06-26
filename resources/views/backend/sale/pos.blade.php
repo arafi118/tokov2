@@ -826,6 +826,12 @@
             else {
                 var data = $(this).data('product');
 
+                var qty = $(this).data('qty');
+                if (qty <= '0') {
+                    swal('Warning', 'This product is out of stock', 'warning');
+                    return ''
+                }
+
                 productSearch(data);
             }
         });
@@ -1004,9 +1010,10 @@
             var rownumber = $('table.order-list tbody tr:last').index();
             if (rownumber < 0) {
                 alert("Please insert product to order table!")
-            } else
+            } else {
                 $('input[name="draft"]').val(1);
-            $('.payment-form').submit();
+                $('.payment-form').submit();
+            }
         });
 
         $("#submit-btn").on("click", function() {
@@ -1502,7 +1509,7 @@
                 else if (operator[0] == '/')
                     total_qty = sale_qty / operation_value[0];
                 if (total_qty > parseFloat(product_qty[pos])) {
-                    alert('Quantity exceeds stock quantity!');
+                    swal('Warning', 'Quantity exceeds stock quantity', 'warning');
                     if (flag) {
                         sale_qty = sale_qty.substring(0, sale_qty.length - 1);
                         localStorageQty[rowindex] = sale_qty;
@@ -1522,7 +1529,7 @@
                 $(child_id).each(function(index) {
                     var position = product_id.indexOf(parseInt(child_id[index]));
                     if (parseFloat(sale_qty * child_qty[index]) > product_qty[position]) {
-                        alert('Quantity exceeds stock quantity!');
+                        swal('Warning', 'Quantity exceeds stock quantity', 'warning');
                         if (flag) {
                             sale_qty = sale_qty.substring(0, sale_qty.length - 1);
                             $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.qty').val(

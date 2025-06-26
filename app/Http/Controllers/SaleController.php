@@ -1228,7 +1228,7 @@ class SaleController extends Controller
             $lims_reward_point_setting_data = RewardPointSetting::latest()->first();
             $lims_tax_list = Tax::where('is_active', true)->get();
 
-            $lims_product_list = Product::select('id', 'name', 'code', 'image')->ActiveFeatured()->with([
+            $lims_product_list = Product::select('id', 'name', 'code', 'image', 'qty')->ActiveFeatured()->with([
                 'variant' => function ($query) {
                     $query->orderBy('position');
                 }

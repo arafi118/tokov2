@@ -336,9 +336,9 @@
                             <li id="sale-create-menu">
                                 <a href="{{ route('sales.create') }}">{{ trans('file.Add Sale') }}</a>
                             </li>
-                            <li id="sale-import-menu">
+                            {{-- <li id="sale-import-menu">
                                 <a href="{{ url('sales/sale_by_csv') }}">{{ trans('file.Import Sale By CSV') }}</a>
-                            </li>
+                            </li> --}}
                         @endif
                     @endif
                     {{-- @if ($gift_card_active)
