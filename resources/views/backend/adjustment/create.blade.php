@@ -29,8 +29,9 @@
                                                     data-live-search-style="begins" title="Select warehouse...">
                                                     @foreach ($lims_warehouse_list as $warehouse)
                                                         <option {{ $loop->first ? 'selected' : '' }}
-                                                            value="{{ $warehouse->id }}">{{ $warehouse->name }}
-                                                            {{ count($lims_warehouse_list) <= 1 }}</option>
+                                                            value="{{ $warehouse->id }}">
+                                                            {{ $warehouse->name }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                             </div>

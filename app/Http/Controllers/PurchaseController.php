@@ -804,6 +804,8 @@ class PurchaseController extends Controller
 
     public function edit($id)
     {
+        $rekening = $this->rekening->getRekening();
+
         $role = Role::find(Auth::user()->role_id);
         if ($role->hasPermissionTo('purchases-edit')) {
             $lims_supplier_list = Supplier::where('is_active', true)->get();
@@ -814,7 +816,7 @@ class PurchaseController extends Controller
             $lims_purchase_data = Purchase::find($id);
             $lims_product_purchase_data = ProductPurchase::where('purchase_id', $id)->get();
 
-            return view('backend.purchase.edit', compact('lims_warehouse_list', 'lims_supplier_list', 'lims_product_list_without_variant', 'lims_product_list_with_variant', 'lims_tax_list', 'lims_purchase_data', 'lims_product_purchase_data'));
+            return view('backend.purchase.edit', compact('lims_warehouse_list', 'lims_supplier_list', 'lims_product_list_without_variant', 'lims_product_list_with_variant', 'lims_tax_list', 'lims_purchase_data', 'lims_product_purchase_data', 'rekening'));
         } else
             return redirect()->back()->with('not_permitted', 'Sorry! You are not allowed to access this module');
     }

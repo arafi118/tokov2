@@ -25,8 +25,13 @@ class CreatePurchasesTable extends Migration
             $table->double('total_tax');
             $table->double('total_cost');
             $table->double('order_tax_rate')->nullable();
-            $table->double('order_tax')->nullable();
             $table->double('order_discount')->nullable();
+            $table->double('order_tax')->nullable();
+            $table->string('order_discount_type')->nullable();
+            $table->double('order_discount_value')->nullable();
+            $table->double('order_discount')->nullable();
+            $table->string('order_cashback_type')->nullable();
+            $table->double('order_cashback_value')->nullable();
             $table->double('order_cashback')->nullable();
             $table->double('shipping_cost')->nullable();
             $table->double('grand_total');
