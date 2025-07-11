@@ -24,7 +24,7 @@ class LaporanKeuanganController extends Controller
     public function __construct()
     {
         $this->jurnal = new TbJurnal;
-        $this->jenis_laporan = ['jurnal' => 'Jurnal', 'buku_besar' => 'Buku Besar', 'neraca_saldo' => 'Neraca Saldo', 'neraca' => 'Neraca Percobaan', 'rugi_laba' => 'Laba Rugi', 'arus_kas' => 'Arus Kas', 'inventaris' => 'Inventaris'];
+        $this->jenis_laporan = ['jurnal' => 'Jurnal', 'buku_besar' => 'Buku Besar', 'neraca_saldo' => 'Neraca Saldo', 'neraca' => 'Neraca', 'rugi_laba' => 'Laba Rugi', 'arus_kas' => 'Arus Kas', 'inventaris' => 'Inventaris'];
     }
 
     public function index(Request $req)
