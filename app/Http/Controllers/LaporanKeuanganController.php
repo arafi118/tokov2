@@ -619,7 +619,7 @@ class LaporanKeuanganController extends Controller
 
                 $params += ['header' => 'yes', 'logo' => 'yes'];
 
-                $pdf = PDF::loadview('backend.laporan_keuangan.neraca_saldo.print', $params, [], ['orientation' => 'P', 'format' => 'A4']);
+                $pdf = PDF::loadview('backend.laporan_keuangan.neraca_saldo.print', $params, [], ['orientation' => 'L', 'format' => 'A4']);
 
                 return $pdf->stream('laporan-neraca-saldo.pdf');
             }
