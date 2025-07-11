@@ -240,6 +240,91 @@
             </li>
 
             <li>
+                <a href="#setting" aria-expanded="false" data-toggle="collapse">
+                    <i class="dripicons-gear"></i><span>{{ trans('file.settings') }}</span>
+                </a>
+                <ul id="setting" class="collapse list-unstyled ">
+                    @if (Auth::user()->role_id <= 2)
+                        <li id="role-menu">
+                            <a href="{{ route('role.index') }}">{{ trans('file.Role Permission') }}</a>
+                        </li>
+                    @endif
+                    @if ($discount_plan_active)
+                        <li id="discount-plan-list-menu">
+                            <a href="{{ route('discount-plans.index') }}">{{ trans('file.Discount Plan') }}</a>
+                        </li>
+                    @endif
+                    @if ($discount_active)
+                        <li id="discount-list-menu">
+                            <a href="{{ route('discounts.index') }}">{{ trans('file.Discount Group') }}</a>
+                        </li>
+                    @endif
+                    {{-- @if ($all_notification_active)
+                        <li id="notification-list-menu">
+                            <a href="{{ route('notifications.index') }}">{{ trans('file.All Notification') }}</a>
+                        </li>
+                    @endif --}}
+                    {{-- @if ($send_notification_active)
+                        <li id="notification-menu">
+                            <a href="" id="send-notification">{{ trans('file.Send Notification') }}</a>
+                        </li>
+                    @endif --}}
+                    @if ($customer_group_active)
+                        <li id="customer-group-menu">
+                            <a href="{{ route('customer_group.index') }}">{{ trans('file.Customer Group') }}</a>
+                        </li>
+                    @endif
+                    @if ($tax_active)
+                        <li id="tax-menu">
+                            <a href="{{ route('tax.index') }}">{{ trans('file.Tax') }}</a>
+                        </li>
+                    @endif
+                    <li id="user-menu">
+                        <a
+                            href="{{ route('user.profile', ['id' => Auth::id()]) }}">{{ trans('file.User Profile') }}</a>
+                    </li>
+                    {{-- @if ($create_sms_active)
+                        <li id="create-sms-menu">
+                            <a href="{{ route('setting.createSms') }}">{{ trans('file.Create SMS') }}</a>
+                        </li>
+                    @endif --}}
+                    @if ($general_setting_active)
+                        <li id="general-setting-menu">
+                            <a href="{{ route('setting.general') }}">{{ trans('file.General Setting') }}</a>
+                        </li>
+                    @endif
+                    {{-- @if ($mail_setting_permission_active)
+                        <li id="mail-setting-menu">
+                            <a href="{{ route('setting.mail') }}">{{ trans('file.Mail Setting') }}</a>
+                        </li>
+                    @endif --}}
+                    {{-- @if ($reward_point_setting_active)
+                        <li id="reward-point-setting-menu">
+                            <a
+                                href="{{ route('setting.rewardPoint') }}">{{ trans('file.Reward Point Setting') }}</a>
+                        </li>
+                    @endif --}}
+                    {{-- @if ($sms_setting_active)
+                        <li id="sms-setting-menu">
+                            <a href="{{ route('setting.sms') }}">{{ trans('file.SMS Setting') }}</a>
+                        </li>
+                    @endif --}}
+                    @if ($pos_setting_active)
+                        <li id="pos-setting-menu">
+                            <a href="{{ route('setting.pos') }}">POS
+                                {{ trans('file.settings') }}</a>
+                        </li>
+                    @endif
+                    {{-- @if ($hrm_setting_active)
+                        <li id="hrm-setting-menu">
+                            <a href="{{ route('setting.hrm') }}">
+                                {{ trans('file.HRM Setting') }}</a>
+                        </li>
+                    @endif --}}
+                </ul>
+            </li>
+
+            <li>
                 <a href="#people" aria-expanded="false" data-toggle="collapse">
                     <i class="dripicons-user"></i><span>{{ trans('file.People') }}</span>
                 </a>
@@ -709,91 +794,6 @@
                             <a id="user-report-link" href="">{{ trans('file.User Report') }}</a>
                         </li>
                     @endif
-                </ul>
-            </li>
-
-            <li>
-                <a href="#setting" aria-expanded="false" data-toggle="collapse">
-                    <i class="dripicons-gear"></i><span>{{ trans('file.settings') }}</span>
-                </a>
-                <ul id="setting" class="collapse list-unstyled ">
-                    @if (Auth::user()->role_id <= 2)
-                        <li id="role-menu">
-                            <a href="{{ route('role.index') }}">{{ trans('file.Role Permission') }}</a>
-                        </li>
-                    @endif
-                    @if ($discount_plan_active)
-                        <li id="discount-plan-list-menu">
-                            <a href="{{ route('discount-plans.index') }}">{{ trans('file.Discount Plan') }}</a>
-                        </li>
-                    @endif
-                    @if ($discount_active)
-                        <li id="discount-list-menu">
-                            <a href="{{ route('discounts.index') }}">{{ trans('file.Discount Group') }}</a>
-                        </li>
-                    @endif
-                    {{-- @if ($all_notification_active)
-                        <li id="notification-list-menu">
-                            <a href="{{ route('notifications.index') }}">{{ trans('file.All Notification') }}</a>
-                        </li>
-                    @endif --}}
-                    {{-- @if ($send_notification_active)
-                        <li id="notification-menu">
-                            <a href="" id="send-notification">{{ trans('file.Send Notification') }}</a>
-                        </li>
-                    @endif --}}
-                    @if ($customer_group_active)
-                        <li id="customer-group-menu">
-                            <a href="{{ route('customer_group.index') }}">{{ trans('file.Customer Group') }}</a>
-                        </li>
-                    @endif
-                    @if ($tax_active)
-                        <li id="tax-menu">
-                            <a href="{{ route('tax.index') }}">{{ trans('file.Tax') }}</a>
-                        </li>
-                    @endif
-                    <li id="user-menu">
-                        <a
-                            href="{{ route('user.profile', ['id' => Auth::id()]) }}">{{ trans('file.User Profile') }}</a>
-                    </li>
-                    {{-- @if ($create_sms_active)
-                        <li id="create-sms-menu">
-                            <a href="{{ route('setting.createSms') }}">{{ trans('file.Create SMS') }}</a>
-                        </li>
-                    @endif --}}
-                    @if ($general_setting_active)
-                        <li id="general-setting-menu">
-                            <a href="{{ route('setting.general') }}">{{ trans('file.General Setting') }}</a>
-                        </li>
-                    @endif
-                    {{-- @if ($mail_setting_permission_active)
-                        <li id="mail-setting-menu">
-                            <a href="{{ route('setting.mail') }}">{{ trans('file.Mail Setting') }}</a>
-                        </li>
-                    @endif --}}
-                    {{-- @if ($reward_point_setting_active)
-                        <li id="reward-point-setting-menu">
-                            <a
-                                href="{{ route('setting.rewardPoint') }}">{{ trans('file.Reward Point Setting') }}</a>
-                        </li>
-                    @endif --}}
-                    {{-- @if ($sms_setting_active)
-                        <li id="sms-setting-menu">
-                            <a href="{{ route('setting.sms') }}">{{ trans('file.SMS Setting') }}</a>
-                        </li>
-                    @endif --}}
-                    @if ($pos_setting_active)
-                        <li id="pos-setting-menu">
-                            <a href="{{ route('setting.pos') }}">POS
-                                {{ trans('file.settings') }}</a>
-                        </li>
-                    @endif
-                    {{-- @if ($hrm_setting_active)
-                        <li id="hrm-setting-menu">
-                            <a href="{{ route('setting.hrm') }}">
-                                {{ trans('file.HRM Setting') }}</a>
-                        </li>
-                    @endif --}}
                 </ul>
             </li>
             {{-- @if (Auth::user()->role_id != 5)
