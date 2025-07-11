@@ -43,7 +43,7 @@
                 <div class="form-inner">
                     <div class="logo">
                         @if ($general_setting->site_logo)
-                            <img src="{{ url('uploadedimages', $general_setting->site_logo) }}" width="110">
+                            <img src="{{ url('uploadedimages', $general_setting->site_logo) }}" height="70">
                         @else
                             <span>{{ $general_setting->site_title }}</span>
                         @endif
