@@ -238,6 +238,55 @@
                     <i class="dripicons-meter"></i><span>{{ __('file.dashboard') }}</span>
                 </a>
             </li>
+
+            <li>
+                <a href="#people" aria-expanded="false" data-toggle="collapse">
+                    <i class="dripicons-user"></i><span>{{ trans('file.People') }}</span>
+                </a>
+                <ul id="people" class="collapse list-unstyled ">
+                    @if ($users_index_active)
+                        <li id="user-list-menu">
+                            <a href="{{ route('user.index') }}">{{ trans('file.User List') }}</a>
+                        </li>
+                        @if ($users_add_active)
+                            <li id="user-create-menu">
+                                <a href="{{ route('user.create') }}">{{ trans('file.Add User') }}</a>
+                            </li>
+                        @endif
+                    @endif
+                    @if ($customers_index_active)
+                        <li id="customer-list-menu">
+                            <a href="{{ route('customer.index') }}">{{ trans('file.Customer List') }}</a>
+                        </li>
+                        @if ($customers_add_active)
+                            <li id="customer-create-menu">
+                                <a href="{{ route('customer.create') }}">{{ trans('file.Add Customer') }}</a>
+                            </li>
+                        @endif
+                    @endif
+                    @if ($billers_index_active)
+                        <li id="biller-list-menu">
+                            <a href="{{ route('biller.index') }}">{{ trans('file.Biller List') }}</a>
+                        </li>
+                        @if ($billers_add_active)
+                            <li id="biller-create-menu">
+                                <a href="{{ route('biller.create') }}">{{ trans('file.Add Biller') }}</a>
+                            </li>
+                        @endif
+                    @endif
+                    @if ($suppliers_index_active)
+                        <li id="supplier-list-menu">
+                            <a href="{{ route('supplier.index') }}">{{ trans('file.Supplier List') }}</a>
+                        </li>
+                        @if ($suppliers_add_active)
+                            <li id="supplier-create-menu">
+                                <a href="{{ route('supplier.create') }}">{{ trans('file.Add Supplier') }}</a>
+                            </li>
+                        @endif
+                    @endif
+                </ul>
+            </li>
+
             <li>
                 <a href="#product" aria-expanded="false" data-toggle="collapse">
                     <i class="dripicons-list"></i><span>{{ __('file.product') }}</span>
@@ -502,54 +551,6 @@
                     </li>
                 </ul>
             </li> --}}
-
-            <li>
-                <a href="#people" aria-expanded="false" data-toggle="collapse">
-                    <i class="dripicons-user"></i><span>{{ trans('file.People') }}</span>
-                </a>
-                <ul id="people" class="collapse list-unstyled ">
-                    @if ($users_index_active)
-                        <li id="user-list-menu">
-                            <a href="{{ route('user.index') }}">{{ trans('file.User List') }}</a>
-                        </li>
-                        @if ($users_add_active)
-                            <li id="user-create-menu">
-                                <a href="{{ route('user.create') }}">{{ trans('file.Add User') }}</a>
-                            </li>
-                        @endif
-                    @endif
-                    @if ($customers_index_active)
-                        <li id="customer-list-menu">
-                            <a href="{{ route('customer.index') }}">{{ trans('file.Customer List') }}</a>
-                        </li>
-                        @if ($customers_add_active)
-                            <li id="customer-create-menu">
-                                <a href="{{ route('customer.create') }}">{{ trans('file.Add Customer') }}</a>
-                            </li>
-                        @endif
-                    @endif
-                    @if ($billers_index_active)
-                        <li id="biller-list-menu">
-                            <a href="{{ route('biller.index') }}">{{ trans('file.Biller List') }}</a>
-                        </li>
-                        @if ($billers_add_active)
-                            <li id="biller-create-menu">
-                                <a href="{{ route('biller.create') }}">{{ trans('file.Add Biller') }}</a>
-                            </li>
-                        @endif
-                    @endif
-                    @if ($suppliers_index_active)
-                        <li id="supplier-list-menu">
-                            <a href="{{ route('supplier.index') }}">{{ trans('file.Supplier List') }}</a>
-                        </li>
-                        @if ($suppliers_add_active)
-                            <li id="supplier-create-menu">
-                                <a href="{{ route('supplier.create') }}">{{ trans('file.Add Supplier') }}</a>
-                            </li>
-                        @endif
-                    @endif
-                </ul>
-            </li>
 
             <li>
                 <a href="#report" aria-expanded="false" data-toggle="collapse">
