@@ -25,7 +25,6 @@ class CreatePurchasesTable extends Migration
             $table->double('total_tax');
             $table->double('total_cost');
             $table->double('order_tax_rate')->nullable();
-            $table->double('order_discount')->nullable();
             $table->double('order_tax')->nullable();
             $table->string('order_discount_type')->nullable();
             $table->double('order_discount_value')->nullable();
