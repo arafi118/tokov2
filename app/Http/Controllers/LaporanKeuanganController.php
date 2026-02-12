@@ -395,6 +395,7 @@ class LaporanKeuanganController extends Controller
                 $kredit_tahun_lalu = 'kredit_12';
 
                 $saldo = 0;
+                $komsaldo = 0;
                 $saldo_bulan_ini = 0;
                 $saldo_bulan_lalu = 0;
                 $saldo_tahun_lalu = 0;
